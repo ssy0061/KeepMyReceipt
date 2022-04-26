@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -64,6 +66,44 @@ public class CrewService {
             log.info("회원가입 시도 : 실패");
             throw new ApiMessageException("회원가입에 실패했습니다. 다시 시도해 주세요.");
         }
+    }
+
+    /**
+     * 이메일 검증
+     *
+     * @param email 이메일
+     * @return boolean (true : 사용 가능, false : 불가능)
+     */
+    public boolean isValidEmail(String email) {
+        final String REGEX = "(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@" +
+                "((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))";
+
+        Matcher matcher = Pattern.compile(REGEX).matcher(email);
+
+        if (matcher.matches()){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 비밀번호 검증
+     *
+     * @param password 비밀번호
+     * @return boolean (true : 사용 가능, false : 불가능)
+     */
+    public boolean isValidPassword(String password) {
+        // 8자리 이상, 특수문자, 숫자, 문자 포함
+        final String REGEX = "^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$";
+
+        Matcher matcher = Pattern.compile(REGEX).matcher(password);
+
+        if (matcher.matches()){
+            return true;
+        }
+
+        return false;
     }
 }
 

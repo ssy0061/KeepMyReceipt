@@ -41,6 +41,12 @@ public class CrewController {
         if (crewService.findByEmail(signUpReqDTO.getEmail()) != null) {
             log.info("회원가입 시도 : 실패 (중복 email 존재) : email : {}", signUpReqDTO.getEmail());
             throw new ApiMessageException("중복된 email을 가진 회원이 존재합니다.");
+        } else if (!crewService.isValidEmail(signUpReqDTO.getEmail())) {
+            log.info("회원가입 시도 : 실패 (이메일 형식 불일치) : email : {}", signUpReqDTO.getEmail());
+            throw new ApiMessageException("이메일이 형식에 맞지 않습니다.");
+        } else if (!crewService.isValidPassword(signUpReqDTO.getPassword())) {
+            log.info("회원가입 시도 : 실패 (비밀번호 형식 불일치) : email : {}", signUpReqDTO.getEmail());
+            throw new ApiMessageException("비밀번호가 형식에 맞지 않습니다.");
         }
 
         crewService.crewSignUp(signUpReqDTO);
@@ -55,7 +61,10 @@ public class CrewController {
     public @ResponseBody SingleResult<Boolean> checkEmail(@PathVariable String email) throws Exception {
         log.info("이메일 중복 확인 시도 : 이메일 : {}", email);
 
-        if (crewService.findByEmail(email) == null) {
+        if (!crewService.isValidEmail(email)) {
+            log.info("이메일 중복 확인 시도 : 실패 (이메일 형식 불일치) : email : {}", email);
+            throw new ApiMessageException("이메일이 형식에 맞지 않습니다.");
+        } else if (crewService.findByEmail(email) == null) {
             log.info("이메일 중복 확인 시도 : 성공 : 중복 여부 : {}", false);
             return responseService.getSingleResult(false);
         } else {
