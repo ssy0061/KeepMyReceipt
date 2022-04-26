@@ -54,7 +54,7 @@ public class CrewService {
                 .email(signUpReqDTO.getEmail())
                 .password(passwordEncoder.encode(signUpReqDTO.getPassword()))
                 .name(signUpReqDTO.getName())
-                .isAllowedPush(YNCode.Y)
+                .isAllowedPush(YNCode.N)
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
 

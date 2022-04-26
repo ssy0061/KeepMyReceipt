@@ -20,25 +20,12 @@ spring:
 
   # 데이터 베이스 연결 설정
   datasource:
-    url: jdbc:mysql://localhost:3306/receipt_db?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://k6d104.p.ssafy.io:3306/receipt_db?serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: receipt
     password: Receipt!*
   flyway:
     enabled: false
-
-  # 메일 전송 시 사용할 설정값
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: keepMyReceiptByIeung@gmail.com
-    password: Receipt!*
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
 
 server:
   # 프로젝트 환경의 포트 설정
