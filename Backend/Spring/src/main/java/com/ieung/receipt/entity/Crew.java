@@ -1,11 +1,7 @@
 package com.ieung.receipt.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ieung.receipt.code.JoinCode;
-import com.ieung.receipt.code.MFCode;
 import com.ieung.receipt.code.YNCode;
-import com.ieung.receipt.converter.JoinCodeConverter;
-import com.ieung.receipt.converter.MFCodeConverter;
 import com.ieung.receipt.converter.YNCodeConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,29 +23,24 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user",
+@Table(name = "crew",
     uniqueConstraints = {
             @UniqueConstraint(
-                    columnNames={"uid"}
+                    columnNames={"email"}
             )
     }
 )
 // 회원 테이블
-public class User extends BaseEntity implements UserDetails {
+public class Crew extends BaseEntity implements UserDetails {
 
     // User 테이블의 키값 = 회원의 고유 키값
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "crew_id")
     private long id;
 
-    // 회원이 가입한 타입 (none:일반, sns:소셜회원가입)
-    @Convert(converter = JoinCodeConverter.class)
-    @Column(nullable = false, length = 5)
-    private JoinCode joinType;
-
-    // 회원아이디(일반:아이디, 소셜회원가입:발급번호)
     @Column(nullable = false, unique = true, length = 120)
-    private String uid;
+    private String email;
 
     // 비밀번호
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -57,63 +48,26 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
 
     // 회원 이름
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, length = 64)
     private String name;
 
-    // 회원 닉네임
-    @Column(nullable = false, length = 64)
-    private String nickname;
-
-    // 회원 이메일
-    @Column(nullable = false, length = 255)
-    private String email;
-
-    // 회원 휴대폰
-    @Column(nullable = true, length = 32)
-    private String phone;
-
-    // 성별 (남자 M, 여자 F)
-    @Convert(converter = MFCodeConverter.class)
-    @Column(nullable = false, length = 1, columnDefinition = "varchar(1) default ''")
-    private MFCode gender;
-
-    // 회원 나이
-    @Column(nullable = false, length = 3, columnDefinition = "int(3) default 0")
-    private int age;
-
-    // 회원 프로필 이미지
-    @Column(nullable = false, length = 255)
-    private String img;
-
-    // 주소
-    @Column(length = 255)
-    private String address;
-
-    // 상세주소
-    @Column(length = 255)
-    private String addressDetail;
-
-    // 푸쉬알림 설정 (Y:on, N:off)
+    // 푸시 알림 설정 (Y:on, N:off)
     @Convert(converter = YNCodeConverter.class)
     @Column(nullable = false, length = 1, columnDefinition = "varchar(1) default 'Y'")
-    private YNCode push;
+    private YNCode isAllowedPush;
 
     // 장비 푸시용 토큰
     @Column(length = 255)
-    private String token;
+    private String pushToken;
 
-    // 사용 여부
-    @Convert(converter = YNCodeConverter.class)
-    @Column(nullable = false, length = 1, columnDefinition = "varchar(1) default 'Y'")
-    private YNCode isBind;
-
-
-
-
+    // 장비 푸시용 토큰
+    @Column(length = 255)
+    private String refreshToken;
 
     // =================================================================================================
     // JWT
     // =================================================================================================
+
     @Column(length = 100)
     private String provider;
 
@@ -152,7 +106,7 @@ public class User extends BaseEntity implements UserDetails {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public String getUsername() {
-        return this.uid;
+        return this.email;
     }
 
     @Override
@@ -162,34 +116,19 @@ public class User extends BaseEntity implements UserDetails {
 
     // =================================================================================================
 
-
-
-    public void updateImg(String img){
-        this.img = img;
+    public void updateNickname(String name){
+        this.name = name;
     }
 
-    public void updateNickname(String nickname){
-        this.nickname = nickname;
+    public void updateIsAllowedPush(YNCode isAllowedPush){
+        this.isAllowedPush = isAllowedPush;
     }
 
-    public void updateAge(int age){
-        this.age = age;
+    public void updateRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
     }
 
-    public void updateGender(MFCode gender){
-        this.gender = gender;
+    public void updatePushToken(String pushToken){
+        this.pushToken = pushToken;
     }
-
-    public void updateIsBind(YNCode isBind){
-        this.isBind = isBind;
-    }
-
-    public void updatePush(YNCode push){
-        this.push = push;
-    }
-
-    public void updateToken(String token){
-        this.token = token;
-    }
-
 }
