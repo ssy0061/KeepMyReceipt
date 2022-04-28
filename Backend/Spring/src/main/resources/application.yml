@@ -6,6 +6,9 @@ logging:
     org.hibernate.type.descriptor.sql: warn  # trace
 
 spring:
+  messages:
+    basename: i18n/exception
+    encoding: UTF-8
   jwt:
     secret: DvqcGn8mnFjqSL4a
   jpa:

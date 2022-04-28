@@ -113,7 +113,7 @@ public class Crew extends BaseEntity implements UserDetails {
 
     // =================================================================================================
 
-    public void updateNickname(String name){
+    public void updateName(String name){
         this.name = name;
     }
 

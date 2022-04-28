@@ -1,9 +1,14 @@
 package com.ieung.receipt.service;
 
 import com.ieung.receipt.code.YNCode;
+import com.ieung.receipt.config.security.JwtTokenProvider;
+import com.ieung.receipt.dto.req.LoginReqDTO;
 import com.ieung.receipt.dto.req.SignUpReqDTO;
+import com.ieung.receipt.dto.req.TokenReqDTO;
+import com.ieung.receipt.dto.res.TokenResDTO;
 import com.ieung.receipt.entity.Crew;
 import com.ieung.receipt.exception.ApiMessageException;
+import com.ieung.receipt.exception.CUserNotFoundException;
 import com.ieung.receipt.repository.CrewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,9 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
+
+import static com.ieung.receipt.util.TokenUtil.getCurrentCrewId;
 
 @Slf4j
 @Service
@@ -22,6 +29,7 @@ import java.util.regex.Pattern;
 public class CrewService {
     private final CrewRepository crewRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * crewId로 회원정보 조회
@@ -30,7 +38,7 @@ public class CrewService {
      * @throws Exception
      */
     public Crew findCrewById(long id) throws Exception {
-        Crew crew = crewRepository.findById(id).orElseThrow(() -> new ApiMessageException("존재하지 않는 회원정보입니다."));
+        Crew crew = crewRepository.findById(id).orElseThrow(() -> new CUserNotFoundException());
 
         return crew;
     }
@@ -42,7 +50,9 @@ public class CrewService {
      * @throws Exception
      */
     public Crew findByEmail(String email) throws Exception {
-        return crewRepository.findByEmail(email);
+        Crew crew = crewRepository.findByEmail(email);
+
+        return crew;
     }
 
     /**
@@ -50,60 +60,89 @@ public class CrewService {
      * @param signUpReqDTO
      */
     @Transactional(readOnly = false)
-    public void crewSignUp(SignUpReqDTO signUpReqDTO) {
+    public void signUp(SignUpReqDTO signUpReqDTO) {
         // DB에 저장할 Crew Entity 세팅
         Crew crew = Crew.builder()
                 .email(signUpReqDTO.getEmail())
                 .password(passwordEncoder.encode(signUpReqDTO.getPassword()))
                 .name(signUpReqDTO.getName())
-                .isAllowedPush(YNCode.N)
+                .isAllowedPush(YNCode.Y)
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
 
         Crew signUpCrew = crewRepository.save(crew);
 
         if (signUpCrew == null) {
-            log.info("회원가입 시도 : 실패");
             throw new ApiMessageException("회원가입에 실패했습니다. 다시 시도해 주세요.");
         }
     }
 
     /**
-     * 이메일 검증
-     *
-     * @param email 이메일
-     * @return boolean (true : 사용 가능, false : 불가능)
+     * 로그인
+     * @param loginReqDTO
+     * @return TokenResDTO (accessToken, refreshToken)
+     * @throws Exception
      */
-    public boolean isValidEmail(String email) {
-        final String REGEX = "(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@" +
-                "((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))";
-
-        Matcher matcher = Pattern.compile(REGEX).matcher(email);
-
-        if (matcher.matches()){
-            return true;
+    @Transactional(readOnly = false)
+    public TokenResDTO login(LoginReqDTO loginReqDTO) throws Exception {
+        Crew crew = findByEmail(loginReqDTO.getEmail());
+        if (crew == null) {
+            throw new CUserNotFoundException();
         }
 
-        return false;
+        if (!passwordEncoder.matches(loginReqDTO.getPassword(), crew.getPassword())) {
+            throw new ApiMessageException("비밀번호를 잘못 입력하였습니다.");
+        }
+
+        // 토큰 발급
+        List<String> list = Arrays.asList("ROLE_USER");
+        TokenResDTO tokenResDTO = jwtTokenProvider.createToken(String.valueOf(crew.getId()), list);
+
+        crew.updateRefreshToken(tokenResDTO.getRefreshToken());
+        crewRepository.save(crew);
+
+        return tokenResDTO;
     }
 
     /**
-     * 비밀번호 검증
-     *
-     * @param password 비밀번호
-     * @return boolean (true : 사용 가능, false : 불가능)
+     * 토큰 재발급
+     * @param tokenReqDTO
+     * @return TokenResDTO (accessToken, refreshToken)
+     * @throws Exception
      */
-    public boolean isValidPassword(String password) {
-        // 8자리 이상, 특수문자, 숫자, 문자 포함
-        final String REGEX = "^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$";
-
-        Matcher matcher = Pattern.compile(REGEX).matcher(password);
-
-        if (matcher.matches()){
-            return true;
+    @Transactional(readOnly = false)
+    public TokenResDTO reissue(TokenReqDTO tokenReqDTO) throws Exception {
+        if (!jwtTokenProvider.validateToken(tokenReqDTO.getRefreshToken())) {
+            throw new ApiMessageException("refreshToken이 유효하지 않습니다.");
         }
 
-        return false;
+        Crew crew = findCrewById(Long.parseLong(jwtTokenProvider.getUserPk(tokenReqDTO.getAccessToken())));
+
+        // DB에 저장된 토큰과의 일치 여부 확인
+        if (crew.getRefreshToken().equals(tokenReqDTO.getRefreshToken())) {
+            TokenResDTO tokenResDTO = jwtTokenProvider.createToken(String.valueOf(crew.getId()),
+                                                                    jwtTokenProvider.getUserRoles(tokenReqDTO.getAccessToken()));
+            crew.updateRefreshToken(tokenResDTO.getRefreshToken());
+            crewRepository.save(crew);
+
+            return tokenResDTO;
+        } else {
+            throw new ApiMessageException("refreshToken이 일치하지 않습니다.");
+        }
+    }
+
+    /**
+     * 회원 정보 수정 (이름)
+     * @param name 바꿀 이름
+     * @return crew
+     * @throws Exception
+     */
+    @Transactional(readOnly = false)
+    public void changeCrewInfo(String name) throws Exception {
+        Crew crew = findCrewById(getCurrentCrewId());
+
+        crew.updateName(name);
+        crewRepository.save(crew);
     }
 }
 

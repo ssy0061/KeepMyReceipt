@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     // permitAll() 처리한 경로의 API는 JWT 값이 없어도 실행 가능
                     .antMatchers("/v3/api-docs/**", "/swagger-resources/**",
                                             "/swagger-ui/**", "/webjars/**", "/swagger*/**").permitAll()
-                    .antMatchers("/api/spring/crew/**", "/api/auth/**").permitAll()
+                    .antMatchers("/api/spring/crew/signup", "/api/spring/crew/login", "/api/spring/crew/token", "/api/spring/crew/check-email/**").permitAll()
                     .antMatchers("/docs/**").permitAll()
                     .anyRequest().hasRole("USER")
                 .and()

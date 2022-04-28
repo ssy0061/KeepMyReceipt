@@ -1,7 +1,9 @@
 package com.ieung.receipt.controller;
 
-import com.ieung.receipt.config.security.JwtTokenProvider;
+import com.ieung.receipt.dto.req.LoginReqDTO;
 import com.ieung.receipt.dto.req.SignUpReqDTO;
+import com.ieung.receipt.dto.req.TokenReqDTO;
+import com.ieung.receipt.dto.res.TokenResDTO;
 import com.ieung.receipt.entity.Crew;
 import com.ieung.receipt.service.CrewService;
 import com.ieung.receipt.service.common.CommonResult;
@@ -16,8 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
-@Tag(name = "01. ")
+@Tag(name = "01. 회원")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +28,6 @@ import javax.validation.Valid;
 public class CrewController {
     private final CrewService crewService;
     private final ResponseService responseService;
-    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 회원가입 일반 : post /signup
@@ -36,40 +38,51 @@ public class CrewController {
     @Operation(summary = "회원가입", description = "회원가입")
     @PostMapping(value = "/signup", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody CommonResult signUp(@Valid @RequestBody SignUpReqDTO signUpReqDTO) throws Exception {
-        log.info("회원가입 시도 : {}", signUpReqDTO.toString());
 
         if (crewService.findByEmail(signUpReqDTO.getEmail()) != null) {
-            log.info("회원가입 시도 : 실패 (중복 email 존재) : email : {}", signUpReqDTO.getEmail());
             throw new ApiMessageException("중복된 email을 가진 회원이 존재합니다.");
-        } else if (!crewService.isValidEmail(signUpReqDTO.getEmail())) {
-            log.info("회원가입 시도 : 실패 (이메일 형식 불일치) : email : {}", signUpReqDTO.getEmail());
-            throw new ApiMessageException("이메일이 형식에 맞지 않습니다.");
-        } else if (!crewService.isValidPassword(signUpReqDTO.getPassword())) {
-            log.info("회원가입 시도 : 실패 (비밀번호 형식 불일치) : email : {}", signUpReqDTO.getEmail());
-            throw new ApiMessageException("비밀번호가 형식에 맞지 않습니다.");
         }
 
-        crewService.crewSignUp(signUpReqDTO);
+        crewService.signUp(signUpReqDTO);
 
-        log.info("회원가입 시도 : 성공 : 이메일 : {}", signUpReqDTO.getEmail());
         return responseService.getSuccessResult();
     }
 
     // 이메일 중복 확인
     @Operation(summary = "이메일 중복 확인", description = "이메일 중복 확인")
     @GetMapping(value = "/check-email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody SingleResult<Boolean> checkEmail(@PathVariable String email) throws Exception {
-        log.info("이메일 중복 확인 시도 : 이메일 : {}", email);
-
-        if (!crewService.isValidEmail(email)) {
-            log.info("이메일 중복 확인 시도 : 실패 (이메일 형식 불일치) : email : {}", email);
-            throw new ApiMessageException("이메일이 형식에 맞지 않습니다.");
-        } else if (crewService.findByEmail(email) == null) {
-            log.info("이메일 중복 확인 시도 : 성공 : 중복 여부 : {}", false);
+    public @ResponseBody SingleResult<Boolean> checkEmail(@PathVariable @NotBlank String email) throws Exception {
+        if (crewService.findByEmail(email) == null) {
             return responseService.getSingleResult(false);
         } else {
-            log.info("이메일 중복 확인 시도 : 성공 : 중복 여부 : {}", true);
             return responseService.getSingleResult(true);
         }
+    }
+
+    // 로그인
+    @Operation(summary = "로그인", description = "로그인")
+    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody SingleResult<TokenResDTO> login(@Valid @RequestBody LoginReqDTO loginReqDTO) throws Exception {
+        TokenResDTO tokenResDTO = crewService.login(loginReqDTO);
+
+        return responseService.getSingleResult(tokenResDTO);
+    }
+
+    // 토큰 재발급
+    @Operation(summary = "토큰 재발급", description = "accessToken 만료시 refreshToken으로 토큰 재발급")
+    @PutMapping(value = "/token", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody SingleResult<TokenResDTO> reissue(@Valid @RequestBody TokenReqDTO tokenReqDTO) throws Exception {
+        TokenResDTO tokenResDTO = crewService.reissue(tokenReqDTO);
+
+        return responseService.getSingleResult(tokenResDTO);
+    }
+
+    // 회원 정보 수정
+    @Operation(summary = "정보 수정", description = "회원 정보 (이름) 수정")
+    @PutMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody CommonResult changeCrewInfo(@RequestParam(value="name") @NotBlank String name) throws Exception {
+        crewService.changeCrewInfo(name);
+
+        return responseService.getSuccessResult();
     }
 }

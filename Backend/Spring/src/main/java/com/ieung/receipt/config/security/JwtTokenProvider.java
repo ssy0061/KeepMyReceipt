@@ -1,5 +1,6 @@
 package com.ieung.receipt.config.security;
 
+import com.ieung.receipt.dto.res.TokenResDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -11,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +28,8 @@ public class JwtTokenProvider { // JWT 토큰을 생성 및 검증 모듈
     @Value("${spring.jwt.secret}")
     private String secretKey;
 
-    private long tokenValidMilisecond = 1000L * 60 * 60 * 24 * 30; // 30일만 토큰 유효
+    private long accessTokenValidMilisecond = 1000L * 60 * 60 * 24 ; // 1일만 토큰 유효
+    private long refreshTokenValidMilisecond = 1000L * 60 * 60 * 24 * 7; // 7일만 토큰 유효
 
     private final UserDetailsService userDetailsService;
 
@@ -36,17 +39,28 @@ public class JwtTokenProvider { // JWT 토큰을 생성 및 검증 모듈
     }
 
     // Jwt 토큰 생성
-    public String createToken(String userPk, List<String> roles) {
+    public TokenResDTO createToken(String userPk, List<String> roles) {
+        Date now = new Date();
+
+        // accessToken 생성
         Claims claims = Jwts.claims().setSubject(userPk);
         claims.put("roles", roles);
         claims.put("userPk", userPk);
-        Date now = new Date();
-        return Jwts.builder()
-                .setClaims(claims) // 데이터
-                .setIssuedAt(now) // 토큰 발행일자
-                .setExpiration(new Date(now.getTime() + tokenValidMilisecond)) // set Expire Time
-                .signWith(SignatureAlgorithm.HS256, secretKey) // 암호화 알고리즘, secret값 세팅
-                .compact();
+        String accessToken = Jwts.builder()
+                                .setClaims(claims) // 데이터
+                                .setIssuedAt(now) // 토큰 발행일자
+                                .setExpiration(new Date(now.getTime() + accessTokenValidMilisecond)) // set Expire Time
+                                .signWith(SignatureAlgorithm.HS256, secretKey) // 암호화 알고리즘, secret값 세팅
+                                .compact();
+
+        // refreshToken 생성
+        String refreshToken = Jwts.builder()
+                                .setIssuedAt(now) // 토큰 발행일자
+                                .setExpiration(new Date(now.getTime() + refreshTokenValidMilisecond)) // set Expire Time
+                                .signWith(SignatureAlgorithm.HS256, secretKey) // 암호화 알고리즘, secret값 세팅
+                                .compact();
+
+        return TokenResDTO.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
     // Jwt 토큰으로 인증 정보를 조회
@@ -60,9 +74,13 @@ public class JwtTokenProvider { // JWT 토큰을 생성 및 검증 모듈
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
-    // Request의 Header에서 token 파싱 : "X-AUTH-TOKEN: jwt토큰"
+    // Request의 Header에서 token 파싱
     public String resolveToken(HttpServletRequest req) {
-        return req.getHeader("X-AUTH-TOKEN");
+        String token = req.getHeader("Authorization");
+        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
+            return token.substring(7);
+        }
+        return null;
     }
 
     // Jwt 토큰의 유효성 + 만료일자 확인
