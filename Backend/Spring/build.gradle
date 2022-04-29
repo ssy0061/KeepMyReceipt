@@ -15,7 +15,10 @@ apply plugin: "com.ewerk.gradle.plugins.querydsl"
 
 group = 'com.ieung'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+targetCompatibility = 1.8
+sourceCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
+
 
 configurations {
 	compileOnly {
