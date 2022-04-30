@@ -12,6 +12,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 @AllArgsConstructor
@@ -33,6 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setForceEncoding(true);
 
         http.httpBasic().disable(); // rest api 이므로 기본설정 사용안함
+        http.cors().configurationSource(corsConfigurationSource());
         http.csrf()
                 .disable()
                 .headers()
@@ -62,4 +66,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .withUser("guest").password(passwordEncoder().encode("guest")).roles("GUEST");
     }
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://k6d104.p.ssafy.io:8185");
+        configuration.addAllowedOrigin("https://k6d104.p.ssafy.io:8185");
+        configuration.addAllowedOrigin("https://k6d104.p.ssafy.io:3000");
+        configuration.addAllowedOrigin("https://k6d104.p.ssafy.io");
+        configuration.addAllowedOrigin("http://k6d104.p.ssafy.io:3000");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.addExposedHeader("Authorization");
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }
