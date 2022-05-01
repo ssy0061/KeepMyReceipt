@@ -1,18 +1,62 @@
-import React from 'react';
-import { Button, Grid } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Grid, Stack, Container, IconButton } from '@mui/material';
+import { Add, Search } from '@mui/icons-material';
 import IndexItem from './item';
 
-export default function GroupIndex() {
-  return (
-    <Grid container direction="column" alignItems="center" spacing={2}>
-      <Grid item xs={12} container justifyContent="center">
-        <h2>내 모임</h2>
-      </Grid>
+interface groupType {
+  name: string;
+  budget: number;
+}
 
-      <IndexItem name="고독한 미식가들" budget={123000} />
-      <IndexItem name="축구" budget={500000} />
-      <h1>모임을 찾으려면 +???</h1>
-      <Button variant="contained">새로운 모임 만들기</Button>
-    </Grid>
+export default function GroupIndex() {
+  const [groups, setGroups] = useState<groupType[] | null>([]);
+  const getGroups = async () => {
+    console.log('가입한 모임 목록 조회 API 요청');
+    setGroups([
+      { name: '고독한 미식가들', budget: 123000 },
+      { name: '축구', budget: 500000 },
+    ]);
+  };
+  useEffect(() => {
+    getGroups();
+  }, []);
+  return (
+    <Container maxWidth="md">
+      <Grid container direction="column">
+        {/* 상단 */}
+        <Stack
+          direction="row"
+          spacing={2}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <h2>내 모임</h2>
+          <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+            <Link to="../group/create">
+              <IconButton color="primary">
+                <Add sx={{ fontSize: '2rem' }} />
+              </IconButton>
+            </Link>
+            <Link to="../group/search">
+              <IconButton>
+                <Search sx={{ color: '#000000', fontSize: '2rem' }} />
+              </IconButton>
+            </Link>
+          </Stack>
+        </Stack>
+
+        {/* 리스트 */}
+        <Stack direction="column" alignItems="center" spacing={2}>
+          {groups?.length ? (
+            groups.map((group, index) => (
+              <IndexItem key={index} name={group.name} budget={group.budget} />
+            ))
+          ) : (
+            <p>모임 없음</p>
+          )}
+        </Stack>
+      </Grid>
+    </Container>
   );
 }
