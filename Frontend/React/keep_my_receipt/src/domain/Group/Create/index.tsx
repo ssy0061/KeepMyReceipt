@@ -11,7 +11,6 @@ import {
 import { AddPhotoAlternate, ArrowBackIosNew, Check } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import { kMaxLength } from 'buffer';
 
 const Input = styled('input')({
   display: 'none',
@@ -177,7 +176,7 @@ export default function GroupCreate() {
                     name="name"
                     value={name}
                     onChange={onFormChange}
-                    inputProps={{ maxlength: 20 }}
+                    inputProps={{ maxLength: 20 }}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -188,7 +187,7 @@ export default function GroupCreate() {
                     name="intro"
                     value={intro}
                     onChange={onFormChange}
-                    inputProps={{ maxlength: 50 }}
+                    inputProps={{ maxLength: 50 }}
                     maxRows={4}
                   />
                 </Grid>

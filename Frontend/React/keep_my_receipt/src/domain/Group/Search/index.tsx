@@ -1,12 +1,96 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchItem from './item';
-import { Container } from '@mui/material';
+import {
+  Container,
+  Box,
+  TextField,
+  IconButton,
+  Grid,
+  Stack,
+} from '@mui/material';
+import { Search, ArrowBackIosNew } from '@mui/icons-material';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+type LocationState = { propWord: string };
 
 export default function GroupSearch() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { propWord } = (location.state as LocationState) || {};
+  const [word, setWord] = useState('');
+  const onChange = (e: any) => {
+    setWord(e.target.value);
+  };
+  const searchWord = (w: string) => {
+    if (w.length < 2) {
+      console.log('검색은 2글자 이상');
+      return;
+    }
+    console.log('모임 검색 API 요청' + '(검색어: ' + w + ')');
+  };
+
+  useEffect(() => {
+    if (propWord) {
+      searchWord(propWord);
+      setWord(propWord);
+    }
+  }, []);
+
   return (
     <Container maxWidth="md">
-      <h2>모임 검색</h2>
-      <SearchItem />
+      <Grid container direction="column">
+        {/* 상단 */}
+        <Stack
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          sx={{ position: 'relative' }}
+        >
+          <IconButton
+            onClick={() => {
+              navigate(-1);
+            }}
+            color="inherit"
+            sx={{ position: 'absolute', left: 0 }}
+          >
+            <ArrowBackIosNew sx={{ fontSize: '2rem' }} />
+          </IconButton>
+          <h2>모임 검색</h2>
+        </Stack>
+
+        {/* 검색 영역 */}
+        <Stack direction="column" spacing={2} alignItems="center">
+          {/* 검색 창 */}
+          <Box
+            height="3rem"
+            sx={{
+              backgroundColor: 'white',
+              paddingLeft: '2rem',
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <TextField
+                onChange={onChange}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    searchWord(word);
+                  }
+                }}
+                value={word}
+                variant="standard"
+                sx={{ outlineColor: 'black' }}
+              />
+              <IconButton onClick={() => searchWord(word)}>
+                <Search sx={{ color: 'black', fontSize: '2rem' }} />
+              </IconButton>
+            </Box>
+          </Box>
+          {/* 검색 결과 */}
+          <p>검색 결과 리스트</p>
+          <SearchItem />
+          <SearchItem />
+        </Stack>
+      </Grid>
     </Container>
   );
 }

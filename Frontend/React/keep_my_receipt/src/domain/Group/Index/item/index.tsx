@@ -7,11 +7,11 @@ interface IndexItemProps {
 }
 export default function IndexItem({ name, budget }: IndexItemProps) {
   return (
-    <Grid item xs={12}>
+    <Grid item xs={12} sm={6} md={4} container justifyContent="center">
       <Card
         variant="outlined"
         sx={{
-          width: 300,
+          width: '18rem',
           boxShadow: 1,
           ':hover': {
             boxShadow: 6,
