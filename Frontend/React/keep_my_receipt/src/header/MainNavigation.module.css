@@ -7,9 +7,9 @@
   }
   .logo {
     font-family: 'Lato', sans-serif;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: white;
-    margin: 0;
+    margin: 0 20px 0 5px;
   }
   .header {
     width: 100%;
@@ -17,9 +17,9 @@
     background-color: #ffaa00;
     box-shadow: 0 1px 4px rgb(255, 169, 63);
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
-    padding: 0 10%;
+    padding: 0 10px 0 10px;
   }
   .header ul {
     list-style: none;

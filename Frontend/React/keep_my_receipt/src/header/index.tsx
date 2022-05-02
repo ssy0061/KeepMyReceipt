@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-// import NavItem from './navItem';
+import NavItem from './item';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import classes from '../header/MainNavigation.module.css';
 import SettingsIcon from '@mui/icons-material/Settings';

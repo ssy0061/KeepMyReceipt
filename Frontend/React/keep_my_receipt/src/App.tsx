@@ -7,6 +7,8 @@ import ClubIndex from './domain/Club/Index';
 import ClubCreate from './domain/Club/Create';
 import ClubSearch from './domain/Club/Search';
 import BookCreate from './domain/Book/Create';
+
+import SettingIndex from './domain/Setting/Index';
 import { Container } from '@mui/material';
 
 function App() {
@@ -49,6 +51,7 @@ function App() {
         <Route path="/book/create" element={<BookCreate />} />
         <Route path="/alert/index" element={<AlertIndex />} />
         <Route path="/account/index" element={<AccountIndex />} />
+        <Route path="/setting/index" element={<SettingIndex />} />
       </Routes>
     </BrowserRouter>
   );
