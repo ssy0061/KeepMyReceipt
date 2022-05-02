@@ -10,5 +10,8 @@
     "browser": true,
     "node": true
   },
-  "rules": { "@typescript-eslint/explicit-module-boundary-types": "off" }
+  "rules": {
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/ban-types": "off"
+  }
 }

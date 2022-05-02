@@ -9,7 +9,7 @@ export default function BookIndex() {
   const { toggleValue, ToggleButtons } = useToggle(['목록', '달력']);
 
   return (
-    <Container>
+    <Container maxWidth="md">
       {/* 월, 지출, 수입 */}
       <IndexHeader />
       {/* 토글 버튼들 */}

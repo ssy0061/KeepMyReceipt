@@ -1,0 +1,18 @@
+.board {
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  border-bottom: 1px solid #dddddd;
+  margin: 3px;
+  padding: 10px 30px;
+  display: flex;
+}
+
+.icon {
+  padding-top: 25px;
+}
+
+.text {
+  padding: auto;
+  margin-left: 10px;
+}
