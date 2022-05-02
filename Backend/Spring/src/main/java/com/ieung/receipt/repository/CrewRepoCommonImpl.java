@@ -1,11 +1,11 @@
 package com.ieung.receipt.repository;
 
-import com.ieung.receipt.code.JoinCode;
-import com.ieung.receipt.code.YNCode;
 import com.ieung.receipt.entity.Crew;
 import com.ieung.receipt.entity.QCrew;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

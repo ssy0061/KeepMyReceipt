@@ -46,7 +46,7 @@ public class ClubController {
      * 모임 생성 : post /club
      * 모임 조회 : get /club/{clubId}
      * 모임 리스트 조회 : get /clubs
-     * 모임 삭제 : delete /clubs?page=0&size=10&sort=id,CDESC
+     * 모임 삭제 : delete /clubs?page=0&size=10&sort=id,DESC
      * 모임 정보 수정 : put /club/{clubId}
      */
 
@@ -76,11 +76,12 @@ public class ClubController {
         return responseService.getSingleResult(clubResDTO);
     }
 
-    // 모임 조회
-    @Operation(summary = "모임 리스트 조회", description = "모임 리스트 조회")
-    @GetMapping(value = "/clubs",produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody SingleResult<ClubListResDTO> getClubs(@ParameterObject @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) throws Exception {
-        Page<Club> page = clubService.getClubs(pageable);
+    // 모임 검색
+    @Operation(summary = "모임 검색", description = "제목으로 모임 검색")
+    @GetMapping(value = "/clubs", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody CommonResult createGroup(@RequestParam(value = "name", defaultValue = "") String name,
+                                                  @ParameterObject @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) throws Exception {
+        Page<Club> page = clubService.getClubs(name, pageable);
 
         // 반환 DTO에 맞도록 가공
         List<ClubResDTO> clubs = IntStream.range(0, page.getContent().size())
@@ -98,18 +99,6 @@ public class ClubController {
 
         return responseService.getSingleResult(clubListResDTO);
     }
-
-//    // 모임 검색
-//    @Operation(summary = "모임 검색", description = "제목으로 모임 검색")
-//    @GetMapping(value = "/club", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public @ResponseBody CommonResult createGroup(@RequestParam(value = "query", defaultValue = "") String query,
-//                                                  @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) throws Exception {
-//        Crew crew = crewService.findCrewById(getCurrentCrewId());
-//
-//        clubService.createClub(crew, clubReqDTO);
-//
-//        return responseService.getSuccessResult();
-//    }
 
     // 모임 삭제
     @Operation(summary = "모임 삭제", description = "모임 삭제")

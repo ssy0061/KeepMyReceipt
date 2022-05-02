@@ -67,11 +67,12 @@ public class ClubService {
     }
 
     /**
-     * 모임 목록 조회
-     * @param pageable
+     * 모임 목록 검색
+     * @param name, pageable
      */
-    public Page<Club> getClubs(Pageable pageable) {
-        return clubRepository.findAll(pageable);
+    public Page<Club> getClubs(String name, Pageable pageable) {
+
+        return clubRepository.findAllByName(name, pageable);
     }
 
     /**
