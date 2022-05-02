@@ -57,7 +57,7 @@ export default function GroupCreate() {
     // });
 
     // 내 모임으로 이동
-    navigate('../group/index');
+    navigate('..');
   };
 
   // 이미지

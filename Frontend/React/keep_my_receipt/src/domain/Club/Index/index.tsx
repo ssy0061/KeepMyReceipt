@@ -28,7 +28,7 @@ export default function GroupIndex() {
       console.log('검색은 2글자 이상');
       return;
     }
-    navigate('../group/search', { state: { propWord: word } });
+    navigate('./search', { state: { propWord: word } });
   };
   const onChange = (e: any) => {
     setWord(e.target.value);
@@ -73,14 +73,14 @@ export default function GroupIndex() {
             <IconButton
               color="primary"
               onClick={() => {
-                navigate('../group/create');
+                navigate('./create');
               }}
             >
               <Add sx={{ fontSize: '2rem' }} />
             </IconButton>
             <IconButton
               onClick={() => {
-                // navigate('../group/search');
+                // navigate('./search');
                 setChecked((prev) => !prev);
               }}
             >
