@@ -21,4 +21,8 @@ public class LoginReqDTO {
     @NotBlank
     @Schema(description = "비밀번호", required = true, example = "123456a!")
     private String password;
+
+    @NotBlank
+    @Schema(description = "FCM 토큰", required = true, example = "doPKY4ACQz-1Bt0g3-36ZZ")
+    String fcmToken;
 }

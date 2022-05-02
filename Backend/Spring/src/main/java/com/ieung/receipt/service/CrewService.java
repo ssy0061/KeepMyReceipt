@@ -29,7 +29,6 @@ import static com.ieung.receipt.util.TokenUtil.getCurrentCrewId;
 public class CrewService {
     private final CrewRepository crewRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * crewId로 회원정보 조회
@@ -66,7 +65,6 @@ public class CrewService {
                 .email(signUpReqDTO.getEmail())
                 .password(passwordEncoder.encode(signUpReqDTO.getPassword()))
                 .name(signUpReqDTO.getName())
-                .isAllowedPush(YNCode.Y)
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
 
@@ -77,59 +75,7 @@ public class CrewService {
         }
     }
 
-    /**
-     * 로그인
-     * @param loginReqDTO
-     * @return TokenResDTO (accessToken, refreshToken)
-     * @throws Exception
-     */
-    @Transactional(readOnly = false)
-    public TokenResDTO login(LoginReqDTO loginReqDTO) throws Exception {
-        Crew crew = findByEmail(loginReqDTO.getEmail());
-        if (crew == null) {
-            throw new CUserNotFoundException();
-        }
 
-        if (!passwordEncoder.matches(loginReqDTO.getPassword(), crew.getPassword())) {
-            throw new ApiMessageException("비밀번호를 잘못 입력하였습니다.");
-        }
-
-        // 토큰 발급
-        List<String> list = Arrays.asList("ROLE_USER");
-        TokenResDTO tokenResDTO = jwtTokenProvider.createToken(String.valueOf(crew.getId()), list);
-
-        crew.updateRefreshToken(tokenResDTO.getRefreshToken());
-        crewRepository.save(crew);
-
-        return tokenResDTO;
-    }
-
-    /**
-     * 토큰 재발급
-     * @param tokenReqDTO
-     * @return TokenResDTO (accessToken, refreshToken)
-     * @throws Exception
-     */
-    @Transactional(readOnly = false)
-    public TokenResDTO reissue(TokenReqDTO tokenReqDTO) throws Exception {
-        if (!jwtTokenProvider.validateToken(tokenReqDTO.getRefreshToken())) {
-            throw new ApiMessageException("refreshToken이 유효하지 않습니다.");
-        }
-
-        Crew crew = findCrewById(Long.parseLong(jwtTokenProvider.getUserPk(tokenReqDTO.getAccessToken())));
-
-        // DB에 저장된 토큰과의 일치 여부 확인
-        if (crew.getRefreshToken().equals(tokenReqDTO.getRefreshToken())) {
-            TokenResDTO tokenResDTO = jwtTokenProvider.createToken(String.valueOf(crew.getId()),
-                                                                    jwtTokenProvider.getUserRoles(tokenReqDTO.getAccessToken()));
-            crew.updateRefreshToken(tokenResDTO.getRefreshToken());
-            crewRepository.save(crew);
-
-            return tokenResDTO;
-        } else {
-            throw new ApiMessageException("refreshToken이 일치하지 않습니다.");
-        }
-    }
 
     /**
      * 회원 정보 수정 (이름)

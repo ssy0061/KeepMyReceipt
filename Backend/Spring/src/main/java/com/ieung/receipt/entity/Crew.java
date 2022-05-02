@@ -1,8 +1,6 @@
 package com.ieung.receipt.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ieung.receipt.code.YNCode;
-import com.ieung.receipt.converter.YNCodeConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,19 +48,6 @@ public class Crew extends BaseEntity implements UserDetails {
     // 회원 이름
     @Column(nullable = false, length = 64)
     private String name;
-
-    // 푸시 알림 설정 (Y:on, N:off)
-    @Convert(converter = YNCodeConverter.class)
-    @Column(nullable = false, length = 1, columnDefinition = "varchar(1) default 'Y'")
-    private YNCode isAllowedPush;
-
-    // 장비 푸시용 토큰
-    @Column(length = 255)
-    private String pushToken;
-
-    // 리프레시 토큰
-    @Column(length = 255)
-    private String refreshToken;
 
     // =================================================================================================
     // JWT
@@ -115,17 +100,5 @@ public class Crew extends BaseEntity implements UserDetails {
 
     public void updateName(String name){
         this.name = name;
-    }
-
-    public void updateIsAllowedPush(YNCode isAllowedPush){
-        this.isAllowedPush = isAllowedPush;
-    }
-
-    public void updateRefreshToken(String refreshToken){
-        this.refreshToken = refreshToken;
-    }
-
-    public void updatePushToken(String pushToken){
-        this.pushToken = pushToken;
     }
 }

@@ -50,31 +50,13 @@ public class CrewController {
 
     // 이메일 중복 확인
     @Operation(summary = "이메일 중복 확인", description = "이메일 중복 확인")
-    @GetMapping(value = "/check-email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/checkEmail/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody SingleResult<Boolean> checkEmail(@PathVariable @NotBlank String email) throws Exception {
         if (crewService.findByEmail(email) == null) {
             return responseService.getSingleResult(false);
         } else {
             return responseService.getSingleResult(true);
         }
-    }
-
-    // 로그인
-    @Operation(summary = "로그인", description = "로그인")
-    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody SingleResult<TokenResDTO> login(@Valid @RequestBody LoginReqDTO loginReqDTO) throws Exception {
-        TokenResDTO tokenResDTO = crewService.login(loginReqDTO);
-
-        return responseService.getSingleResult(tokenResDTO);
-    }
-
-    // 토큰 재발급
-    @Operation(summary = "토큰 재발급", description = "accessToken 만료시 refreshToken으로 토큰 재발급")
-    @PutMapping(value = "/token", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody SingleResult<TokenResDTO> reissue(@Valid @RequestBody TokenReqDTO tokenReqDTO) throws Exception {
-        TokenResDTO tokenResDTO = crewService.reissue(tokenReqDTO);
-
-        return responseService.getSingleResult(tokenResDTO);
     }
 
     // 회원 정보 수정
