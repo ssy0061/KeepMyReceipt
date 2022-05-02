@@ -14,7 +14,7 @@ const Navigation = () => {
       <nav>
         <ul>
           <li className="menu">
-            <Link to="/book/index">거래내역</Link>
+            <Link to="/book">거래내역</Link>
           </li>
           <li className="menu">
             <Link to="/">분석</Link>
@@ -23,18 +23,18 @@ const Navigation = () => {
             <Link to="/">거래등록</Link>
           </li>
           <li className="menu">
-            <Link to="/">모임관리</Link>
+            <Link to="/club">모임관리</Link>
           </li>
           <li className="menu">
             <Link to="/">보고서</Link>
           </li>
           <div className={classes.mobile}>
-            <Link to="/alert/index">
+            <Link to="/alert">
               <NotificationsActiveIcon />
             </Link>
           </div>
           <div className={classes.mobile}>
-            <Link to="/setting/index">
+            <Link to="/setting">
               <SettingsIcon />
             </Link>
           </div>

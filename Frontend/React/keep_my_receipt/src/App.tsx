@@ -17,26 +17,7 @@ function App() {
       <Navigation />
       <Routes>
         {/* 밑에 Route들 추가하시면 됩니다! */}
-        <Route
-        // path="/"
-        // element={
-        // <Container maxWidth="md">
-        //   <p>전체 페이지 nav bar</p>
-        //   <ul>
-        //     <li>
-        //       <Link to="/">Home</Link>
-        //     </li>
-        //     <li>
-        //       <Link to="/club">Club</Link>
-        //     </li>
-        //     <li>
-        //       <Link to="/book">Book</Link>
-        //     </li>
-        //   </ul>
-        //   <Outlet />
-        // </Container>
-        // }
-        >
+        <Route path="/" element={<Outlet />}>
           <Route index element={<p>랜딩 페이지</p>} />
           <Route path="club" element={<Outlet />}>
             <Route index element={<ClubIndex />} />
@@ -45,13 +26,24 @@ function App() {
           </Route>
           <Route path="book" element={<Outlet />}>
             <Route index element={<BookIndex />} />
+            <Route path="create" element={<BookCreate />} />
+          </Route>
+          <Route path="alert" element={<Outlet />}>
+            <Route index element={<AlertIndex />} />
+            {/* 추가 */}
+          </Route>
+          <Route path="account" element={<Outlet />}>
+            <Route index element={<AccountIndex />} />
+            {/* 추가 */}
+          </Route>
+          <Route path="setting" element={<Outlet />}>
+            <Route index element={<SettingIndex />} />
+            {/* 추가 */}
           </Route>
         </Route>
-        <Route path="/book/index" element={<BookIndex />} />
-        <Route path="/book/create" element={<BookCreate />} />
-        <Route path="/alert/index" element={<AlertIndex />} />
+
+        {/* baseUrl/book이면 book index로 접속 */}
         <Route path="/account/index" element={<AccountIndex />} />
-        <Route path="/setting/index" element={<SettingIndex />} />
       </Routes>
     </BrowserRouter>
   );
