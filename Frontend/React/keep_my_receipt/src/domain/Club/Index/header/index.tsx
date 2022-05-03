@@ -8,16 +8,6 @@ export default function IndexHeader() {
   const navigate = useNavigate();
   const [checked, setChecked] = useState(false);
   const [word, setWord] = useState('');
-  // const searchWord = () => {
-  //   if (word.length < 2) {
-  //     console.log('검색은 2글자 이상');
-  //     return;
-  //   }
-  //   navigate('./search', { state: { propWord: word } });
-  // };
-  // const onChange = (e: any) => {
-  //   setWord(e.target.value);
-  // };
   return (
     <Stack
       direction="row"
@@ -58,43 +48,9 @@ export default function IndexHeader() {
           value={word}
           setValue={setWord}
           navi="./search"
-          api="club"
-          placeholder="모임 검색"
+          placeholder="모임 검색(2글자 이상)"
           close={true}
         />
-        {/* <Box
-            height="3rem"
-            sx={{
-              backgroundColor: 'white',
-              display: checked ? 'block' : 'none',
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <TextField
-                onChange={onChange}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    searchWord();
-                  }
-                }}
-                value={word}
-                placeholder="모임 검색"
-                variant="standard"
-                sx={{ outlineColor: 'black' }}
-              />
-              <IconButton onClick={searchWord}>
-                <Search sx={{ color: 'black', fontSize: '2rem' }} />
-              </IconButton>
-              <IconButton
-                onClick={() => {
-                  setChecked((prev) => !prev);
-                  setWord('');
-                }}
-              >
-                <Close sx={{ color: 'black', fontSize: '2rem' }} />
-              </IconButton>
-            </Box>
-          </Box> */}
       </Stack>
     </Stack>
   );

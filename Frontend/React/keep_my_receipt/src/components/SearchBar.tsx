@@ -9,8 +9,6 @@ SearchBar.defaultProps = {
   close: false,
 };
 
-type api = 'club' | 'account' | 'etc';
-
 interface searchBarProps {
   value: string;
   setValue: any;
@@ -18,9 +16,8 @@ interface searchBarProps {
   setFadeDisplay?: any;
   navi?: string;
   placeholder?: string;
-  api: api;
-  setApiResult?: any;
   close?: boolean;
+  onSearch?: any;
 }
 
 export default function SearchBar({
@@ -30,40 +27,25 @@ export default function SearchBar({
   setFadeDisplay,
   navi,
   placeholder,
-  api,
-  setApiResult,
   close,
+  onSearch,
 }: searchBarProps) {
   const navigate = useNavigate();
-  const [result, setResult] = useState('');
 
   const searchWord = () => {
     if (value.length < 2) {
       console.log('검색은 2글자 이상');
+      setValue('');
       return;
     }
-    // 검색 결과 창으로 이동(keyword만 prop하므로 처음에는 직접 api 요청해야 함)
+    // 검색 결과 창으로 이동(keyword만 prop하므로 처음 render하고 api 요청 필요)
     if (navi) {
-      navigate(navi, { state: { propWord: value } });
+      // navigate(navi, { state: { propWord: value, used: false } });
+      navigate(navi + '?' + 'keyWord=' + value);
+    } else {
     }
-    //  api 요청
-    getList();
-  };
-
-  const getList = () => {
-    // api 요청
-    if (api && setApiResult) {
-      // 모임 검색
-      if (api === 'club') {
-        console.log(
-          '모임 검색(searchBar) API 요청' + '(검색어: ' + value + ')',
-        );
-        setResult(
-          "{{'name': '고독한 미식가들', 'budget': '100000'}, {'name': '축구', 'budget': '300000'}}",
-        );
-        setApiResult(result);
-      }
-      // ~ 검색
+    if (onSearch) {
+      onSearch();
     }
   };
 
