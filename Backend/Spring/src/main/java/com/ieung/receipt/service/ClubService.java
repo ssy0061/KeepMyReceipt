@@ -41,7 +41,7 @@ public class ClubService {
 
         Club resGroup = clubRepository.save(group);
         if (resGroup == null) {
-            throw new ApiMessageException("그룹 생성에 실패했습니다. 다시 시도해 주세요.");
+            throw new ApiMessageException("모임 생성에 실패했습니다. 다시 시도해 주세요.");
         }
 
         // DB에 저장할 Crew (Leader) Entity 세팅
@@ -53,7 +53,7 @@ public class ClubService {
 
         ClubCrew resClubCrew = clubCrewRepository.save(clubCrew);
         if (resClubCrew == null) {
-            throw new ApiMessageException("그룹 생성에 실패했습니다. 다시 시도해 주세요.");
+            throw new ApiMessageException("모임 생성에 실패했습니다. 다시 시도해 주세요.");
         }
     }
 
@@ -82,7 +82,7 @@ public class ClubService {
     @Transactional(readOnly = false)
     public void deleteClub(Long crewId, Long clubId) {
         ClubCrew clubCrew = clubCrewRepository.findByClubIdAndCrewId(clubId, crewId)
-                                                 .orElseThrow(() -> new ApiMessageException("가입된 모임이 아닙니다."));
+                                                 .orElseThrow(() -> new AccessDeniedException(""));
 
         if (clubCrew.getAuth() == AuthCode.LEADER) {
             Long clubCrewCnt = clubCrewRepository.findCountByClubId(clubId);
@@ -105,15 +105,16 @@ public class ClubService {
     @Transactional(readOnly = false)
     public void updateClub(Long crewId, Long clubId, ClubReqDTO clubReqDTO) {
         ClubCrew clubCrew = clubCrewRepository.findByClubIdAndCrewId(clubId, crewId)
-                                                 .orElseThrow(() -> new ApiMessageException("가입된 모임이 아닙니다."));
+                                                 .orElseThrow(() -> new AccessDeniedException(""));
 
         if (clubCrew.getAuth() == AuthCode.LEADER) {
             Club club = clubCrew.getClub();
             club.updateName(clubReqDTO.getName());
             club.updateDescription(clubReqDTO.getDescription());
+            club.updateImage(clubReqDTO.getImage());
             clubRepository.save(club);
         } else {
-            throw new ApiMessageException("리더만 수정할 수 있습니다.");
+            throw new AccessDeniedException("");
         }
     }
 }

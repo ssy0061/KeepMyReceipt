@@ -45,7 +45,7 @@ public class ClubCrewService {
 
         ClubCrew resClubCrew = clubCrewRepository.save(clubCrew);
         if (resClubCrew == null) {
-            throw new ApiMessageException("그룹 생성에 실패했습니다. 다시 시도해 주세요.");
+            throw new ApiMessageException("모임 신청에 실패했습니다. 다시 시도해 주세요.");
         }
     }
 

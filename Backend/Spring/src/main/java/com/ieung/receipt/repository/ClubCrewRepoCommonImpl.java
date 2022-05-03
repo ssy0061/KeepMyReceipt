@@ -130,10 +130,6 @@ public class ClubCrewRepoCommonImpl implements ClubCrewRepoCommon {
                         OrderSpecifier<?> orderName = QueryDslUtil.getSortedColumn(direction, QClubCrew.clubCrew, "auth");
                         ORDERS.add(orderName);
                         break;
-                    case "state":
-                        OrderSpecifier<?> orderDescription = QueryDslUtil.getSortedColumn(direction, QClubCrew.clubCrew, "state");
-                        ORDERS.add(orderDescription);
-                        break;
                     default:
                         break;
                 }
