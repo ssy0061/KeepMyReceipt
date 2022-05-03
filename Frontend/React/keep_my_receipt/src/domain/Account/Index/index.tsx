@@ -1,7 +1,11 @@
 import AuthForm from './Form';
 
 const AccountIndex = () => {
-  return <AuthForm />;
+  return (
+    <div>
+      <AuthForm />
+    </div>
+  );
 };
 
 export default AccountIndex;

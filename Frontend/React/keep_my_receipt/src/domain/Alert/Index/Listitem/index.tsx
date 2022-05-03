@@ -12,9 +12,9 @@ export default function ListItem({ items }: { items: ItemType[] }) {
     <div className="board2">
       {items.map((item) => (
         <Stack key={item.message}>
-          <Typography>{item.category}</Typography>
-          <Typography>{item.message}</Typography>
-          <Typography>{item.date}</Typography>
+          <Typography className="text">{item.category}</Typography>
+          <Typography className="text">{item.message}</Typography>
+          <Typography className="text">{item.date}</Typography>
         </Stack>
       ))}
     </div>

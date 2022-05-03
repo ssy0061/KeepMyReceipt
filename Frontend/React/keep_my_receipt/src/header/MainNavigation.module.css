@@ -12,7 +12,7 @@
     margin: 0 20px 0 5px;
   }
   .header {
-    width: 100%;
+    max-width: 100%;
     height: 5rem;
     background-color: #ffaa00;
     box-shadow: 0 1px 4px rgb(255, 169, 63);

@@ -14,6 +14,9 @@ const Navigation = () => {
       <nav>
         <ul>
           <li className="menu">
+            <Link to="/account">로그인</Link>
+          </li>
+          <li className="menu">
             <Link to="/book">거래내역</Link>
           </li>
           <li className="menu">
