@@ -18,7 +18,7 @@ export default function GroupSearch() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const keyWord = searchParams.get('keyWord');
+  const keyWord = searchParams.get('query');
   const { propWord, used } = (location.state as LocationState) || {};
   const [word, setWord] = useState('');
   // const onChange = (e: any) => {

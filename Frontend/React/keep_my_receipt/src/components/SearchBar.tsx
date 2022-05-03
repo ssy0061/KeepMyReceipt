@@ -38,10 +38,9 @@ export default function SearchBar({
       setValue('');
       return;
     }
-    // 검색 결과 창으로 이동(keyword만 prop하므로 처음 render하고 api 요청 필요)
+
     if (navi) {
-      // navigate(navi, { state: { propWord: value, used: false } });
-      navigate(navi + '?' + 'keyWord=' + value);
+      navigate(navi + '?' + 'query=' + value);
     } else {
     }
     if (onSearch) {
