@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import NavItem from './item';
+// import NavItem from './navItem';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import classes from '../header/MainNavigation.module.css';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -14,7 +14,7 @@ const Navigation = () => {
       <nav>
         <ul>
           <li className="menu">
-            <Link to="/book">거래내역</Link>
+            <Link to="/book/index">거래내역</Link>
           </li>
           <li className="menu">
             <Link to="/">분석</Link>
@@ -23,18 +23,18 @@ const Navigation = () => {
             <Link to="/">거래등록</Link>
           </li>
           <li className="menu">
-            <Link to="/club">모임관리</Link>
+            <Link to="/">모임관리</Link>
           </li>
           <li className="menu">
             <Link to="/">보고서</Link>
           </li>
           <div className={classes.mobile}>
-            <Link to="/alert">
+            <Link to="/alert/index">
               <NotificationsActiveIcon />
             </Link>
           </div>
           <div className={classes.mobile}>
-            <Link to="/setting">
+            <Link to="/setting/index">
               <SettingsIcon />
             </Link>
           </div>

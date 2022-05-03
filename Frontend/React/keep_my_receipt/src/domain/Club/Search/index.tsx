@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import { Search, ArrowBackIosNew } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import SearchBar from '../../../components/SearchBar';
 
 type LocationState = { propWord: string };
 
@@ -19,31 +18,23 @@ export default function GroupSearch() {
   const location = useLocation();
   const { propWord } = (location.state as LocationState) || {};
   const [word, setWord] = useState('');
-  const [apiResult, setApiResult] = useState('');
-  // const onChange = (e: any) => {
-  //   setWord(e.target.value);
-  // };
-  // const searchWord = (w: string) => {
-  //   if (w.length < 2) {
-  //     console.log('검색은 2글자 이상');
-  //     return;
-  //   }
-  //   console.log('모임 검색 API 요청' + '(검색어: ' + w + ')');
-  // };
+  const onChange = (e: any) => {
+    setWord(e.target.value);
+  };
+  const searchWord = (w: string) => {
+    if (w.length < 2) {
+      console.log('검색은 2글자 이상');
+      return;
+    }
+    console.log('모임 검색 API 요청' + '(검색어: ' + w + ')');
+  };
 
   useEffect(() => {
-    // 새로고침하면 propWord로 되는 이슈 발생...
     if (propWord) {
-      console.log(
-        'propWord로 모임 검색 API 요청' + '(검색어: ' + propWord + ')',
-      );
+      searchWord(propWord);
       setWord(propWord);
     }
   }, []);
-
-  useEffect(() => {
-    console.log(apiResult);
-  }, [apiResult]);
 
   return (
     <Container maxWidth="md">
@@ -70,13 +61,7 @@ export default function GroupSearch() {
         {/* 검색 영역 */}
         <Stack direction="column" spacing={2} alignItems="center">
           {/* 검색 창 */}
-          <SearchBar
-            value={word}
-            setValue={setWord}
-            api="club"
-            setApiResult={setApiResult}
-          />
-          {/* <Box
+          <Box
             height="3rem"
             sx={{
               backgroundColor: 'white',
@@ -99,7 +84,7 @@ export default function GroupSearch() {
                 <Search sx={{ color: 'black', fontSize: '2rem' }} />
               </IconButton>
             </Box>
-          </Box> */}
+          </Box>
           {/* 검색 결과 */}
           <p>검색 결과 리스트</p>
           <SearchItem />
