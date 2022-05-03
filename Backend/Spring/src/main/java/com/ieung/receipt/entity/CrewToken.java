@@ -2,10 +2,7 @@ package com.ieung.receipt.entity;
 
 import com.ieung.receipt.code.YNCode;
 import com.ieung.receipt.converter.YNCodeConverter;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 

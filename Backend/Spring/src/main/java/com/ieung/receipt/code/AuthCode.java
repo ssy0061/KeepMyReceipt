@@ -8,12 +8,10 @@ import lombok.Getter;
 // 권한 상태로 사용될 상태 코드값
 public enum AuthCode implements BaseEnumCode<String> {
 
-    L("Leader"),
-    M("Manager"),
-    N("None"),
-    LEADER("Leader"),
-    MANAGER("Manager"),
-    NONE("None");
+    LEADER("리더"),
+    MANAGER("관리자"),
+    NORMAL("회원"),
+    NONE("대기");
 
     private final String value;
 }

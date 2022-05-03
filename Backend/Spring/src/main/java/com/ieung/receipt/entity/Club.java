@@ -29,6 +29,11 @@ public class Club {
     @Column(length = 255)
     private String description;
 
+    // 모임 이미지
+    @Column(length = 255)
+    private String image;
+
+
     public void updateName(String name) {
         this.name = name;
     }
@@ -37,12 +42,17 @@ public class Club {
         this.description = description;
     }
 
+    public void updateImage(String image) {
+        this.image = image;
+    }
+
     // Club을 ClubResDTO 객체로 변환
     public ClubResDTO toClubResDTO() {
         return ClubResDTO.builder()
                 .id(id)
                 .name(name)
                 .description(description)
+                .image(image)
                 .build();
     }
 }

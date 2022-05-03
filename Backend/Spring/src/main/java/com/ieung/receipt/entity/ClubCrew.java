@@ -4,10 +4,9 @@ import com.ieung.receipt.code.AuthCode;
 import com.ieung.receipt.code.StateCode;
 import com.ieung.receipt.converter.AuthCodeConverter;
 import com.ieung.receipt.converter.StateCodeConverter;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.ieung.receipt.dto.res.ClubCrewResDTO;
+import com.ieung.receipt.dto.res.CrewReqsResDTO;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -17,7 +16,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "club_crew")
-public class ClubCrew {
+public class ClubCrew extends BaseEntity {
     // 모임별 회원 고유 키값
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,8 +38,24 @@ public class ClubCrew {
     @Column(nullable = false, length = 10, columnDefinition = "varchar(10)")
     private AuthCode auth;
 
-    // 처리 상태
-    @Convert(converter = StateCodeConverter.class)
-    @Column(nullable = false, length = 10, columnDefinition = "varchar(10)")
-    private StateCode state;
+    public void updateAuth(AuthCode auth) {
+        this.auth = auth;
+    }
+
+    public CrewReqsResDTO toCrewReqsResDTO() {
+        return CrewReqsResDTO.builder()
+                .clubCrewId(id)
+                .name(crew.getName())
+                .email(crew.getEmail())
+                .build();
+    }
+
+    public ClubCrewResDTO toClubCrewResDTO() {
+        return ClubCrewResDTO.builder()
+                .clubCrewId(id)
+                .name(crew.getName())
+                .email(crew.getEmail())
+                .auth(auth.getValue())
+                .build();
+    }
 }

@@ -60,6 +60,15 @@ public class CrewTokenService {
                     .crew(crew)
                     .isAllowedPush(YNCode.Y)
                     .fcmToken(fcmToken).build();
+            // 기존 로그인 내역과 다른 회원이라면 기존 내역 삭제 후 새로 생성
+        } else if (crewToken.getCrew().getId() != crew.getId()) {
+            crewTokenRepository.delete(crewToken);
+            crewTokenRepository.flush();
+
+            crewToken = CrewToken.builder()
+                    .crew(crew)
+                    .isAllowedPush(YNCode.Y)
+                    .fcmToken(fcmToken).build();
         }
 
         crewToken.updateRefreshToken(tokenResDTO.getRefreshToken());
@@ -67,7 +76,6 @@ public class CrewTokenService {
 
         return tokenResDTO;
     }
-
 
     /**
      * 토큰 재발급

@@ -10,8 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 public class TokenReqDTO {
     @Schema(description = "accessToken", required = true, example = "123")
-    String accessToken;
+    private String accessToken;
 
     @Schema(description = "refreshToken", required = true, example = "123")
-    String refreshToken;
+    private String refreshToken;
 }

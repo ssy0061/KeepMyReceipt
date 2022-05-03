@@ -2,9 +2,7 @@ package com.ieung.receipt.repository;
 
 import com.ieung.receipt.entity.Club;
 import com.ieung.receipt.entity.QClub;
-import com.ieung.receipt.entity.QClubCrew;
 import com.ieung.receipt.util.QueryDslUtil;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @Transactional
@@ -47,6 +44,7 @@ public class ClubRepoCommonImpl implements ClubRepoCommon {
         return new PageImpl<>(result, pageable, result.size());
     }
 
+    // Pageable 객체의 sort를 list로 변환
     private List<OrderSpecifier> getAllOrderSpecifiers(Pageable pageable) {
 
         List<OrderSpecifier> ORDERS = new ArrayList<>();
@@ -76,41 +74,3 @@ public class ClubRepoCommonImpl implements ClubRepoCommon {
         return ORDERS;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

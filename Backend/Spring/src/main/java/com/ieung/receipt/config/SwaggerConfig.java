@@ -5,13 +5,20 @@ package com.ieung.receipt.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.apache.commons.lang3.StringUtils;
 import org.springdoc.core.GroupedOpenApi;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Comparator;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 
 @Configuration
@@ -22,6 +29,7 @@ public class SwaggerConfig {
                 .group("V1")
                 .pathsToMatch("/api/**")
                 .addOpenApiCustomiser(buildSecurityOpenApi())
+                .addOpenApiCustomiser(sortTagsAlphabetically())
                 .build();
     }
 
@@ -44,5 +52,13 @@ public class SwaggerConfig {
                         .in(SecurityScheme.In.HEADER)
                         .bearerFormat("JWT")
                         .scheme("bearer"));
+    }
+
+    public OpenApiCustomiser sortTagsAlphabetically() {
+        // 알파벳순으로 정렬
+        return openApi -> openApi.setTags(openApi.getTags()
+                .stream()
+                .sorted(Comparator.comparing(tag -> StringUtils.stripAccents(tag.getName())))
+                .collect(Collectors.toList()));
     }
 }
