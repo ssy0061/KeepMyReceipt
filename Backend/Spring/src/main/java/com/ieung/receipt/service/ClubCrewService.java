@@ -145,7 +145,7 @@ public class ClubCrewService {
         if (getAuth(clubCrew.getClub().getId(), crewId) == AuthCode.LEADER) {
             switch (authCode) {
                 case LEADER:
-                    toLeader(clubCrew, getCurrentCrewId());
+                    toLeader(clubCrew, crewId);
                     break;
                 case MANAGER:
                     toManager(clubCrew);
@@ -229,7 +229,7 @@ public class ClubCrewService {
 
     /**
      * 모임 강퇴
-     * @param clubId, crewId
+     * @param clubCrewId, crewId
      */
     @Transactional(readOnly = false)
     public void kickClubCrew(long clubCrewId, Long crewId) {
