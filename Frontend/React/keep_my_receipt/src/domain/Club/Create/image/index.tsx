@@ -4,17 +4,18 @@ import { AddPhotoAlternate } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
 interface CreateImageProps {
-  form: any;
-  setForm: any;
+  onImgChange: any;
 }
 
 const Input = styled('input')({
   display: 'none',
 });
 
-export default function CreateImage({ form, setForm }: CreateImageProps) {
+export default function CreateImage({ onImgChange }: CreateImageProps) {
   // 이미지
   const [imgSrc, setImgSrc] = useState('');
+
+  // 이미지 미리보기
   const readImage = (input: any) => {
     // 이미지 파일인지 검사(생략)
 
@@ -30,10 +31,7 @@ export default function CreateImage({ form, setForm }: CreateImageProps) {
     reader.readAsDataURL(input.files[0]);
   };
   const onChange = (event: any) => {
-    setForm({
-      ...form,
-      imgFile: event.target.files[0],
-    });
+    onImgChange(event.target.files[0]);
     readImage(event.target);
   };
   return (

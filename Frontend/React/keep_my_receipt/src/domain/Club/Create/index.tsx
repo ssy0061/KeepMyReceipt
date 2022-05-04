@@ -28,6 +28,13 @@ export default function GroupCreate() {
       [name]: value,
     });
   };
+  const onImgChange = (file: any) => {
+    setForm({
+      ...form,
+      imgFile: file,
+    });
+  };
+
   const createGroup = async () => {
     if (form.name === '') {
       setCheck(true);
@@ -68,7 +75,7 @@ export default function GroupCreate() {
         {/* 본문 */}
         <Stack spacing={3}>
           {/* 이미지 */}
-          <CreateImage form={form} setForm={setForm} />
+          <CreateImage onImgChange={onImgChange} />
 
           {/* Form */}
           <CreateForm
