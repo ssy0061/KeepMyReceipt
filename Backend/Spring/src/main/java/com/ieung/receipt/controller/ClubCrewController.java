@@ -50,6 +50,9 @@ public class ClubCrewController {
      * 모임 가입 승인 : put /crew/{clubCrewId}/request
      * 모임 가입 거절 : delete /crew/{clubCrewId}/request
      * 모임별 회원 리스트 조회 : get /{clubId}/crews?page=0&size=10&sort=id,ASC
+     * 모임별 관리자 권한 지정 : put /crew/{clubCrewId}/auth/{auth}
+     * 모임 강퇴 : delete /crew/{clubCrewId}/kick
+     * 모임 탈퇴 : delete /{clubId}/crew
      */
 
     // 모임 가입 신청
@@ -92,7 +95,7 @@ public class ClubCrewController {
 
     // 모임 가입 승인
     @Operation(summary = "모임 가입 승인", description = "모임 가입 승인")
-    @PutMapping(value = "crew/{clubCrewId}/request", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/crew/{clubCrewId}/request", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody CommonResult approveClubCrew(@PathVariable @NotBlank long clubCrewId) throws Exception {
         clubCrewService.approve(clubCrewId, getCurrentCrewId());
         // 알림 주는 로직 추가 예정
@@ -102,7 +105,7 @@ public class ClubCrewController {
 
     // 모임 가입 거절
     @Operation(summary = "모임 가입 거절", description = "모임 가입 거절")
-    @DeleteMapping(value = "crew/{clubCrewId}/request", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/crew/{clubCrewId}/request", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody CommonResult refuseClubCrew(@PathVariable @NotBlank long clubCrewId) throws Exception {
         clubCrewService.refusal(clubCrewId, getCurrentCrewId());
         // 알림 주는 로직 추가 예정
@@ -138,32 +141,34 @@ public class ClubCrewController {
 
     // 모임별 회원 관리자 권한 지정
     @Operation(summary = "모임별 회원 관리자 권한 지정", description = "모임별 회원 관리자 권한 지정")
-    @PutMapping(value = "crew/{clubCrewId}/auth/{auth}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/crew/{clubCrewId}/auth/{auth}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody CommonResult updateClubCrewAuth(@PathVariable @NotBlank long clubCrewId, @PathVariable @NotBlank String auth) throws Exception {
         try {
             AuthCode authCode = AuthCode.valueOf(auth);
-
-            switch (authCode) {
-                case LEADER:
-                    // 위임 로직 추가 예정
-                    //clubCrewService.toLeader(clubCrewId, getCurrentCrewId());
-                    throw new ApiMessageException("지원하지 않는 권한입니다.");
-                case MANAGER:
-                    clubCrewService.toManager(clubCrewId, getCurrentCrewId());
-                    break;
-                case NORMAL:
-                    clubCrewService.toNormal(clubCrewId, getCurrentCrewId());
-                    break;
-                case NONE:
-                    // 강퇴 로직 추가 예정
-                    throw new ApiMessageException("지원하지 않는 권한입니다.");
-            }
-
+            clubCrewService.updateAuth(clubCrewId, getCurrentCrewId(), authCode);
         } catch (IllegalArgumentException iae) {
             throw new ApiMessageException("지원하지 않는 권한입니다.");
         }
 
         // 알림 주는 로직 추가 예정
+
+        return responseService.getSuccessResult();
+    }
+
+    // 모임 강퇴
+    @Operation(summary = "모임 강퇴", description = "모임 강퇴")
+    @DeleteMapping(value = "/crew/{clubCrewId}/kick", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody CommonResult kickClubCrew(@PathVariable @NotBlank long clubCrewId) throws Exception {
+        clubCrewService.kickClubCrew(clubCrewId, getCurrentCrewId());
+
+        return responseService.getSuccessResult();
+    }
+
+    // 모임 탈퇴
+    @Operation(summary = "모임 탈퇴", description = "모임 탈퇴")
+    @DeleteMapping(value = "/{clubId}/crew", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody CommonResult deleteClubCrew(@PathVariable @NotBlank long clubId) throws Exception {
+        clubCrewService.deleteClubCrew(clubId, getCurrentCrewId());
 
         return responseService.getSuccessResult();
     }

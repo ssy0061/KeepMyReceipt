@@ -133,22 +133,28 @@ public class ClubCrewService {
     }
 
     /**
-     * 관리자 권한 부여
+     * 권한 수정
      * @param clubCrewId, crewId
      */
     @Transactional(readOnly = false)
-    public void toManager(long clubCrewId, Long crewId) {
+    public void updateAuth(long clubCrewId, Long crewId, AuthCode authCode) {
         ClubCrew clubCrew = clubCrewRepository.findById(clubCrewId)
                 .orElseThrow(() -> new ApiMessageException("모임에 가입된 회원이 아닙니다."));
 
         // 요청을 보낸 회원이 리더인지 확인
         if (getAuth(clubCrew.getClub().getId(), crewId) == AuthCode.LEADER) {
-            // 대상 회원이 일반 회원인지 확인
-            if (clubCrew.getAuth() == AuthCode.NORMAL) {
-                clubCrew.updateAuth(AuthCode.MANAGER);
-                clubCrewRepository.save(clubCrew);
-            } else {
-                throw new ApiMessageException("변경할 수 없는 회원입니다.");
+            switch (authCode) {
+                case LEADER:
+                    toLeader(clubCrew, getCurrentCrewId());
+                    break;
+                case MANAGER:
+                    toManager(clubCrew);
+                    break;
+                case NORMAL:
+                    toNormal(clubCrew);
+                    break;
+                default:
+                    throw new ApiMessageException("지원하지 않는 권한입니다.");
             }
         } else {
             throw new AccessDeniedException("");
@@ -156,20 +162,85 @@ public class ClubCrewService {
     }
 
     /**
-     * 관리자 권한 박탈
-     * @param clubCrewId, crewId
+     * 관리자 권한 부여
+     * @param clubCrew, crewId
      */
     @Transactional(readOnly = false)
-    public void toNormal(long clubCrewId, Long crewId) {
+    public void toManager(ClubCrew clubCrew) {
+        // 대상 회원이 일반 회원인지 확인
+        if (clubCrew.getAuth() == AuthCode.NORMAL) {
+            clubCrew.updateAuth(AuthCode.MANAGER);
+            clubCrewRepository.save(clubCrew);
+        } else {
+            throw new ApiMessageException("변경할 수 없는 회원입니다.");
+        }
+    }
+
+    /**
+     * 관리자 권한 박탈
+     * @param clubCrew, crewId
+     */
+    @Transactional(readOnly = false)
+    public void toNormal(ClubCrew clubCrew) {
+        // 대상 회원이 관리자 회원인지 확인
+        if (clubCrew.getAuth() == AuthCode.MANAGER) {
+            clubCrew.updateAuth(AuthCode.NONE);
+            clubCrewRepository.save(clubCrew);
+        } else {
+            throw new ApiMessageException("변경할 수 없는 회원입니다.");
+        }
+    }
+
+    /**
+     * 리더 위임
+     * @param targetClubCrew, crewId
+     */
+    @Transactional(readOnly = false)
+    public void toLeader(ClubCrew targetClubCrew, Long crewId) {
+        ClubCrew requestClubCrew = clubCrewRepository.findByClubIdAndCrewId(targetClubCrew.getClub().getId(), crewId)
+                .orElseThrow(() -> new AccessDeniedException(""));
+
+        // 대상 회원이 일반 회원 이상인지 확인
+        if (targetClubCrew.getAuth() != AuthCode.NONE) {
+            requestClubCrew.updateAuth(AuthCode.NORMAL);
+            targetClubCrew.updateAuth(AuthCode.LEADER);
+            clubCrewRepository.save(requestClubCrew);
+            clubCrewRepository.save(targetClubCrew);
+        } else {
+            throw new ApiMessageException("변경할 수 없는 회원입니다.");
+        }
+    }
+
+    /**
+     * 모임 탈퇴
+     * @param clubId, crewId
+     */
+    @Transactional(readOnly = false)
+    public void deleteClubCrew(long clubId, Long crewId) {
+        ClubCrew clubCrew = clubCrewRepository.findByClubIdAndCrewId(clubId, crewId)
+                .orElseThrow(() -> new ApiMessageException("가입된 모임이 아닙니다."));
+
+        if (clubCrew.getAuth() == AuthCode.LEADER || clubCrew.getAuth() == AuthCode.NONE) {
+            throw new ApiMessageException("탈퇴할 수 없는 회원입니다.");
+        } else {
+            clubCrewRepository.delete(clubCrew);
+        }
+    }
+
+    /**
+     * 모임 강퇴
+     * @param clubId, crewId
+     */
+    @Transactional(readOnly = false)
+    public void kickClubCrew(long clubCrewId, Long crewId) {
         ClubCrew clubCrew = clubCrewRepository.findById(clubCrewId)
                 .orElseThrow(() -> new ApiMessageException("모임에 가입된 회원이 아닙니다."));
 
         // 요청을 보낸 회원이 리더인지 확인
         if (getAuth(clubCrew.getClub().getId(), crewId) == AuthCode.LEADER) {
-            // 대상 회원이 관리자 회원인지 확인
-            if (clubCrew.getAuth() == AuthCode.MANAGER) {
-                clubCrew.updateAuth(AuthCode.NONE);
-                clubCrewRepository.save(clubCrew);
+            // 대상 회원이 본인이 아니고 일반회원 이상인지 확인
+            if (clubCrew.getCrew().getId() != crewId && clubCrew.getAuth() != AuthCode.NONE) {
+                clubCrewRepository.delete(clubCrew);
             } else {
                 throw new ApiMessageException("변경할 수 없는 회원입니다.");
             }
