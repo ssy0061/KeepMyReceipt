@@ -57,7 +57,7 @@ public class ClubCrewService {
         AuthCode authCode = clubCrewRepository.findAuthCodeByClubIdAndCrewId(clubId, crewId);
 
         if (authCode == null) {
-            return AuthCode.NONE;
+            throw new ApiMessageException("모임에 가입된 회원이 아닙니다.");
         }
 
         return authCode;

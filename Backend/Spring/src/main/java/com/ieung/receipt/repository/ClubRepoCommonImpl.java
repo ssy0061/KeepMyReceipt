@@ -1,10 +1,13 @@
 package com.ieung.receipt.repository;
 
+import com.ieung.receipt.code.AuthCode;
 import com.ieung.receipt.entity.Club;
 import com.ieung.receipt.entity.QClub;
+import com.ieung.receipt.entity.QClubCrew;
 import com.ieung.receipt.util.QueryDslUtil;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -36,6 +39,50 @@ public class ClubRepoCommonImpl implements ClubRepoCommon {
                 .select(QClub.club)
                 .from(QClub.club)
                 .where(QClub.club.name.contains(name))
+                .orderBy(orders.stream().toArray(OrderSpecifier[]::new))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return new PageImpl<>(result, pageable, result.size());
+    }
+
+    @Override
+    public Page<Club> findJoinedClubByCrewId(Long crewId, Pageable pageable) {
+        List<OrderSpecifier> orders = getAllOrderSpecifiers(pageable);
+
+        List<Club> result = queryFactory
+                .select(QClub.club)
+                .from(QClub.club)
+                .where(QClub.club.id.in(
+                        JPAExpressions
+                                .select(QClubCrew.clubCrew.club.id)
+                                .from(QClubCrew.clubCrew)
+                                .where(QClubCrew.clubCrew.crew.id.eq(crewId),
+                                        QClubCrew.clubCrew.auth.ne(AuthCode.NONE))
+                ))
+                .orderBy(orders.stream().toArray(OrderSpecifier[]::new))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return new PageImpl<>(result, pageable, result.size());
+    }
+
+    @Override
+    public Page<Club> findRequestedClubByCrewId(Long crewId, Pageable pageable) {
+        List<OrderSpecifier> orders = getAllOrderSpecifiers(pageable);
+
+        List<Club> result = queryFactory
+                .select(QClub.club)
+                .from(QClub.club)
+                .where(QClub.club.id.in(
+                        JPAExpressions
+                                .select(QClubCrew.clubCrew.club.id)
+                                .from(QClubCrew.clubCrew)
+                                .where(QClubCrew.clubCrew.crew.id.eq(crewId),
+                                        QClubCrew.clubCrew.auth.eq(AuthCode.NONE))
+                ))
                 .orderBy(orders.stream().toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

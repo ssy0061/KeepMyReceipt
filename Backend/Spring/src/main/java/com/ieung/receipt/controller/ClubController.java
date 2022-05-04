@@ -44,6 +44,8 @@ public class ClubController {
 
     /**
      * 모임 생성 : post /club
+     * 가입한 모임 조회 : get /clubs/joined
+     * 가입 신청한 모임 조회 : get/clubs/requested
      * 모임 조회 : get /club/{clubId}
      * 모임 리스트 조회 : get /clubs?page=0&size=10&sort=id,ASC
      * 모임 삭제 : delete /clubs/{clubId}
@@ -59,6 +61,38 @@ public class ClubController {
         clubService.createClub(crew, clubReqDTO);
 
         return responseService.getSuccessResult();
+    }
+
+    // 가입한 모임 조회
+    @Operation(summary = "가입한 모임 조회", description = "가입한 모임 조회")
+    @GetMapping(value = "/clubs/joined",produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody SingleResult<PagingListResDTO<ClubResDTO>> getJoinedClub( @ParameterObject @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) throws Exception {
+        Page<Club> page = clubService.getJoinedClubs(getCurrentCrewId(), pageable);
+
+        // 반환 DTO에 맞도록 가공
+        List<ClubResDTO> clubs = IntStream.range(0, page.getContent().size())
+                .mapToObj(i -> page.getContent().get(i).toClubResDTO())
+                .collect(Collectors.toList());
+
+        PagingListResDTO pagingListResDTO = new PagingListResDTO(page, clubs);
+
+        return responseService.getSingleResult(pagingListResDTO);
+    }
+
+    // 가입 신청한 모임 조회
+    @Operation(summary = "가입 신청한 모임 조회", description = "가입 신청한 모임 조회")
+    @GetMapping(value = "/clubs/requested",produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody SingleResult<PagingListResDTO<ClubResDTO>> getRequestClub( @ParameterObject @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) throws Exception {
+        Page<Club> page = clubService.getRequestedClubs(getCurrentCrewId(), pageable);
+
+        // 반환 DTO에 맞도록 가공
+        List<ClubResDTO> clubs = IntStream.range(0, page.getContent().size())
+                .mapToObj(i -> page.getContent().get(i).toClubResDTO())
+                .collect(Collectors.toList());
+
+        PagingListResDTO pagingListResDTO = new PagingListResDTO(page, clubs);
+
+        return responseService.getSingleResult(pagingListResDTO);
     }
 
     // 특정 모임 조회
@@ -88,14 +122,7 @@ public class ClubController {
                 .mapToObj(i -> page.getContent().get(i).toClubResDTO())
                 .collect(Collectors.toList());
 
-        PagingListResDTO pagingListResDTO = PagingListResDTO.builder()
-                .pageNumber(page.getNumber())
-                .totalPages(page.getTotalPages())
-                .numberOfElements(page.getNumberOfElements())
-                .size(page.getSize())
-                .totalElements(page.getTotalElements())
-                .list(Collections.singletonList(clubs))
-                .build();
+        PagingListResDTO pagingListResDTO = new PagingListResDTO(page, clubs);
 
         return responseService.getSingleResult(pagingListResDTO);
     }

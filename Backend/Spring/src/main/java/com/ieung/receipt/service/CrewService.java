@@ -75,8 +75,6 @@ public class CrewService {
         }
     }
 
-
-
     /**
      * 회원 정보 수정 (이름)
      * @param name 바꿀 이름
@@ -90,6 +88,16 @@ public class CrewService {
         crew.updateName(name);
         crewRepository.save(crew);
     }
+
+//    /**
+//     * 회원 탈퇴
+//     * @param crewId
+//     */
+//    public void deleteCrew(Long crewId) {
+//
+//
+//        crewRepository.deleteById(crewId);
+//    }
 }
 
 

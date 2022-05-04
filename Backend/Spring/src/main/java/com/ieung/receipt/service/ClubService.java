@@ -117,4 +117,22 @@ public class ClubService {
             throw new AccessDeniedException("");
         }
     }
+
+    /**
+     * 가입한 모임 조회
+     * @param crewId, pageable
+     */
+    @Transactional(readOnly = false)
+    public Page<Club> getJoinedClubs(Long crewId, Pageable pageable) {
+        return clubRepository.findJoinedClubByCrewId(crewId, pageable);
+    }
+
+    /**
+     * 가입 신청한 모임 조회
+     * @param crewId, pageable
+     */
+    @Transactional(readOnly = false)
+    public Page<Club> getRequestedClubs(Long crewId, Pageable pageable) {
+        return clubRepository.findRequestedClubByCrewId(crewId, pageable);
+    }
 }
