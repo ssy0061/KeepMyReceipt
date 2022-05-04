@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconButton, Stack, Container } from '@mui/material';
 import { ArrowBackIosNew } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import CreateImage from './image';
 import CreateForm from './form';
 
@@ -40,12 +41,22 @@ export default function GroupCreate() {
       setCheck(true);
       console.log('모임 이름은 필수');
       return;
-    } else {
-      setCheck(false);
     }
     console.log(form);
-    console.log('모임 생성 API 요청');
-
+    await axios
+      .post('https://k6d104.p.ssafy.io/api/spring/club', {
+        name: name,
+        description: intro,
+        image:
+          'https://cdne-totv8-prod.azureedge.net/media/40307/spurs-blue-compressed.png?anchor=center&mode=crop&quality=100&width=500',
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log('구현 예정: JWT 필요, 이미지 저장 후 URL 가져오기');
+      });
     // 내 모임으로 이동
     navigate('..');
   };
