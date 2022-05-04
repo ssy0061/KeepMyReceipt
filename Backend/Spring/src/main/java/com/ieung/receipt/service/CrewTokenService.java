@@ -51,29 +51,27 @@ public class CrewTokenService {
         List<String> list = crew.getRoles();
         TokenResDTO tokenResDTO = jwtTokenProvider.createToken(String.valueOf(crew.getId()), list);
 
-
+        // 모든 회원을 대상으로 해당 기기로 로그인한 기록이 있는지 확인
         CrewToken crewToken = crewTokenRepository.findByFcmToken(fcmToken);
+        // 해당 회원을 대상으로  해당 기기로 로그인한 기록이 있는지 확인
+        CrewToken myCrewToken = crewTokenRepository.findByCrewIdAndFcmToken(crew.getId(), fcmToken);
 
         // 기존 로그인 내역이 없으면 새로 생성
-        if (crewToken == null) {
-            crewToken = CrewToken.builder()
-                    .crew(crew)
-                    .isAllowedPush(YNCode.Y)
-                    .fcmToken(fcmToken).build();
-            // 기존 로그인 내역과 다른 회원이라면 기존 내역 refreshToken null 처리 후 새로 생성
-        } else if (crewToken.getCrew().getId() == crew.getId()) {
-            crewToken.updateRefreshToken(null);
-            crewTokenRepository.save(crewToken);
-            crewTokenRepository.flush();
-
-            crewToken = CrewToken.builder()
+        if (myCrewToken == null) {
+            myCrewToken = CrewToken.builder()
                     .crew(crew)
                     .isAllowedPush(YNCode.Y)
                     .fcmToken(fcmToken).build();
         }
 
-        crewToken.updateRefreshToken(tokenResDTO.getRefreshToken());
-        crewTokenRepository.save(crewToken);
+        myCrewToken.updateRefreshToken(tokenResDTO.getRefreshToken());
+        crewTokenRepository.save(myCrewToken);
+
+        // 다른 회원이 해당 기기로 로그인한 기록이 있으면 refreshToken null 처리
+        if (crewToken != null && crewToken.getCrew().getId() != crew.getId()) {
+            crewToken.updateRefreshToken(null);
+            crewTokenRepository.save(crewToken);
+        }
 
         return tokenResDTO;
     }

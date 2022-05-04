@@ -7,8 +7,11 @@ import java.util.Optional;
 
 @Repository
 public interface CrewTokenRepoCommon {
-    // fcmToken으로 조회
+    // fcmToken으로 최근 로그인 내역 조회
     CrewToken findByFcmToken(String fcmToken);
+
+    // crewId와 fcmToken으로 조회
+    CrewToken findByCrewIdAndFcmToken(long crewId, String fcmToken);
 
     // crewId와 refreshToken으로 조회
     Optional<CrewToken> findByCrewIdAndRefreshToken(Long crewId, String refreshToken);

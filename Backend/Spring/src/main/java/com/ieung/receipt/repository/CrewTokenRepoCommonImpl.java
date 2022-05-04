@@ -21,7 +21,20 @@ public class CrewTokenRepoCommonImpl implements CrewTokenRepoCommon {
         CrewToken result = queryFactory
                 .select(QCrewToken.crewToken)
                 .from(QCrewToken.crewToken)
-                .where(QCrewToken.crewToken.fcmToken.eq(fcmToken))
+                .where(QCrewToken.crewToken.fcmToken.eq(fcmToken),
+                        QCrewToken.crewToken.refreshToken.isNotNull())
+                .fetchOne();
+
+        return result;
+    }
+
+    @Override
+    public CrewToken findByCrewIdAndFcmToken(long crewId, String fcmToken) {
+        CrewToken result = queryFactory
+                .select(QCrewToken.crewToken)
+                .from(QCrewToken.crewToken)
+                .where(QCrewToken.crewToken.fcmToken.eq(fcmToken),
+                        QCrewToken.crewToken.crew.id.eq(crewId))
                 .fetchOne();
 
         return result;
