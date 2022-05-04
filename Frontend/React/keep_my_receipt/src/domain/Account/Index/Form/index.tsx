@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from 'react';
 import './index.css';
+import { useState, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
@@ -7,17 +7,17 @@ import {
   Button,
   ButtonProps,
   Stack,
-  FormControl,
-  Input,
-  InputLabel,
   TextField,
-  FormHelperText,
   Container,
+  Input,
+  InputAdornment,
 } from '@mui/material';
-import React from 'react';
 import { yellow } from '@mui/material/colors';
+import React from 'react';
+import { useInput } from '@mui/base';
 
 export default function AuthForm() {
+  // 스타일
   const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
     color: theme.palette.getContrastText(yellow[50]),
     '&.MuiButton-contained': {
@@ -28,86 +28,46 @@ export default function AuthForm() {
       backgroundColor: yellow[800],
     },
   }));
+  const ariaLabel = { 'aria-label': 'description' };
 
-  const nameInputRef = useRef<HTMLInputElement>(null);
-  const emailInputRef = useRef<HTMLInputElement>(null);
-  const passwordInputRef = useRef<HTMLInputElement>(null);
-  const checkPasswordInputRef = useRef<HTMLInputElement>(null);
-
+  //회원가입 - 로그인 형식바꾸는 부분
   const [isLogin, setIsLogin] = useState(true);
-  const [name, setName] = React.useState('Composed TextField');
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
-
+  // 회원가입 API -  useref 훅 이용해 입력 데이터 추출
   const submitHandler = (event: any) => {
+    // 형식과 관계없이 확인버튼 눌러서 제출했을 때
     event.preventDefault();
 
-    // ref 통해 함수에서 입력 데이터 추출
-    const enteredName = nameInputRef.current!.value;
-    const enteredEmail = emailInputRef.current!.value;
-    const enteredPassword = passwordInputRef.current!.value;
-    const checkEnteredPassword = checkPasswordInputRef.current!.value;
-
-    // // 유효성 검사 - (1)이메일 형식
-    // const checkEmailForm = () => {
-    //   const reg_email =
-    //     /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/;
-    //   if (!reg_email.test(enteredEmail)) {
-    //     return false;
-    //   } else {
-    //     return true;
-    //   }
-    // };
-
-    // // 유효성 검사 - (2) 이메일 중복확인 url : /api/spring/crew/checkEmail/{email}
-    // // 유효성 검사 - (3) 비밀번호 글자 수
-    // // 유효성 검사 - (4) 비밀번호 형식 (특수문자+문자+숫자 포함 8자)
-    // const checkPasswordForm = () => {
-    //   const reg_password =
-    //     /([a-zA-Z0-9].*[!,@,#,$,%,^,&,*,?,_,~])|([!,@,#,$,%,^,&,*,?,_,~].*[a-zA-Z0-9])/;
-    //   if (!reg_password.test(enteredPassword)) {
-    //     return false;
-    //   } else {
-    //     return true;
-    //   }
-    // };
-
-    // // 유효성 검사 - (5) 비밀번호와 비밀번호 확인 일치
-    // const checkSamePassword = () => {
-    //   if (enteredPassword != checkEnteredPassword) {
-    //     console.log('비밀번호가 일치하지 않습니다.');
-    //   }
-    // };
-
-    //로그인
+    // 유효성 검사 - useState 사용하기
+    // weaglk@naver.com ssafy123!@ 막걸리 : 비밀번호에 특수문자가...음...
     if (isLogin) {
     } else {
-      fetch('https://k6d104.p.ssafy.io/api/spring/crew/signup', {
-        method: 'POST',
-        body: JSON.stringify({
-          email: enteredEmail,
-          password: checkEnteredPassword,
-          name: enteredName,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then((res) => {
-        if (res.ok) {
-        } else {
-          return res.json().then((data) => {
-            console.log(data);
-          });
-        }
-      });
+      axios
+        .post('https://k6d104.p.ssafy.io/api/spring/crew/signup', {
+          email: event.target[2].value,
+          password: event.target[4].value,
+          name: event.target[0].value,
+        })
+        .then(function (response) {
+          //이메일 중복 or 형식에 맞지 않는 경우
+          if (response.data.code == 0) {
+            console.log(response.data.output);
+            console.log(response.data.msg);
+          }
+          // 회원가입 성공
+          else {
+            console.log(response.data.output);
+            console.log(response.data.msg);
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
   };
-
   return (
     <Container maxWidth="sm">
       <h1 className="h1">{isLogin ? '로그인' : '회원가입'}</h1>
@@ -115,70 +75,66 @@ export default function AuthForm() {
         <Stack spacing={1.5}>
           {!isLogin ? (
             <TextField
-              fullWidth
-              id="name-input"
-              label="이름"
               type="text"
+              id="nickname"
+              name="nickname"
+              required
+              fullWidth
+              label="이름"
               autoComplete="current-password"
               variant="outlined"
               size="small"
-              ref={nameInputRef}
             />
           ) : (
             ''
           )}
 
-          <Stack direction="row" spacing={1}>
-            <TextField
-              fullWidth
-              id="email-input"
-              label="이메일"
-              type="text"
-              autoComplete="current-password"
-              variant="outlined"
-              size="small"
-              ref={emailInputRef}
-            />
-            {!isLogin ? (
-              <Button id="email-doublecheck" variant="outlined">
-                확인{' '}
-              </Button>
-            ) : (
-              ''
-            )}
-          </Stack>
+          <TextField
+            placeholder="이메일을 입력해주세요"
+            inputProps={ariaLabel}
+            id="email"
+            name="email"
+            required
+            fullWidth
+            label="이메일"
+            type="email"
+            autoComplete="current-password"
+            variant="outlined"
+            size="small"
+          />
 
           <TextField
+            id="password"
+            name="password"
+            required
             fullWidth
-            id="standard-password-input"
             label="비밀번호"
             type="password"
             autoComplete="current-password"
             variant="outlined"
             helperText="특수문자, 영문, 숫자 모두 포함해야 합니다."
             size="small"
-            ref={passwordInputRef}
           />
 
           {!isLogin ? (
             <TextField
-              fullWidth
-              id="standard-password-input"
-              label="비밀번호 확인"
               type="password"
+              id="password-check"
+              name="password-check"
+              fullWidth
+              label="비밀번호 확인"
               autoComplete="current-password"
               variant="outlined"
               size="small"
               required
-              ref={checkPasswordInputRef}
             />
           ) : (
             ''
           )}
 
           <Stack>
-            <ColorButton variant="contained">
-              {isLogin ? '로그인' : '회원가입'}
+            <ColorButton variant="contained" type="submit">
+              확인
             </ColorButton>
             <Button type="button" onClick={switchAuthModeHandler}>
               {isLogin ? (
@@ -192,7 +148,4 @@ export default function AuthForm() {
       </form>
     </Container>
   );
-}
-function setName(value: string) {
-  throw new Error('Function not implemented.');
 }
