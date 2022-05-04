@@ -1,40 +1,24 @@
-import { memo, useState } from 'react';
-import {
-  Collapse,
-  IconButton,
-  List,
-  ListItemButton,
-  ListItemText,
-} from '@mui/material';
+import { memo } from 'react';
+import { Collapse, IconButton, List, ListItemButton } from '@mui/material';
 import { ExpandLess, ExpandMore, Info } from '@mui/icons-material';
 
-// import useEditableList from '../../../../hooks/useEditableList';
+import useEditableList from '../../../../hooks/useEditableList';
 import ListItemTextWithSubtext from '../ListItemTextWithSubtext';
 
 interface ItemCategoryType {
   name: string;
   list: string[];
+  setList: React.Dispatch<React.SetStateAction<string[]>>;
   category: string;
   setCategory: React.Dispatch<React.SetStateAction<string>>;
 }
 
-function ItemCategoryEditable({
-  name,
-  list,
-  category,
-  setCategory,
-}: ItemCategoryType) {
-  // 세부 목록 열림 / 닫힘 상태
-  const [open, setOpen] = useState(false);
+function ItemCategoryEditable(props: ItemCategoryType) {
+  const { EditableList, isOpen, setOpen } = useEditableList();
 
   // 세부 목록 열림 / 닫힘 조작
   const handleExpand = () => {
-    setOpen(!open);
-  };
-
-  // 세부 목록 클릭 시 값 바꿈
-  const handleSelect = (newValue: string) => {
-    setCategory(newValue);
+    setOpen(!isOpen);
   };
 
   return (
@@ -54,29 +38,20 @@ function ItemCategoryEditable({
           </IconButton>
 
           {/* 분류명 & 선택된 항목 */}
-          <ListItemTextWithSubtext text={name} subtext={category} />
+          <ListItemTextWithSubtext text={props.name} subtext={props.category} />
 
           {/* 열기 / 닫기 화살표 */}
-          {open ? <ExpandLess /> : <ExpandMore />}
+          {isOpen ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
 
         {/* 화살표 눌렀을 때 나오는 리스트들 */}
-        <Collapse in={open} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {list.map((item) => (
-              <ListItemButton
-                // 클릭 시 값 바꿈 & 목록 접음
-                onClick={() => {
-                  handleExpand();
-                  handleSelect(item);
-                }}
-                sx={{ pl: 4 }}
-                key={item}
-              >
-                <ListItemText primary={item} />
-              </ListItemButton>
-            ))}
-          </List>
+        <Collapse in={isOpen} timeout="auto" unmountOnExit>
+          <EditableList
+            originalList={props.list}
+            setOriginalList={props.setList}
+            setSelected={props.setCategory}
+            collapsible
+          />
         </Collapse>
       </List>
     </>

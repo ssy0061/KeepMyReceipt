@@ -1,22 +1,24 @@
-import React from 'react';
-import { Button, Collapse } from '@mui/material';
-import useEditableList from '../../../hooks/useEditableList';
+// import { useState } from 'react';
+// import { Button, Collapse } from '@mui/material';
 
-const sample = [
-  { name: '축구공', editable: false },
-  { name: '축구화', editable: false },
-];
+// import useEditableList from '../../../hooks/useEditableList';
 
 export default function BookUpdate() {
-  const { selectedItem, EditableList, isOpen, setOpen } = useEditableList(
-    sample,
-    true,
-  );
+  // const sample = ['축구공', '축구화'];
+  // const [sampleList, setSampleList] = useState(sample);
+  // const { selectedItem, EditableList, isOpen, setOpen } = useEditableList();
 
   return (
     <>
-      {selectedItem}
-      <EditableList />
+      {/* {selectedItem}
+      <Button onClick={() => setOpen((open) => !open)}>열기</Button>
+      <Collapse in={isOpen} timeout="auto" unmountOnExit>
+        <EditableList
+          originalList={sampleList}
+          setOriginalObject={setSampleList}
+          collapsible
+        />
+      </Collapse> */}
     </>
   );
 }
