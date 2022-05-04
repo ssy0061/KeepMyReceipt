@@ -60,9 +60,10 @@ public class CrewTokenService {
                     .crew(crew)
                     .isAllowedPush(YNCode.Y)
                     .fcmToken(fcmToken).build();
-            // 기존 로그인 내역과 다른 회원이라면 기존 내역 삭제 후 새로 생성
-        } else if (crewToken.getCrew().getId() != crew.getId()) {
-            crewTokenRepository.delete(crewToken);
+            // 기존 로그인 내역과 다른 회원이라면 기존 내역 refreshToken null 처리 후 새로 생성
+        } else if (crewToken.getCrew().getId() == crew.getId()) {
+            crewToken.updateRefreshToken(null);
+            crewTokenRepository.save(crewToken);
             crewTokenRepository.flush();
 
             crewToken = CrewToken.builder()
@@ -103,6 +104,5 @@ public class CrewTokenService {
         crewTokenRepository.save(crewToken);
 
         return tokenResDTO;
-
     }
 }

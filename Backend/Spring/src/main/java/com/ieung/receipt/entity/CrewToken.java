@@ -11,13 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "crew_token",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        columnNames={"fcm_token"}
-                )
-        }
-)
+@Table(name = "crew_token")
 public class CrewToken {
     // 회원별 토큰 고유 키값
     @Id
@@ -35,7 +29,7 @@ public class CrewToken {
     private String refreshToken;
 
     // 장비 푸시용 토큰
-    @Column(unique = true, length = 255, name = "fcm_token")
+    @Column(length = 255, name = "fcm_token")
     private String fcmToken;
 
     // 푸시 알림 설정 (Y:on, N:off)
