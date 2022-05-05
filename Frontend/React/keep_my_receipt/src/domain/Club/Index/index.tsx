@@ -1,34 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Container } from '@mui/material';
-import IndexItem from './item';
+import { Grid, Container, Stack } from '@mui/material';
+import axios from 'axios';
+import IndexList from './List';
 import IndexHeader from './header';
 
-interface groupType {
+interface listItemTypes {
+  id: number;
   name: string;
-  budget: number;
+  description: string;
+  image: string;
 }
 
-export default function GroupIndex() {
+interface resopnseType {
+  pageNumber: number;
+  size: number;
+  totalPages: number;
+  numberOfElements: number;
+  totalElements: number;
+  list: listItemTypes[];
+}
+export default function ClubIndex() {
   // 모임 목록 조회
-  const [groups, setGroups] = useState<groupType[] | null>([]);
-  const getGroups = async () => {
-    console.log('가입한 모임 목록 조회 API 요청');
-    setGroups([
-      { name: '고독한 미식가들', budget: 123000 },
-      { name: '축구', budget: 500000 },
-      { name: '야구', budget: 1000000 },
-      { name: '고독한 미식가들', budget: 123000 },
-      { name: '축구', budget: 500000 },
-      { name: '야구', budget: 1000000 },
-      { name: '고독한 미식가들', budget: 123000 },
-      { name: '축구', budget: 500000 },
-      { name: '야구', budget: 1000000 },
-    ]);
+  const [clubList, setClubList] = useState<listItemTypes[]>([]);
+  const getClubList = async () => {
+    await axios
+      .get('https://k6d104.p.ssafy.io/api/spring/clubs/joined', {
+        params: {
+          page: 0,
+          size: 5,
+          sort: 'id%2CASC',
+        },
+      })
+      .then((response) => {
+        console.log(response.data.data);
+        setClubList(response.data.data.list);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
+
   useEffect(() => {
-    getGroups();
+    getClubList();
   }, []);
+
   return (
     <Container maxWidth="md">
       <Grid container direction="column" sx={{ marginBottom: 3 }}>
@@ -36,15 +52,18 @@ export default function GroupIndex() {
         <IndexHeader />
 
         {/* 리스트 */}
-        <Grid container justifyContent="center" spacing={2}>
-          {groups?.length ? (
-            groups.map((group, index) => (
-              <IndexItem key={index} name={group.name} budget={group.budget} />
-            ))
+        <Stack
+          direction="column"
+          spacing={2}
+          alignItems="center"
+          sx={{ marginTop: '1rem' }}
+        >
+          {clubList.length ? (
+            <IndexList clubList={clubList} />
           ) : (
             <p>모임 없음</p>
           )}
-        </Grid>
+        </Stack>
       </Grid>
     </Container>
   );

@@ -48,8 +48,7 @@ export default function GroupCreate() {
         name: name,
         description: intro,
         // image: imgFile,
-        image:
-          'https://pbs.twimg.com/profile_images/1460579910095884288/waX3gy16_400x400.jpg',
+        image: '',
       })
       .then((response) => {
         console.log(response);

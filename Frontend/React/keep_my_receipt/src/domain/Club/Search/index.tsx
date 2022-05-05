@@ -92,13 +92,6 @@ export default function GroupSearch() {
   //   console.log(list);
   // }, [res]);
 
-  useEffect(() => {
-    const accessToken =
-      'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJQayI6IjMiLCJpYXQiOjE2NTE3MTQ4MzQsImV4cCI6MTY1MTgwMTIzNH0.LHy4mt3jBcrxn6MpMoGV4GPl0cxVTq50D7TKf-TtZ4M';
-
-    // API 요청하는 콜마다 헤더에 accessToken 담아 보내도록 설정
-    axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-  }, []);
   return (
     <Container maxWidth="md">
       <Grid container direction="column">
@@ -119,7 +112,6 @@ export default function GroupSearch() {
             sx={{ position: 'absolute', left: 0 }}
           >
             <ArrowBack sx={{ fontSize: '1.8rem' }} />
-            {/* <span style={{ fontSize: '1rem' }}>내 모임</span> */}
           </IconButton>
           {/* 검색 창 */}
           <SearchBar
@@ -140,7 +132,7 @@ export default function GroupSearch() {
           {/* 상단 */}
           {keyWord ? null : '전체 모임 목록'}
           {/* 리스트 */}
-          {list.length > 0 ? (
+          {list.length ? (
             <SearchList clubList={list} />
           ) : (
             <p>검색된 모임이 없습니다.</p>
