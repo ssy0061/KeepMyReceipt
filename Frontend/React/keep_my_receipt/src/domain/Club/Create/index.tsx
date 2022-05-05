@@ -47,8 +47,9 @@ export default function GroupCreate() {
       .post('https://k6d104.p.ssafy.io/api/spring/club', {
         name: name,
         description: intro,
+        // image: imgFile,
         image:
-          'https://cdne-totv8-prod.azureedge.net/media/40307/spurs-blue-compressed.png?anchor=center&mode=crop&quality=100&width=500',
+          'https://pbs.twimg.com/profile_images/1460579910095884288/waX3gy16_400x400.jpg',
       })
       .then((response) => {
         console.log(response);

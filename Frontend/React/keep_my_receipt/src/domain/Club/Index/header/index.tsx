@@ -48,7 +48,7 @@ export default function IndexHeader() {
           value={word}
           setValue={setWord}
           navi="./search"
-          placeholder="모임 검색(2글자 이상)"
+          placeholder="모임 검색"
           close={true}
         />
       </Stack>

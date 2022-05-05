@@ -33,11 +33,11 @@ export default function SearchBar({
   const navigate = useNavigate();
 
   const searchWord = () => {
-    if (value.length < 2) {
-      console.log('검색은 2글자 이상');
-      setValue('');
-      return;
-    }
+    // if (value.length < 2) {
+    //   console.log('검색은 2글자 이상');
+    //   setValue('');
+    //   return;
+    // }
 
     if (navi) {
       navigate(navi + '?' + 'query=' + value);

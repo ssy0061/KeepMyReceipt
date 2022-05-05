@@ -1,18 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import SearchItem from './item';
-import {
-  Container,
-  Box,
-  TextField,
-  IconButton,
-  Grid,
-  Stack,
-} from '@mui/material';
+import { Container, IconButton, Grid, Stack } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import SearchBar from '../../../components/SearchBar';
+import SearchList from './List';
+import axios from 'axios';
+import { AnyRecord } from 'dns';
+
+interface listItemTypes {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+}
 
 type LocationState = { propWord: string; used: boolean };
+interface resopnseType {
+  pageNumber: number;
+  size: number;
+  totalPages: number;
+  numberOfElements: number;
+  totalElements: number;
+  list: listItemTypes[];
+}
 
 export default function GroupSearch() {
   const navigate = useNavigate();
@@ -21,19 +31,24 @@ export default function GroupSearch() {
   const keyWord = searchParams.get('query');
   const { propWord, used } = (location.state as LocationState) || {};
   const [word, setWord] = useState('');
-  // const onChange = (e: any) => {
-  //   setWord(e.target.value);
-  // };
-  // const searchWord = (w: string) => {
-  //   if (w.length < 2) {
-  //     console.log('검색은 2글자 이상');
-  //     return;
-  //   }
-  //   console.log('모임 검색 API 요청' + '(검색어: ' + w + ')');
-  // };
+  const [res, setRes] = useState<resopnseType>({
+    pageNumber: 0,
+    size: 0,
+    totalPages: 0,
+    numberOfElements: 0,
+    totalElements: 0,
+    list: [],
+  });
+  const {
+    pageNumber,
+    size,
+    totalPages,
+    numberOfElements,
+    totalElements,
+    list,
+  } = res || null;
 
   useEffect(() => {
-    // 새로고침하면 propWord로 되는 이슈 발생...
     if (!used && propWord) {
       console.log(
         'propWord로 모임 검색 API 요청' + '(검색어: ' + propWord + ')',
@@ -46,14 +61,44 @@ export default function GroupSearch() {
     if (keyWord) {
       setWord(keyWord);
       getClubList(keyWord);
+    } else {
+      getClubList();
     }
   }, [keyWord]);
 
-  const getClubList = (w?: string) => {
-    const kw = w ? w : word;
-    console.log('API 요청', 'keyWord = ' + kw);
+  const getClubList = async (w?: string) => {
+    const searchWord = w ? w : word;
+    await axios
+      .get('https://k6d104.p.ssafy.io/api/spring/clubs', {
+        params: {
+          name: searchWord,
+          page: 0,
+          size: 5,
+          sort: 'id%2CASC',
+        },
+      })
+      .then((response) => {
+        setRes(response.data.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
+  // response 확인
+  // useEffect(() => {
+  //   console.log(res);
+  //   // 여기서는 배열
+  //   console.log(list);
+  // }, [res]);
+
+  useEffect(() => {
+    const accessToken =
+      'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJQayI6IjMiLCJpYXQiOjE2NTE3MTQ4MzQsImV4cCI6MTY1MTgwMTIzNH0.LHy4mt3jBcrxn6MpMoGV4GPl0cxVTq50D7TKf-TtZ4M';
+
+    // API 요청하는 콜마다 헤더에 accessToken 담아 보내도록 설정
+    axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+  }, []);
   return (
     <Container maxWidth="md">
       <Grid container direction="column">
@@ -86,10 +131,28 @@ export default function GroupSearch() {
         </Stack>
 
         {/* 검색 결과 */}
-        <Stack direction="column" spacing={2} alignItems="center">
-          <p>검색 결과 리스트</p>
-          <SearchItem />
-          <SearchItem />
+        <Stack
+          direction="column"
+          spacing={2}
+          alignItems="center"
+          sx={{ marginTop: '1rem' }}
+        >
+          {/* 상단 */}
+          {keyWord ? null : '전체 모임 목록'}
+          {/* 리스트 */}
+          {list.length > 0 ? (
+            <SearchList clubList={list} />
+          ) : (
+            <p>검색된 모임이 없습니다.</p>
+          )}
+          {/* 페이지네이션 */}
+          <Stack>
+            <p>pageNumber: {pageNumber}</p>
+            <p>size: {size}</p>
+            <p>totalPages: {totalPages}</p>
+            <p>numberOfElements: {numberOfElements}</p>
+            <p>totalElements: {totalElements}</p>
+          </Stack>
         </Stack>
       </Grid>
     </Container>
