@@ -33,7 +33,7 @@ spring:
 server:
   # 프로젝트 환경의 포트 설정
   port: 8185
-  domain: k6d104.p.ssafy.io
+  domain: localhost
   servlet:
     session:
       timeout: 1440m
@@ -42,3 +42,6 @@ server:
 aes256:
   key: WZsExuBV3GSQ55Uf
 
+# 푸쉬 알림 전송 시 필요한 firebase json 파일의 위치
+app:
+  firebase-config: keep-my-receipt-firebase-adminsdk-8o9sg-b7f7231713.json

@@ -3,6 +3,8 @@ package com.ieung.receipt.entity;
 import com.ieung.receipt.code.YNCode;
 import com.ieung.receipt.converter.YNCodeConverter;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -21,6 +23,7 @@ public class CrewToken {
 
     // 회원
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @JoinColumn(name = "crew_id")
     private Crew crew;
 

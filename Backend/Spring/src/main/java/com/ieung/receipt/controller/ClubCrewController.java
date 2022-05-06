@@ -1,14 +1,19 @@
 package com.ieung.receipt.controller;
 
 import com.ieung.receipt.code.AuthCode;
+import com.ieung.receipt.code.NotiCode;
+import com.ieung.receipt.dto.notification.NotificationData;
+import com.ieung.receipt.dto.notification.NotificationRequestDTO;
 import com.ieung.receipt.dto.res.ClubCrewResDTO;
 import com.ieung.receipt.dto.res.CrewReqsResDTO;
 import com.ieung.receipt.dto.res.PagingListResDTO;
 import com.ieung.receipt.entity.ClubCrew;
 import com.ieung.receipt.entity.Crew;
+import com.ieung.receipt.entity.CrewToken;
+import com.ieung.receipt.entity.Notification;
 import com.ieung.receipt.exception.ApiMessageException;
-import com.ieung.receipt.service.ClubCrewService;
-import com.ieung.receipt.service.CrewService;
+import com.ieung.receipt.repository.NotificationRepository;
+import com.ieung.receipt.service.*;
 import com.ieung.receipt.service.common.CommonResult;
 import com.ieung.receipt.service.common.ResponseService;
 import com.ieung.receipt.service.common.SingleResult;
@@ -42,7 +47,10 @@ import static com.ieung.receipt.util.TokenUtil.getCurrentCrewId;
 public class ClubCrewController {
     private final CrewService crewService;
     private final ClubCrewService clubCrewService;
+    private final CrewTokenService crewTokenService;
     private final ResponseService responseService;
+    private final NotificationService notificationService;
+    private final PushService pushService;
 
     /**
      * 모임 가입 요청 : post /{clubId}/crew
@@ -61,8 +69,13 @@ public class ClubCrewController {
     @PostMapping(value = "/{clubId}/crew", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody CommonResult joinClub(@PathVariable @NotBlank long clubId) throws Exception {
         Crew crew = crewService.findCrewById(getCurrentCrewId());
-        clubCrewService.joinClub(clubId, crew);
-        // 알림 주는 로직 추가 예정
+        ClubCrew clubCrew = clubCrewService.joinClub(clubId, crew);
+
+        // 알림 전송
+        List<CrewToken> crewTokens = crewTokenService.getLeaderCrewToken(clubId);
+        notificationService.createOneNotification(NotiCode.JOIN, "가입 신청 알림",
+                                                clubCrew.getCrew().getName() + "님이 "+ clubCrew.getClub().getName() + " 가입을 요청하였습니다.",
+                                                      clubId, crewTokens);
 
         return responseService.getSuccessResult();
     }
@@ -81,9 +94,6 @@ public class ClubCrewController {
 
         PagingListResDTO pagingListResDTO = new PagingListResDTO(page, clubCrews);
 
-        // 알림 주는 로직 추가 예정
-
-
         return responseService.getSingleResult(pagingListResDTO);
     }
 
@@ -91,8 +101,12 @@ public class ClubCrewController {
     @Operation(summary = "모임 가입 승인", description = "모임 가입 승인")
     @PutMapping(value = "/crew/{clubCrewId}/request", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody CommonResult approveClubCrew(@PathVariable @NotBlank long clubCrewId) throws Exception {
-        clubCrewService.approve(clubCrewId, getCurrentCrewId());
-        // 알림 주는 로직 추가 예정
+        ClubCrew clubCrew = clubCrewService.approve(clubCrewId, getCurrentCrewId());
+
+        // 알림 전송
+        List<CrewToken> crewTokens = crewTokenService.getNormalCrewToken(clubCrew.getCrew().getId());
+        notificationService.createOneNotification(NotiCode.JOIN, "가입 승인 알림",
+                clubCrew.getClub().getName() + " 가입 요청이 승인되었습니다.", clubCrew.getClub().getId(), crewTokens);
 
         return responseService.getSuccessResult();
     }
@@ -101,8 +115,12 @@ public class ClubCrewController {
     @Operation(summary = "모임 가입 거절", description = "모임 가입 거절")
     @DeleteMapping(value = "/crew/{clubCrewId}/request", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody CommonResult refuseClubCrew(@PathVariable @NotBlank long clubCrewId) throws Exception {
-        clubCrewService.refusal(clubCrewId, getCurrentCrewId());
-        // 알림 주는 로직 추가 예정
+        ClubCrew clubCrew = clubCrewService.refusal(clubCrewId, getCurrentCrewId());
+
+        // 알림 전송
+        List<CrewToken> crewTokens = crewTokenService.getNormalCrewToken(clubCrew.getCrew().getId());
+        notificationService.createOneNotification(NotiCode.JOIN, "가입 거절 알림",
+                clubCrew.getClub().getName() + " 가입 요청이 거절되었습니다.", clubCrew.getClub().getId(), crewTokens);
 
         return responseService.getSuccessResult();
     }
@@ -121,8 +139,6 @@ public class ClubCrewController {
 
         PagingListResDTO pagingListResDTO = new PagingListResDTO(page, clubCrews);
 
-        // 알림 주는 로직 추가 예정
-
         return responseService.getSingleResult(pagingListResDTO);
     }
 
@@ -136,8 +152,6 @@ public class ClubCrewController {
         } catch (IllegalArgumentException iae) {
             throw new ApiMessageException("지원하지 않는 권한입니다.");
         }
-
-        // 알림 주는 로직 추가 예정
 
         return responseService.getSuccessResult();
     }

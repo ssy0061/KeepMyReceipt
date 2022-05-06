@@ -1,13 +1,17 @@
 package com.ieung.receipt.service;
 
 import com.ieung.receipt.code.AuthCode;
+import com.ieung.receipt.code.NotiCode;
 import com.ieung.receipt.code.StateCode;
+import com.ieung.receipt.code.YNCode;
 import com.ieung.receipt.entity.Club;
 import com.ieung.receipt.entity.ClubCrew;
 import com.ieung.receipt.entity.Crew;
+import com.ieung.receipt.entity.Notification;
 import com.ieung.receipt.exception.ApiMessageException;
 import com.ieung.receipt.repository.ClubCrewRepository;
 import com.ieung.receipt.repository.ClubRepository;
+import com.ieung.receipt.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ClubCrewService {
     private final ClubCrewRepository clubCrewRepository;
+    private final NotificationRepository notificationRepository;
     private final ClubRepository clubRepository;
 
     /**
@@ -28,7 +33,7 @@ public class ClubCrewService {
      * @param clubId, crewId
      */
     @Transactional(readOnly = false)
-    public void joinClub(long clubId, Crew crew) {
+    public ClubCrew joinClub(long clubId, Crew crew) {
         Club club = clubRepository.findById(clubId).orElseThrow(() -> new ApiMessageException("존재하지 않는 모임입니다."));
 
         // 가입 여부 확인
@@ -47,6 +52,8 @@ public class ClubCrewService {
         if (resClubCrew == null) {
             throw new ApiMessageException("모임 신청에 실패했습니다. 다시 시도해 주세요.");
         }
+
+        return resClubCrew;
     }
 
     /**
@@ -68,15 +75,15 @@ public class ClubCrewService {
      * @param clubCrewId, crewId (승인하는 회원 아이디)
      */
     @Transactional(readOnly = false)
-    public void approve(long clubCrewId, long crewId) {
-        ClubCrew clubCrew = clubCrewRepository.findById(clubCrewId)
+    public ClubCrew approve(long clubCrewId, long crewId) {
+        ClubCrew clubCrew = clubCrewRepository.findByIdWithClub(clubCrewId)
                                                 .orElseThrow(() -> new ApiMessageException("가입 신청한 회원이 아닙니다."));
         // 승인 요청을 보낸 회원이 리더인지 확인
         if (getAuth(clubCrew.getClub().getId(), crewId) == AuthCode.LEADER) {
             // 이미 가입되었는지 확인
             if (clubCrew.getAuth() == AuthCode.NONE) {
                 clubCrew.updateAuth(AuthCode.NORMAL);
-                clubCrewRepository.save(clubCrew);
+                return clubCrewRepository.save(clubCrew);
             } else {
                 throw new ApiMessageException("이미 가입된 회원입니다.");
             }
@@ -90,8 +97,8 @@ public class ClubCrewService {
      * @param clubCrewId, crewId (승인하는 회원 아이디)
      */
     @Transactional(readOnly = false)
-    public void refusal(long clubCrewId, long crewId) {
-        ClubCrew clubCrew = clubCrewRepository.findById(clubCrewId)
+    public ClubCrew refusal(long clubCrewId, long crewId) {
+        ClubCrew clubCrew = clubCrewRepository.findByIdWithClub(clubCrewId)
                                                .orElseThrow(() -> new ApiMessageException("가입 신청한 회원이 아닙니다."));
 
         // 승인 요청을 보낸 회원이 리더인지 확인
@@ -99,6 +106,7 @@ public class ClubCrewService {
             // 이미 가입되었는지 확인
             if (clubCrew.getAuth() == AuthCode.NONE) {
                 clubCrewRepository.delete(clubCrew);
+                return clubCrew;
             } else {
                 throw new ApiMessageException("이미 가입된 회원입니다.");
             }

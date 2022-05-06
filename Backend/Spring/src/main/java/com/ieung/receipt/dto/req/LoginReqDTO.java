@@ -23,6 +23,7 @@ public class LoginReqDTO {
     private String password;
 
     @NotBlank
-    @Schema(description = "FCM 토큰", required = true, example = "doPKY4ACQz-1Bt0g3-36ZZ")
+    @Schema(description = "FCM 토큰", required = true, example = "fm8hrEvUQs2H-PrwTmag2_:APA91bG2xqy35-ANXmVDCTW4tfUKKXFLrH-lxF_c9ap7dNocj_ri-" +
+                                                                 "TRLzh8nE8XirQuEk-8D3tp1b3nfmPT61tYpSqvbrsjCYJA89tIboXxvo099SCXg_tWWaAjZlrpigc0MRjowfdK8")
     private String fcmToken;
 }

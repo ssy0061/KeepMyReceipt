@@ -82,7 +82,7 @@ public class ClubController {
     // 가입 신청한 모임 조회
     @Operation(summary = "가입 신청한 모임 조회", description = "가입 신청한 모임 조회")
     @GetMapping(value = "/clubs/requested",produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody SingleResult<PagingListResDTO<ClubResDTO>> getRequestClub( @ParameterObject @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) throws Exception {
+    public @ResponseBody SingleResult<PagingListResDTO<ClubResDTO>> getRequestClub(@ParameterObject @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) throws Exception {
         Page<Club> page = clubService.getRequestedClubs(getCurrentCrewId(), pageable);
 
         // 반환 DTO에 맞도록 가공

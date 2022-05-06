@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -77,6 +76,22 @@ public class CrewTokenService {
     }
 
     /**
+     * 로그아웃
+     * @param crewId, fcmToken
+     */
+    @Transactional(readOnly = false)
+    public void logout(Long crewId, String fcmToken) {
+        CrewToken crewToken = crewTokenRepository.findByCrewIdAndFcmToken(crewId, fcmToken);
+
+        if (crewToken == null) {
+            throw new ApiMessageException("fcm token을 확인해주세요.");
+        }
+
+        crewToken.updateRefreshToken(null);
+        crewTokenRepository.save(crewToken);
+    }
+
+    /**
      * 토큰 재발급
      * @param tokenReqDTO
      * @return TokenResDTO (accessToken, refreshToken)
@@ -102,5 +117,71 @@ public class CrewTokenService {
         crewTokenRepository.save(crewToken);
 
         return tokenResDTO;
+    }
+
+    /**
+     * 토큰 조회
+     */
+    public List<CrewToken> getLeaderOrManagerCrewTokenList(long clubId) {
+        return crewTokenRepository.findLeaderOrManagerByClubId(clubId);
+    }
+
+    public List<CrewToken> getNormalCrewToken(long crewId) {
+        return crewTokenRepository.findByCrewId(crewId);
+    }
+
+    public List<CrewToken> getLeaderCrewToken(long clubId) {
+        return crewTokenRepository.findLeaderByClubId(clubId);
+    }
+
+    /**
+     * 푸시 알림 허용
+     */
+    @Transactional(readOnly = false)
+    public void allowPush(Long crewId, String fcmToken) {
+        CrewToken crewToken = crewTokenRepository.findByCrewIdAndFcmToken(crewId, fcmToken);
+
+        if (crewToken == null) {
+            throw new ApiMessageException("fcm token을 확인해주세요.");
+        } else {
+            if (crewToken.getIsAllowedPush() == YNCode.Y) {
+                throw new ApiMessageException("이미 푸시 알림이 허용되어있습니다.");
+            } else {
+                crewToken.updateIsAllowedPush(YNCode.Y);
+                crewTokenRepository.save(crewToken);
+            }
+        }
+    }
+
+    /**
+     * 푸시 알림 비허용
+     */
+    @Transactional(readOnly = false)
+    public void disallowPush(Long crewId, String fcmToken) {
+        CrewToken crewToken = crewTokenRepository.findByCrewIdAndFcmToken(crewId, fcmToken);
+
+        if (crewToken == null) {
+            throw new ApiMessageException("fcm token을 확인해주세요.");
+        } else {
+            if (crewToken.getIsAllowedPush() == YNCode.N) {
+                throw new ApiMessageException("이미 푸시 알림이 비허용되어있습니다.");
+            } else {
+                crewToken.updateIsAllowedPush(YNCode.N);
+                crewTokenRepository.save(crewToken);
+            }
+        }
+    }
+
+    /**
+     * 푸시 알림 상태 조회
+     */
+    public YNCode getIsAllowedPush(Long crewId, String fcmToken) {
+        CrewToken crewToken = crewTokenRepository.findByCrewIdAndFcmToken(crewId, fcmToken);
+
+        if (crewToken == null) {
+            throw new ApiMessageException("fcm token을 확인해주세요.");
+        } else {
+            return crewToken.getIsAllowedPush();
+        }
     }
 }

@@ -17,6 +17,7 @@ public interface ClubCrewRepoCommon {
     Boolean findExistByClubIdAndCrewId(Long clubId, Long crewId);    // 가입 여부 확인
     Page<ClubCrew> findAllByClubId(Long clubId, Pageable pageable);  // 모임별 회원 조회
     Page<ClubCrew> findRequestsByClubId(Long clubId, Pageable pageable); // 모임별 가입 신청 회원 조회
+    Optional<ClubCrew> findByIdWithClub(Long clubCrewId); // club 정보와 함께 조회
 }
 
 

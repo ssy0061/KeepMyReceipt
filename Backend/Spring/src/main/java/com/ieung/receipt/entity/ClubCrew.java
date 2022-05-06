@@ -7,6 +7,8 @@ import com.ieung.receipt.converter.StateCodeConverter;
 import com.ieung.receipt.dto.res.ClubCrewResDTO;
 import com.ieung.receipt.dto.res.CrewReqsResDTO;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -25,11 +27,13 @@ public class ClubCrew extends BaseEntity {
 
     // 모임
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @JoinColumn(name = "club_id")
     private Club club;
 
     // 회원
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @JoinColumn(name = "crew_id")
     private Crew crew;
 
