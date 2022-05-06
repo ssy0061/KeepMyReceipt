@@ -2,11 +2,13 @@ package com.ieung.receipt.repository;
 
 import com.ieung.receipt.code.AuthCode;
 import com.ieung.receipt.entity.ClubCrew;
+import com.ieung.receipt.entity.QClub;
 import com.ieung.receipt.entity.QClubCrew;
 import com.ieung.receipt.entity.QCrew;
 import com.ieung.receipt.util.QueryDslUtil;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -92,7 +94,16 @@ public class ClubCrewRepoCommonImpl implements ClubCrewRepoCommon {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(result, pageable, result.size());
+        long total = queryFactory
+                .select(QClubCrew.clubCrew)
+                .from(QClubCrew.clubCrew)
+                .innerJoin(QClubCrew.clubCrew.crew, QCrew.crew)
+                .fetchJoin()
+                .where(QClubCrew.clubCrew.club.id.eq(clubId),
+                        QClubCrew.clubCrew.auth.ne(AuthCode.NONE))
+                .fetch().size();
+
+        return new PageImpl<>(result, pageable, total);
     }
 
     @Override
@@ -110,7 +121,15 @@ public class ClubCrewRepoCommonImpl implements ClubCrewRepoCommon {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(result, pageable, result.size());
+        long total = queryFactory
+                .selectFrom(QClubCrew.clubCrew)
+                .innerJoin(QClubCrew.clubCrew.crew, QCrew.crew)
+                .fetchJoin()
+                .where(QClubCrew.clubCrew.club.id.eq(clubId),
+                        QClubCrew.clubCrew.auth.eq(AuthCode.NONE))
+                .fetch().size();
+
+        return new PageImpl<>(result, pageable, total);
     }
 
     // Pageable 객체의 sort를 list로 변환

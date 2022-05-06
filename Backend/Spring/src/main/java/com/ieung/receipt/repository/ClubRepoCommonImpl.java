@@ -9,10 +9,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +41,13 @@ public class ClubRepoCommonImpl implements ClubRepoCommon {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(result, pageable, result.size());
+        long total = queryFactory
+                .select(QClub.club)
+                .from(QClub.club)
+                .where(QClub.club.name.contains(name))
+                .fetch().size();
+
+        return new PageImpl<>(result, pageable, total);
     }
 
     @Override
@@ -66,7 +69,19 @@ public class ClubRepoCommonImpl implements ClubRepoCommon {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(result, pageable, result.size());
+        long total = queryFactory
+                .select(QClub.club)
+                .from(QClub.club)
+                .where(QClub.club.id.in(
+                        JPAExpressions
+                                .select(QClubCrew.clubCrew.club.id)
+                                .from(QClubCrew.clubCrew)
+                                .where(QClubCrew.clubCrew.crew.id.eq(crewId),
+                                        QClubCrew.clubCrew.auth.ne(AuthCode.NONE))
+                ))
+                .fetch().size();
+
+        return new PageImpl<>(result, pageable, total);
     }
 
     @Override
@@ -88,7 +103,19 @@ public class ClubRepoCommonImpl implements ClubRepoCommon {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(result, pageable, result.size());
+        long total = queryFactory
+                .select(QClub.club)
+                .from(QClub.club)
+                .where(QClub.club.id.in(
+                        JPAExpressions
+                                .select(QClubCrew.clubCrew.club.id)
+                                .from(QClubCrew.clubCrew)
+                                .where(QClubCrew.clubCrew.crew.id.eq(crewId),
+                                        QClubCrew.clubCrew.auth.eq(AuthCode.NONE))
+                ))
+                .fetch().size();
+
+        return new PageImpl<>(result, pageable, total);
     }
 
     // Pageable 객체의 sort를 list로 변환
