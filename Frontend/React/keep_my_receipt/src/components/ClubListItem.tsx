@@ -18,7 +18,13 @@ interface ClubInfoType {
   image: string;
 }
 
-export default function ClubListItem({ clubInfo }: { clubInfo: ClubInfoType }) {
+export default function ClubListItem({
+  clubInfo,
+  onClick,
+}: {
+  clubInfo: ClubInfoType;
+  onClick?: any;
+}) {
   const { id, name, description, image } = clubInfo;
   return (
     <Grid
@@ -39,7 +45,7 @@ export default function ClubListItem({ clubInfo }: { clubInfo: ClubInfoType }) {
           },
         }}
       >
-        <CardActionArea>
+        <CardActionArea onClick={onClick}>
           <CardContent sx={{ padding: '1rem' }}>
             <Stack
               direction="row"

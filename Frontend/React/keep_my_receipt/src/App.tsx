@@ -15,6 +15,7 @@ import CameraIndex from './domain/Receipt/Camera';
 import RequestIndex from './domain/Receipt/Request';
 import RequestListIndex from './domain/Receipt/RequestList';
 import ApproveIndex from './domain/Receipt/Approve';
+import ManageIndex from './domain/Manage';
 
 function App() {
   return (
@@ -28,11 +29,22 @@ function App() {
             <Route index element={<ClubIndex />} />
             <Route path="create" element={<ClubCreate />} />
             <Route path="search" element={<ClubSearch />} />
-          </Route>
-          <Route path="book" element={<Outlet />}>
-            <Route index element={<BookIndex />} />
-            <Route path="create" element={<BookCreate />} />
-            <Route path="update" element={<BookUpdate />} />
+            <Route path=":id" element={<Outlet />}>
+              <Route path="book" element={<Outlet />}>
+                <Route index element={<BookIndex />} />
+                <Route path="create" element={<BookCreate />} />
+                <Route path="update" element={<BookUpdate />} />
+              </Route>
+              <Route path="receipt" element={<Outlet />}>
+                <Route path="camera" element={<CameraIndex />} />
+                <Route path="request" element={<RequestIndex />} />
+                <Route path="requestList" element={<RequestListIndex />} />
+                <Route path="approve" element={<ApproveIndex />} />
+              </Route>
+              <Route path="manage" element={<Outlet />}>
+                <Route index element={<ManageIndex />} />
+              </Route>
+            </Route>
           </Route>
           <Route path="alert" element={<Outlet />}>
             <Route index element={<AlertIndex />} />
@@ -46,30 +58,6 @@ function App() {
             <Route index element={<SettingIndex />} />
             {/* 추가 */}
           </Route>
-        </Route>
-        <Route path="book" element={<Outlet />}>
-          <Route index element={<BookIndex />} />
-          <Route path="create" element={<BookCreate />} />
-          <Route path="update" element={<BookUpdate />} />
-        </Route>
-        <Route path="alert" element={<Outlet />}>
-          <Route index element={<AlertIndex />} />
-          {/* 추가 */}
-        </Route>
-        <Route path="account" element={<Outlet />}>
-          <Route index element={<AccountIndex />} />
-          {/* 추가 */}
-        </Route>
-        <Route path="setting" element={<Outlet />}>
-          <Route index element={<SettingIndex />} />
-          {/* 추가 */}
-        </Route>
-        <Route path="receipt" element={<Outlet />}>
-          <Route path="camera" element={<CameraIndex />} />
-          <Route path="request" element={<RequestIndex />} />
-          <Route path="requestList" element={<RequestListIndex />} />
-          <Route path="approve" element={<ApproveIndex />} />
-          {/* 추가 */}
         </Route>
 
         {/* baseUrl/book이면 book index로 접속 */}
