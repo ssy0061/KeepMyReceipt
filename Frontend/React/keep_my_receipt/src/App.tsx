@@ -1,4 +1,5 @@
 import Navigation from './header';
+import SimpleBottomNavigation from './footer';
 import BookIndex from './domain/Book/Index';
 import AlertIndex from './domain/Alert/Index';
 import AccountIndex from './domain/Account/Index';
@@ -10,7 +11,6 @@ import BookCreate from './domain/Book/Create';
 import BookUpdate from './domain/Book/Update';
 
 import SettingIndex from './domain/Setting/Index';
-import { Container } from '@mui/material';
 import CameraIndex from './domain/Receipt/Camera';
 import RequestIndex from './domain/Receipt/Request';
 import RequestListIndex from './domain/Receipt/RequestList';
@@ -71,6 +71,7 @@ function App() {
         <Route path="/account/index" element={<AccountIndex />} />
         <Route path="/setting/index" element={<SettingIndex />} />
       </Routes>
+      <SimpleBottomNavigation />
     </BrowserRouter>
   );
 }
