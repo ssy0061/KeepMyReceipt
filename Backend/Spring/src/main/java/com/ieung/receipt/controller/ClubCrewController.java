@@ -73,9 +73,9 @@ public class ClubCrewController {
 
         // 알림 전송
         List<CrewToken> crewTokens = crewTokenService.getLeaderCrewToken(clubId);
-        notificationService.createOneNotification(NotiCode.JOIN, "가입 신청 알림",
+        notificationService.createOneNotification(NotiCode.JOIN, "가입 요청 알림",
                                                 clubCrew.getCrew().getName() + "님이 "+ clubCrew.getClub().getName() + " 가입을 요청하였습니다.",
-                                                      clubId, crewTokens);
+                                                    clubCrew.getClub(), crewTokens);
 
         return responseService.getSuccessResult();
     }
@@ -106,7 +106,7 @@ public class ClubCrewController {
         // 알림 전송
         List<CrewToken> crewTokens = crewTokenService.getNormalCrewToken(clubCrew.getCrew().getId());
         notificationService.createOneNotification(NotiCode.JOIN, "가입 승인 알림",
-                clubCrew.getClub().getName() + " 가입 요청이 승인되었습니다.", clubCrew.getClub().getId(), crewTokens);
+                clubCrew.getClub().getName() + " 가입 요청이 승인되었습니다.", clubCrew.getClub(), crewTokens);
 
         return responseService.getSuccessResult();
     }
@@ -120,7 +120,7 @@ public class ClubCrewController {
         // 알림 전송
         List<CrewToken> crewTokens = crewTokenService.getNormalCrewToken(clubCrew.getCrew().getId());
         notificationService.createOneNotification(NotiCode.JOIN, "가입 거절 알림",
-                clubCrew.getClub().getName() + " 가입 요청이 거절되었습니다.", clubCrew.getClub().getId(), crewTokens);
+                clubCrew.getClub().getName() + " 가입 요청이 거절되었습니다.", clubCrew.getClub(), crewTokens);
 
         return responseService.getSuccessResult();
     }

@@ -47,8 +47,10 @@ public class Notification extends BaseEntity {
     private NotiCode notiCode;
 
     // 알림과 연관된 clubId
-    @Column
-    private long clubId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action= OnDeleteAction.CASCADE)
+    @JoinColumn(name = "club_id")
+    private Club club;
 
     // 알림과 연관된 청구 reqId
     @Column
@@ -68,7 +70,7 @@ public class Notification extends BaseEntity {
                 .notificationId(id)
                 .title(title)
                 .body(body)
-                .clubId(clubId)
+                .clubId(club.getId())
                 .reqId(reqId)
                 .date(getCreateDate())
                 .isRead(isRead == YNCode.Y)
