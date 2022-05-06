@@ -9,6 +9,7 @@ import com.ieung.receipt.dto.res.TokenResDTO;
 import com.ieung.receipt.entity.Crew;
 import com.ieung.receipt.exception.ApiMessageException;
 import com.ieung.receipt.exception.CUserNotFoundException;
+import com.ieung.receipt.repository.ClubCrewRepository;
 import com.ieung.receipt.repository.CrewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import static com.ieung.receipt.util.TokenUtil.getCurrentCrewId;
 @Transactional(readOnly = true)
 public class CrewService {
     private final CrewRepository crewRepository;
+    private final ClubCrewRepository clubCrewRepository;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -89,15 +91,19 @@ public class CrewService {
         crewRepository.save(crew);
     }
 
-//    /**
-//     * 회원 탈퇴
-//     * @param crewId
-//     */
-//    public void deleteCrew(Long crewId) {
-//
-//
-//        crewRepository.deleteById(crewId);
-//    }
+    /**
+     * 회원 탈퇴
+     * @param crewId
+     */
+    @Transactional(readOnly = false)
+    public void deleteCrew(Long crewId) {
+        // 해당 회원이 리더인 모임이 있다면 탈퇴 불가
+        if (clubCrewRepository.findExistLeaderByCrewId(crewId)) {
+            throw new ApiMessageException("모임의 리더는 탈퇴할 수 없습니다.");
+        }
+
+        crewRepository.deleteById(crewId);
+    }
 }
 
 

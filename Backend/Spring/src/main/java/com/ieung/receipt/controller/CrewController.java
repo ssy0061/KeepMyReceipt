@@ -37,6 +37,7 @@ public class CrewController {
      * 이메일 중복 확인 : get /check-email/{email}
      * 회원 정보 수정 : put /info
      * 회원 정보 조회 : get /info
+     * 회원 탈퇴 : delete
      */
 
     // 회원가입
@@ -88,12 +89,12 @@ public class CrewController {
         return responseService.getSingleResult(crewResDTO);
     }
 
-//    // 회원 탈퇴
-//    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴")
-//    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-//    public @ResponseBody CommonResult deleteCrew() throws Exception {
-//        crewService.deleteCrew(getCurrentCrewId());
-//
-//        return responseService.getSingleResult(crewResDTO);
-//    }
+    // 회원 탈퇴
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴")
+    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody CommonResult deleteCrew() throws Exception {
+        crewService.deleteCrew(getCurrentCrewId());
+
+        return responseService.getSuccessResult();
+    }
 }
