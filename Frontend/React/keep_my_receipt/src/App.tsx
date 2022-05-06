@@ -1,4 +1,5 @@
 import Navigation from './header';
+import SimpleBottomNavigation from './footer';
 import BookIndex from './domain/Book/Index';
 import AlertIndex from './domain/Alert/Index';
 import AccountIndex from './domain/Account/Index';
@@ -31,6 +32,7 @@ function App() {
             <Route index element={<ClubIndex />} />
             <Route path="create" element={<ClubCreate />} />
             <Route path="search" element={<ClubSearch />} />
+
             <Route path=":id" element={<Outlet />}>
               <Route path="book" element={<Outlet />}>
                 <Route index element={<BookIndex />} />
@@ -71,6 +73,7 @@ function App() {
         <Route path="/account/index" element={<AccountIndex />} />
         <Route path="/setting/index" element={<SettingIndex />} />
       </Routes>
+      <SimpleBottomNavigation />
     </BrowserRouter>
   );
 }
