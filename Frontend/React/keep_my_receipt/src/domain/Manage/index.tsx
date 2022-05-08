@@ -4,7 +4,6 @@ import { Container, Grid, Tabs, Tab, Box, Stack } from '@mui/material';
 import ManageClub from './Club';
 import ManageCrew from './Crew';
 import ManageJoin from './Join';
-import { fontWeight } from '@mui/system';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -26,7 +25,6 @@ export default function ManageIndex() {
         role="tabpanel"
         hidden={value !== index}
         id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
         {...other}
       >
         {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
@@ -36,7 +34,7 @@ export default function ManageIndex() {
   const a11yProps = (index: number) => {
     return {
       id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
+      //   'aria-controls': `simple-tabpanel-${index}`,
     };
   };
   return (
@@ -67,12 +65,12 @@ export default function ManageIndex() {
               />
               <Tab
                 label="가입 대기"
-                {...a11yProps(1)}
+                // {...a11yProps(1)}
                 sx={{ fontSize: '1rem', fontWeight: 'bold' }}
               />
               <Tab
                 label="모임"
-                {...a11yProps(2)}
+                // {...a11yProps(2)}
                 sx={{ fontSize: '1rem', fontWeight: 'bold' }}
               />
             </Tabs>

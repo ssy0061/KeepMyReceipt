@@ -5,7 +5,7 @@ import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import SearchBar from '../../../components/SearchBar';
 import SearchList from './List';
 import axios from 'axios';
-import { AnyRecord } from 'dns';
+import Pagination from '../../../components/Pagination';
 
 interface listItemTypes {
   id: number;
@@ -39,14 +39,7 @@ export default function GroupSearch() {
     totalElements: 0,
     list: [],
   });
-  const {
-    pageNumber,
-    size,
-    totalPages,
-    numberOfElements,
-    totalElements,
-    list,
-  } = res || null;
+  const { list } = res || null;
 
   useEffect(() => {
     if (!used && propWord) {
@@ -60,21 +53,20 @@ export default function GroupSearch() {
   useEffect(() => {
     if (keyWord) {
       setWord(keyWord);
-      getClubList(keyWord);
+      getClubList();
     } else {
       getClubList();
     }
   }, [keyWord]);
 
-  const getClubList = async (w?: string) => {
-    const searchWord = w ? w : word;
+  const getClubList = async (page?: number) => {
     await axios
       .get('https://k6d104.p.ssafy.io/api/spring/clubs', {
         params: {
-          name: searchWord,
-          page: 0,
+          name: word,
+          page: page ? page : 0,
           size: 5,
-          sort: 'id%2CASC',
+          sort: 'id,DESC',
         },
       })
       .then((response) => {
@@ -85,16 +77,9 @@ export default function GroupSearch() {
       });
   };
 
-  // response 확인
-  // useEffect(() => {
-  //   console.log(res);
-  //   // 여기서는 배열
-  //   console.log(list);
-  // }, [res]);
-
   return (
     <Container maxWidth="md">
-      <Grid container direction="column">
+      <Grid container direction="column" sx={{ marginBottom: 3 }}>
         {/* 상단 */}
         <Stack
           direction="row"
@@ -138,13 +123,12 @@ export default function GroupSearch() {
             <p>검색된 모임이 없습니다.</p>
           )}
           {/* 페이지네이션 */}
-          <Stack>
-            <p>pageNumber: {pageNumber}</p>
-            <p>size: {size}</p>
-            <p>totalPages: {totalPages}</p>
-            <p>numberOfElements: {numberOfElements}</p>
-            <p>totalElements: {totalElements}</p>
-          </Stack>
+          <Pagination
+            pageInfo={res}
+            paginationSize={5}
+            onClickPage={getClubList}
+            bgColor="#ffaa00"
+          />
         </Stack>
       </Grid>
     </Container>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { IconButton, Stack, Container } from '@mui/material';
-import { ArrowBackIosNew } from '@mui/icons-material';
+import { ArrowBackIosNew, ContactlessOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CreateImage from './image';
@@ -9,19 +9,18 @@ import CreateForm from './form';
 interface formProps {
   name: any;
   intro?: any;
-  imgFile?: any;
 }
 
 export default function GroupCreate() {
   const navigate = useNavigate();
   const [check, setCheck] = useState(false);
   // form
+  const [imgFile, setImgFile] = useState();
   const [form, setForm] = useState<formProps>({
     name: '',
     intro: '',
-    imgFile: '',
   });
-  const { name, intro, imgFile } = form;
+  const { name, intro } = form;
   const onFormChange = (e: any) => {
     const { name, value } = e.target;
     setForm({
@@ -30,37 +29,49 @@ export default function GroupCreate() {
     });
   };
   const onImgChange = (file: any) => {
-    setForm({
-      ...form,
-      imgFile: file,
-    });
+    setImgFile(file);
   };
 
-  const createGroup = async () => {
+  const onClick = async () => {
     if (form.name === '') {
       setCheck(true);
       console.log('모임 이름은 필수');
       return;
     }
-    console.log(form);
+    // 이미지 파일 업로드하여 url 가져오기
+    const imgUrl = imgFile
+      ? await axios
+          .post(
+            'http://k6d104.p.ssafy.io:5555/fast/uploadImage',
+            { image: imgFile },
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            },
+          )
+          .catch((e) => {
+            console.log(e);
+            return;
+          })
+      : '';
+    // console.log(imgUrl);
+    // 모임 생성
     await axios
       .post('https://k6d104.p.ssafy.io/api/spring/club', {
         name: name,
         description: intro,
-        // image: imgFile,
-        image: '',
+        image: imgUrl ? imgUrl.data : '',
       })
       .then((response) => {
         console.log(response);
       })
       .catch((e) => {
         console.log(e);
-        console.log('구현 예정: JWT 필요, 이미지 저장 후 URL 가져오기');
       });
     // 내 모임으로 이동
     navigate('..');
   };
-
   return (
     <Container maxWidth="md">
       <Stack direction="column" spacing={3}>
@@ -94,7 +105,7 @@ export default function GroupCreate() {
             intro={intro}
             check={check}
             onChange={onFormChange}
-            onClick={createGroup}
+            onClick={onClick}
           />
         </Stack>
       </Stack>

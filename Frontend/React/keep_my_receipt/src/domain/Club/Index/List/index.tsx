@@ -5,7 +5,7 @@ import ClubListItem from '../../../../components/ClubListItem';
 
 export default function IndexList({ clubList }: { clubList: any }) {
   const navigate = useNavigate();
-  console.log(clubList);
+  // console.log(clubList);
   const onClick = (id: number) => {
     navigate(`./${id}/book`);
   };
