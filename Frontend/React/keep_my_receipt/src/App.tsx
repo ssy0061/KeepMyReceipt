@@ -2,7 +2,8 @@ import Navigation from './header';
 import SimpleBottomNavigation from './footer';
 import BookIndex from './domain/Book/Index';
 import AlertIndex from './domain/Alert/Index';
-import AccountIndex from './domain/Account/Index';
+import LoginIndex from './domain/Account/Login';
+import SignUpIndex from './domain/Account/SignUp';
 import { BrowserRouter, Routes, Route, Outlet, Link } from 'react-router-dom';
 import ClubIndex from './domain/Club/Index';
 import ClubCreate from './domain/Club/Create';
@@ -57,8 +58,12 @@ function App() {
             <Route index element={<AlertIndex />} />
             {/* 추가 */}
           </Route>
-          <Route path="account" element={<Outlet />}>
-            <Route index element={<AccountIndex />} />
+          <Route path="login" element={<Outlet />}>
+            <Route index element={<LoginIndex />} />
+            {/* 추가 */}
+          </Route>
+          <Route path="signup" element={<Outlet />}>
+            <Route index element={<SignUpIndex />} />
             {/* 추가 */}
           </Route>
           <Route path="setting" element={<Outlet />}>
@@ -68,7 +73,7 @@ function App() {
         </Route>
 
         {/* baseUrl/book이면 book index로 접속 */}
-        <Route path="/account/index" element={<AccountIndex />} />
+        <Route path="/login/index" element={<LoginIndex />} />
         <Route path="/setting/index" element={<SettingIndex />} />
       </Routes>
       <SimpleBottomNavigation />
