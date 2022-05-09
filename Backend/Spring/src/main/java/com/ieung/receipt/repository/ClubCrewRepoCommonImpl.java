@@ -46,6 +46,20 @@ public class ClubCrewRepoCommonImpl implements ClubCrewRepoCommon {
     }
 
     @Override
+    public Optional<ClubCrew> findByClubIdAndCrewIdWithCrew(Long clubId, Long crewId) {
+        Optional<ClubCrew> result = Optional.ofNullable(queryFactory
+                .select(QClubCrew.clubCrew)
+                .from(QClubCrew.clubCrew)
+                .innerJoin(QClubCrew.clubCrew.crew, QCrew.crew)
+                .fetchJoin()
+                .where(QClubCrew.clubCrew.crew.id.eq(crewId),
+                        QClubCrew.clubCrew.club.id.eq(clubId))
+                .fetchOne());
+
+        return result;
+    }
+
+    @Override
     public Long findCountByClubId(Long clubId) {
         Long result = queryFactory
                 .select(QClubCrew.clubCrew.count())

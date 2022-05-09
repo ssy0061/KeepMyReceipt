@@ -39,7 +39,7 @@ public class CrewTokenController {
         return responseService.getSingleResult(tokenResDTO);
     }
 
-    // 로그인
+    // 로그아웃
     @Operation(summary = "로그아웃", description = "로그아웃")
     @PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody CommonResult logout(@Valid @RequestBody @Schema(description = "FCM 토큰") String fcmToken) throws Exception {

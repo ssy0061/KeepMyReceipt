@@ -5,13 +5,10 @@ import com.ieung.receipt.code.YNCode;
 import com.ieung.receipt.config.security.JwtTokenProvider;
 import com.ieung.receipt.dto.notification.NotificationData;
 import com.ieung.receipt.dto.notification.NotificationRequestDTO;
-import com.ieung.receipt.entity.Club;
+import com.ieung.receipt.entity.Crew;
 import com.ieung.receipt.entity.CrewToken;
 import com.ieung.receipt.entity.Notification;
 import com.ieung.receipt.exception.ApiMessageException;
-import com.ieung.receipt.exception.CAuthenticationEntryPointException;
-import com.ieung.receipt.exception.CUserNotFoundException;
-import com.ieung.receipt.repository.CrewTokenRepository;
 import com.ieung.receipt.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +18,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -48,6 +48,47 @@ public class NotificationService {
                 .build();
 
         notificationRepository.save(notification);
+
+        for (CrewToken crewToken : crewTokens) {
+            if (crewToken.getFcmToken() != null && crewToken.getIsAllowedPush() == YNCode.Y
+                    && jwtTokenProvider.validateToken(crewToken.getRefreshToken())) {
+                pushService.sendPushToDevice(NotificationRequestDTO.builder()
+                        .registration_ids(crewToken.getFcmToken())
+                        .notification(NotificationData.builder()
+                                .title(title)
+                                .body(body)
+                                .build())
+                        .build());
+            }
+        }
+    }
+
+    @Transactional(readOnly = false)
+    public void createManyNotifications(NotiCode notiCode, String title, String body, Long clubId, List<CrewToken> crewTokens) {
+        if (crewTokens == null || crewTokens.size() == 0) {
+            return;
+        }
+
+        Set<Long> crewIdSet = new HashSet<>();
+        List<Notification> notifications = new ArrayList<>();
+
+        for (CrewToken crewToken : crewTokens) {
+            if (!crewIdSet.contains(crewToken.getCrew().getId())) {
+                Notification notification = Notification.builder()
+                        .title(title)
+                        .body(body)
+                        .crew(crewToken.getCrew())
+                        .clubId(clubId)
+                        .notiCode(notiCode)
+                        .isRead(YNCode.N)
+                        .build();
+
+                notifications.add(notification);
+                crewIdSet.add(crewToken.getCrew().getId());
+            }
+        }
+
+        notificationRepository.saveAll(notifications);
 
         for (CrewToken crewToken : crewTokens) {
             if (crewToken.getFcmToken() != null && crewToken.getIsAllowedPush() == YNCode.Y

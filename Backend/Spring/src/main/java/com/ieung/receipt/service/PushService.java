@@ -56,9 +56,6 @@ public class PushService {
             if (msgDTO != null) {
                 NotificationData notificationData = msgDTO.getNotification();
 
-
-
-
                 Message message = Message.builder()
                         .setToken(msgDTO.getRegistration_ids())
                         .setNotification(Notification.builder()

@@ -52,9 +52,9 @@ public class Notification extends BaseEntity {
     @JoinColumn(name = "club_id")
     private Club club;
 
-    // 알림과 연관된 청구 reqId
+    // 알림과 연관된 청구 requestId
     @Column
-    private long reqId;
+    private long requestId;
 
     // 알림 열람 여부
     @Convert(converter = YNCodeConverter.class)
@@ -70,8 +70,8 @@ public class Notification extends BaseEntity {
                 .notificationId(id)
                 .title(title)
                 .body(body)
-                .clubId(club.getId())
-                .reqId(reqId)
+                .clubId(clubId)
+                .requestId(requestId)
                 .date(getCreateDate())
                 .isRead(isRead == YNCode.Y)
                 .notiCode(notiCode.getValue())

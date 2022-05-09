@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface ClubCrewRepoCommon {
     Optional<ClubCrew> findByClubIdAndCrewId(Long clubId, Long crewId); // 특정 모임 조회
+    Optional<ClubCrew> findByClubIdAndCrewIdWithCrew(Long clubId, Long crewId); // 특정 모임 조회
     Long findCountByClubId(Long clubId); // 모임별 인원 조회
     AuthCode findAuthCodeByClubIdAndCrewId(long clubId, long crewId); // 모임별 회원 권한 확인
     Boolean findExistByClubIdAndCrewId(Long clubId, Long crewId);    // 가입 여부 확인

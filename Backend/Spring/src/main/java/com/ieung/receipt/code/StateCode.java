@@ -9,7 +9,8 @@ import lombok.Getter;
 public enum StateCode implements BaseEnumCode<String> {
     REQUEST("신청"),
     APPROVE("승인"),
-    REFUSAL("거절");
+    REFUSAL("거절"),
+    ALL("all"); // 조회에만 사용
 
     private final String value;
 }
