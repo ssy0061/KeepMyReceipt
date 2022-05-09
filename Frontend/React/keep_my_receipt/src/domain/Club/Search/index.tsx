@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, IconButton, Grid, Stack } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
-import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import SearchBar from '../../../components/SearchBar';
 import SearchList from './List';
 import axios from 'axios';
