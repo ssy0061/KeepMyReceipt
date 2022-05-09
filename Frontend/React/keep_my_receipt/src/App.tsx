@@ -3,6 +3,7 @@ import SimpleBottomNavigation from './footer';
 import BookIndex from './domain/Book/Index';
 import AlertIndex from './domain/Alert/Index';
 import LoginIndex from './domain/Account/Login';
+// import LogoutIndex from './domain/Account/Logout';
 import SignUpIndex from './domain/Account/SignUp';
 import { BrowserRouter, Routes, Route, Outlet, Link } from 'react-router-dom';
 import ClubIndex from './domain/Club/Index';
@@ -66,6 +67,10 @@ function App() {
             <Route index element={<SignUpIndex />} />
             {/* 추가 */}
           </Route>
+          {/* <Route path="logout" element={<Outlet />}> */}
+          {/* <Route index element={<LogoutIndex />} /> */}
+          {/* 추가 */}
+          {/* </Route> */}
           <Route path="setting" element={<Outlet />}>
             <Route index element={<SettingIndex />} />
             {/* 추가 */}

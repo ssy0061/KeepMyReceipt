@@ -12,34 +12,7 @@ import {
 } from '@mui/material';
 import { yellow } from '@mui/material/colors';
 
-//FCM SDK 추가 및 초기화
-import firebase from 'firebase/compat/app';
-import { initializeApp } from 'firebase/app';
-// 메시지 전송
-import { getMessaging, getToken, onMessage } from 'firebase/messaging';
-
 export default function SignUpForm() {
-  //FCM SDK 추가 및 초기화
-  const config = {
-    apiKey: 'AIzaSyDGykCVGG6PGRdGT8-Y5H7aQAIcr_27Tqs',
-    authDomain: 'keep-my-receipt.firebaseapp.com',
-    projectId: 'keep-my-receipt',
-    storageBucket: 'keep-my-receipt.appspot.com',
-    messagingSenderId: '891638757148',
-    appId: '1:891638757148:web:1c9d4f1ca58fb5b48eecd9',
-    measurementId: 'G-HMSK59MMM0',
-  };
-
-  // 허가요청
-  firebase.initializeApp(config);
-  // 등록 토큰 액세스
-  const messaging = getMessaging();
-
-  // 웹 앱이 포그라운드 상태일 때 메시지 처리
-  onMessage(messaging, (payload) => {
-    console.log('Message received. ', payload);
-  });
-
   // 스타일
   const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
     color: theme.palette.getContrastText(yellow[50]),
@@ -56,7 +29,6 @@ export default function SignUpForm() {
   const switchAuthModeHandler = () => {
     navigate('/login');
   };
-  let token = '';
 
   // input value 가져오기
   const [nickName, setNickName] = useState('');
@@ -83,9 +55,6 @@ export default function SignUpForm() {
   };
 
   // 유효성 검사
-  let totalNum = 0;
-  let onSubmitCheck = false;
-  // const [onSubmitCheck, setOnSubmitCheck] = useState(false);
   const [helpEmailText, setEmailHelpText] = useState('');
   const [helpPasswordText, setPasswordHelpText] = useState('');
   const [helpPasswordCheckText, setPasswordCheckHelpText] = useState('');
@@ -95,10 +64,10 @@ export default function SignUpForm() {
     axios
       .get(`/api/spring/crew/checkEmail/${email}`)
       .then(function (response) {
-        if (response.data.output == 0) {
+        if (response.data.data == true) {
           setEmailHelpText('중복된 이메일입니다');
         } else {
-          totalNum += 1;
+          console.log('사용할 수 있는 이메일입니다.');
         }
       })
       .catch(function (error) {
@@ -111,7 +80,6 @@ export default function SignUpForm() {
     if (regEmail.test(email) === false) {
       setEmailHelpText('이메일 형식이 맞지 않습니다.');
     } else {
-      totalNum += 1;
       setEmailHelpText('');
     }
   };
@@ -125,7 +93,6 @@ export default function SignUpForm() {
         '비밀번호는 8자 이상, 특수문자, 영문자, 숫자를 1개 이상 포함해야 합니다.',
       );
     } else {
-      totalNum += 1;
       setPasswordHelpText('');
     }
   };
@@ -135,35 +102,13 @@ export default function SignUpForm() {
     if (password != checkPassword) {
       setPasswordCheckHelpText('비밀번호가 일치하지 않습니다.');
     } else {
-      totalNum += 1;
       setPasswordCheckHelpText('');
     }
   };
 
-  if (totalNum === 4) {
-    onSubmitCheck = true;
-  }
-
-  getToken(messaging, {
-    // FCM에서 웹 사용자 인증 정보 구성
-    vapidKey:
-      'BAOlbrGYtLAHLlKXzaoFFTaZIujMmBrXtngCRvt13MHAv-CqMwy9y-D2-yVPMN0udgkZ_uvjJtchfr-oBpqqrnM',
-  })
-    .then((currentToken) => {
-      if (currentToken) {
-        token = currentToken;
-      } else {
-        console.log(
-          'No registration token available. Request permission to generate one.',
-        );
-      }
-    })
-    .catch((err) => {
-      console.log('An error occurred while retrieving token. ', err);
-    });
-
   // 회원가입 후 페이지 이동
   const navigate = useNavigate();
+
   const submitHandler = (event: any) => {
     event.preventDefault();
     setIsLoading(true);
@@ -179,7 +124,7 @@ export default function SignUpForm() {
         if (response.data.output == 0) {
           alert(errorMessage);
         } else {
-          navigate('/');
+          navigate('/login');
         }
       })
       .catch(function (error) {
@@ -253,7 +198,7 @@ export default function SignUpForm() {
               <ColorButton
                 variant="contained"
                 type="submit"
-                disabled={onSubmitCheck}
+                // disabled={submitCheck(true)}
               >
                 확인
               </ColorButton>

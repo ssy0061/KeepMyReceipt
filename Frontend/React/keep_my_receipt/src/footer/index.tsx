@@ -15,7 +15,6 @@ export default function SimpleBottomNavigation() {
   const accessToken = sessionStorage.getItem('accessToken');
   if (accessToken) {
     axios.defaults.headers.common['Authorization'] = accessToken;
-    console.log(axios.defaults.headers.common['Authorization']);
   }
   const navigate = useNavigate();
 

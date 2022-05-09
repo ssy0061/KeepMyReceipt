@@ -17,12 +17,9 @@ import firebase from 'firebase/compat/app';
 import { initializeApp } from 'firebase/app';
 // 메시지 전송
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
-import { onBackgroundMessage } from 'firebase/messaging/sw';
-
 const JWT_EXPIRY_TIME = 24 * 3600 * 1000; // 만료 시간 (24시간 밀리 초로 표현)
 
 export default function LoginForm() {
-  //fcm
   //FCM SDK 추가 및 초기화
   const config = {
     apiKey: 'AIzaSyDGykCVGG6PGRdGT8-Y5H7aQAIcr_27Tqs',
@@ -34,11 +31,11 @@ export default function LoginForm() {
     measurementId: 'G-HMSK59MMM0',
   };
 
+  let token = '';
   // 허가요청
   firebase.initializeApp(config);
   // 등록 토큰 액세스
   const messaging = getMessaging();
-  let token = '';
 
   // 웹 앱이 포그라운드 상태일 때 메시지 처리
   onMessage(messaging, (payload) => {
@@ -56,8 +53,7 @@ export default function LoginForm() {
       backgroundColor: yellow[800],
     },
   }));
-
-  //회원가입 - 로그인 형식바꾸는 부분
+  const navigate = useNavigate();
   const switchAuthModeHandler = () => {
     navigate('/signup');
   };
@@ -77,25 +73,7 @@ export default function LoginForm() {
     setPassword(e.target.value);
   };
 
-  getToken(messaging, {
-    // FCM에서 웹 사용자 인증 정보 구성
-    vapidKey:
-      'BAOlbrGYtLAHLlKXzaoFFTaZIujMmBrXtngCRvt13MHAv-CqMwy9y-D2-yVPMN0udgkZ_uvjJtchfr-oBpqqrnM',
-  })
-    .then((currentToken) => {
-      if (currentToken) {
-        token = currentToken;
-      } else {
-        console.log(
-          'No registration token available. Request permission to generate one.',
-        );
-      }
-    })
-    .catch((err) => {
-      console.log('An error occurred while retrieving token. ', err);
-    });
-
-  const navigate = useNavigate();
+  // let token = sessionStorage.getItem('fcmToken');
 
   //일반 로그인
   function onLoginSuccess(response: any) {
@@ -118,6 +96,25 @@ export default function LoginForm() {
       });
   }
 
+  getToken(messaging, {
+    // FCM에서 웹 사용자 인증 정보 구성
+    vapidKey:
+      'BAOlbrGYtLAHLlKXzaoFFTaZIujMmBrXtngCRvt13MHAv-CqMwy9y-D2-yVPMN0udgkZ_uvjJtchfr-oBpqqrnM',
+  })
+    .then((currentToken) => {
+      if (currentToken) {
+        token = currentToken;
+        sessionStorage.setItem('fcmToken', token);
+      } else {
+        console.log(
+          'No registration token available. Request permission to generate one.',
+        );
+      }
+    })
+    .catch((err) => {
+      console.log('An error occurred while retrieving token. ', err);
+    });
+
   const submitHandler = (event: any) => {
     event.preventDefault();
     setIsLoading(true);
@@ -135,9 +132,9 @@ export default function LoginForm() {
 
         if (response.data.output == 0) {
           console.log('로그인 실패');
+          console.log(response.data);
         } else {
           onLoginSuccess(response.data);
-          // 로그인 성공 후 메인 페이지로 이동
           navigate('/');
         }
       })
