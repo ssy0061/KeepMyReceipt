@@ -39,6 +39,7 @@ export default function GroupCreate() {
       return;
     }
     // 이미지 파일 업로드하여 url 가져오기
+    axios.defaults.withCredentials = false;
     const imgUrl = imgFile
       ? await axios
           .post(
@@ -50,6 +51,10 @@ export default function GroupCreate() {
               },
             },
           )
+          .then((res) => {
+            console.log(res.data.file);
+            return res.data.file;
+          })
           .catch((e) => {
             console.log(e);
             return;
@@ -61,7 +66,7 @@ export default function GroupCreate() {
       .post('https://k6d104.p.ssafy.io/api/spring/club', {
         name: name,
         description: intro,
-        image: imgUrl ? imgUrl.data : '',
+        image: imgUrl ? imgUrl : '',
       })
       .then((response) => {
         console.log(response);
