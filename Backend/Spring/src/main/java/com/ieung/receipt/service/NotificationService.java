@@ -5,6 +5,7 @@ import com.ieung.receipt.code.YNCode;
 import com.ieung.receipt.config.security.JwtTokenProvider;
 import com.ieung.receipt.dto.notification.NotificationData;
 import com.ieung.receipt.dto.notification.NotificationRequestDTO;
+import com.ieung.receipt.entity.Club;
 import com.ieung.receipt.entity.Crew;
 import com.ieung.receipt.entity.CrewToken;
 import com.ieung.receipt.entity.Notification;
@@ -64,7 +65,7 @@ public class NotificationService {
     }
 
     @Transactional(readOnly = false)
-    public void createManyNotifications(NotiCode notiCode, String title, String body, Long clubId, List<CrewToken> crewTokens) {
+    public void createManyNotifications(NotiCode notiCode, String title, String body, Club club, List<CrewToken> crewTokens) {
         if (crewTokens == null || crewTokens.size() == 0) {
             return;
         }
@@ -78,7 +79,7 @@ public class NotificationService {
                         .title(title)
                         .body(body)
                         .crew(crewToken.getCrew())
-                        .clubId(clubId)
+                        .club(club)
                         .notiCode(notiCode)
                         .isRead(YNCode.N)
                         .build();
