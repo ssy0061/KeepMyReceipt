@@ -49,8 +49,11 @@ public class RequestService {
      * @param clubId, crewId, stateCode, pageable
      */
     public Page<Request> getRequests(long clubId, Long crewId, StateCode stateCode, Pageable pageable) {
-        if (!clubCrewRepository.findExistByClubIdAndCrewId(clubId, crewId)) {
+        AuthCode authCode = clubCrewRepository.findAuthCodeByClubIdAndCrewId(clubId, crewId);
+        if (authCode == null) {
             throw new ApiMessageException("가입된 모임이 아닙니다.");
+        } else if (authCode == AuthCode.NONE || authCode == AuthCode.NORMAL) {
+            throw new AccessDeniedException("");
         }
 
         Page<Request> result;
@@ -71,6 +74,13 @@ public class RequestService {
     public Request getRequest(long requestId, Long crewId) {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new ApiMessageException("해당하는 청구 내역이 없습니다."));
+
+        AuthCode authCode = clubCrewRepository.findAuthCodeByClubIdAndCrewId(request.getClub().getId(), crewId);
+        if (authCode == null) {
+            throw new ApiMessageException("가입된 모임이 아닙니다.");
+        } else if (request.getCrewId() != crewId && (authCode == AuthCode.NONE || authCode == AuthCode.NORMAL)) {
+            throw new AccessDeniedException("");
+        }
 
         if (!clubCrewRepository.findExistByClubIdAndCrewId(request.getClub().getId(), crewId)) {
             throw new ApiMessageException("가입된 모임이 아닙니다.");
@@ -135,7 +145,7 @@ public class RequestService {
 
         AuthCode authCode = clubCrewRepository.findAuthCodeByClubIdAndCrewId(request.getClub().getId(), crewId);
         if (authCode == null) {
-            throw new ApiMessageException("모임에 가입된 회원이 아닙니다.");
+            throw new ApiMessageException("가입된 모임이 아닙니다.");
         }
 
         // 요청 권한 확인
