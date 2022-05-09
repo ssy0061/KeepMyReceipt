@@ -128,6 +128,7 @@ public class RequestService {
      * 특정 청구 요청 거절
      * @param requestId, crewId
      */
+    @Transactional(readOnly = false)
     public Request refusalRequest(long requestId, Long crewId) {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new ApiMessageException("해당하는 청구 내역이 없습니다."));
