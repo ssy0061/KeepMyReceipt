@@ -70,7 +70,7 @@ public class Notification extends BaseEntity {
                 .notificationId(id)
                 .title(title)
                 .body(body)
-                .clubId(clubId)
+                .clubId(club.getId())
                 .requestId(requestId)
                 .date(getCreateDate())
                 .isRead(isRead == YNCode.Y)
