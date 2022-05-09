@@ -14,7 +14,6 @@ interface listItemTypes {
   image: string;
 }
 
-type LocationState = { propWord: string; used: boolean };
 interface resopnseType {
   pageNumber: number;
   size: number;
@@ -26,10 +25,8 @@ interface resopnseType {
 
 export default function GroupSearch() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const keyWord = searchParams.get('query');
-  const { propWord, used } = (location.state as LocationState) || {};
   const [word, setWord] = useState('');
   const [res, setRes] = useState<resopnseType>({
     pageNumber: 0,
@@ -41,15 +38,6 @@ export default function GroupSearch() {
   });
   const { list } = res || null;
 
-  useEffect(() => {
-    if (!used && propWord) {
-      console.log(
-        'propWord로 모임 검색 API 요청' + '(검색어: ' + propWord + ')',
-      );
-      setWord(propWord);
-      console.log(location);
-    }
-  }, []);
   useEffect(() => {
     if (keyWord) {
       setWord(keyWord);
@@ -63,7 +51,7 @@ export default function GroupSearch() {
     await axios
       .get('https://k6d104.p.ssafy.io/api/spring/clubs', {
         params: {
-          name: word,
+          name: keyWord ? keyWord : word,
           page: page ? page : 0,
           size: 5,
           sort: 'id,DESC',
@@ -78,7 +66,7 @@ export default function GroupSearch() {
   };
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{ padding: 0 }}>
       <Grid container direction="column" sx={{ marginBottom: 3 }}>
         {/* 상단 */}
         <Stack

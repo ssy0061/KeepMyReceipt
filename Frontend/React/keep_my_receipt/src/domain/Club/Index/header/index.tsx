@@ -11,7 +11,6 @@ export default function IndexHeader() {
   return (
     <Stack
       direction="row"
-      spacing={2}
       justifyContent="center"
       alignItems="center"
       sx={{ position: 'relative' }}

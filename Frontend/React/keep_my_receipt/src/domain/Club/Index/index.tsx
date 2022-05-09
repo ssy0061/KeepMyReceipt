@@ -55,11 +55,10 @@ export default function ClubIndex() {
     getClubList(0);
   }, []);
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{ padding: 0 }}>
       <Grid container direction="column" sx={{ marginBottom: 3 }}>
         {/* Header */}
         <IndexHeader />
-
         {/* 리스트 */}
         <Stack direction="column" justifyContent="space-between" spacing={2}>
           <Stack

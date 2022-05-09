@@ -78,7 +78,7 @@ export default function GroupCreate() {
     navigate('..');
   };
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{ padding: 0 }}>
       <Stack direction="column" spacing={3}>
         {/* 상단 */}
         <Stack

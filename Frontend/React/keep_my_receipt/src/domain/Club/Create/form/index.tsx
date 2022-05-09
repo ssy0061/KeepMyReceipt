@@ -37,11 +37,10 @@ export default function CreateForm({
             <TextField
               fullWidth
               label="모임 소개"
-              multiline
               name="intro"
               value={intro}
               onChange={onChange}
-              inputProps={{ maxLength: 50 }}
+              inputProps={{ maxLength: 20 }}
               maxRows={4}
             />
           </Grid>

@@ -84,12 +84,7 @@ export default function Pagination({
       );
     }
     return (
-      <Stack
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
-        spacing={1}
-      >
+      <Stack direction="row" justifyContent="center" alignItems="center">
         <IconButton
           onClick={onClcikBack}
           color="inherit"
