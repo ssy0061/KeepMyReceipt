@@ -26,7 +26,7 @@ public class Request extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "request_id")
-    private long id;
+    private Long id;
 
     // 연관된 모임
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,7 +36,7 @@ public class Request extends BaseEntity {
 
     // 신청자
     @Column(nullable = false)
-    private long crewId;
+    private Long crewId;
 
     // 신청자 이름
     @Column(nullable = false, length = 64)

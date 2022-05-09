@@ -55,7 +55,7 @@ public class RequestController {
 
         // 알림 전송
         List<CrewToken> crewTokens = crewTokenService.getLeaderOrManagerCrewTokenList(clubId);
-        notificationService.createManyNotifications(NotiCode.CHARGE,"청구 알림",
+        notificationService.createManyNotifications(NotiCode.CHARGE,request.getId(), "청구 알림",
                 request.getCrewName() + "님이 "+ request.getPrice() + "원을 청구하였습니다.",
                 request.getClub(), crewTokens);
 
@@ -124,7 +124,7 @@ public class RequestController {
 
         // 알림 전송
         List<CrewToken> crewTokens = crewTokenService.getNormalCrewToken(request.getCrewId());
-        notificationService.createManyNotifications(NotiCode.CHARGE,"청구 거절 알림",
+        notificationService.createManyNotifications(NotiCode.CHARGE, requestId, "청구 거절 알림",
                 request.getPrice() + "원 청구가 거절되었습니다.",
                 request.getClub(), crewTokens);
 

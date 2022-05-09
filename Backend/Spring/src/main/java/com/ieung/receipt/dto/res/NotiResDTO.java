@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class NotiResDTO {
     @Schema(description = "알림 PK", example = "1")
-    private long notificationId;
+    private Long notificationId;
 
     @Schema(description = "알림 제목", example = "가입 요청 알림")
     private String title;
@@ -31,8 +31,8 @@ public class NotiResDTO {
     private boolean isRead;
 
     @Schema(description = "연관 모임 id", example = "1")
-    private long clubId;
+    private Long clubId;
 
     @Schema(description = "청구 요청 내역 id (알림 분류 코드가 청구일 때만)", example = "1")
-    private long requestId;
+    private Long requestId;
 }

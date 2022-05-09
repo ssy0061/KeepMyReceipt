@@ -25,7 +25,7 @@ public class Notification extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notification_id")
-    private long id;
+    private Long id;
 
     // 회원
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,7 +54,7 @@ public class Notification extends BaseEntity {
 
     // 알림과 연관된 청구 requestId
     @Column
-    private long requestId;
+    private Long requestId;
 
     // 알림 열람 여부
     @Convert(converter = YNCodeConverter.class)

@@ -34,7 +34,7 @@ public class NotificationService {
     private final PushService pushService;
 
     @Transactional(readOnly = false)
-    public void createOneNotification(NotiCode notiCode, String title, String body, Club club, List<CrewToken> crewTokens) {
+    public void createOneNotification(NotiCode notiCode, Long requestId, String title, String body, Club club, List<CrewToken> crewTokens) {
         if (crewTokens == null || crewTokens.size() == 0) {
             return;
         }
@@ -45,6 +45,7 @@ public class NotificationService {
                 .crew(crewTokens.get(0).getCrew())
                 .club(club)
                 .notiCode(notiCode)
+                .requestId(requestId)
                 .isRead(YNCode.N)
                 .build();
 
@@ -65,7 +66,7 @@ public class NotificationService {
     }
 
     @Transactional(readOnly = false)
-    public void createManyNotifications(NotiCode notiCode, String title, String body, Club club, List<CrewToken> crewTokens) {
+    public void createManyNotifications(NotiCode notiCode, Long requestId, String title, String body, Club club, List<CrewToken> crewTokens) {
         if (crewTokens == null || crewTokens.size() == 0) {
             return;
         }
@@ -80,6 +81,7 @@ public class NotificationService {
                         .body(body)
                         .crew(crewToken.getCrew())
                         .club(club)
+                        .requestId(requestId)
                         .notiCode(notiCode)
                         .isRead(YNCode.N)
                         .build();
