@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { Divider, Stack, Switch, Typography } from '@mui/material';
 
-export function MainCategoryDialog() {
+export const MainCategoryDialog = memo(() => {
   const [checked, setChecked] = useState(true);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,4 +28,4 @@ export function MainCategoryDialog() {
       </Stack>
     </>
   );
-}
+});

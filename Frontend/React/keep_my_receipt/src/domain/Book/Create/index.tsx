@@ -1,15 +1,30 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import { Container } from '@mui/material';
 
 import Header from './Header';
 import PageButtons from './PageButtons';
 import Item from './Item';
-import bookReducer from '../bookReducer';
+import bookReducer, { updateBook } from '../bookReducer';
 import bookSample from './sample.json';
 
 export default function BookCreate() {
   const [state, dispatch] = useReducer(bookReducer, bookSample);
   const [page, setPage] = useState(1);
+
+  // 금액 총합을 누적해서 계산
+  // 아이템에 변화가 생길 때마다 재생성
+  const sumTotalValue = useCallback(() => {
+    const newTotalValue = state.items.reduce((prev, cur) => {
+      return prev + parseInt(cur.itemValue.toString());
+    }, 0);
+    if (newTotalValue !== state.totalValue) {
+      dispatch(updateBook('totalValue', newTotalValue));
+    }
+  }, [state.items]);
+
+  useEffect(() => {
+    sumTotalValue();
+  }, [state.items]);
 
   useEffect(() => {
     console.log('state', state);
@@ -23,6 +38,7 @@ export default function BookCreate() {
         date={state.date}
         totalValue={state.totalValue}
         length={state.items.length}
+        dispatch={dispatch}
       />
 
       {/* 페이지네이션 버튼들 */}

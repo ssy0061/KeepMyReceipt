@@ -3,6 +3,7 @@ import { IconButton, ListItem } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 
 import ListItemTextWithSubtext from '../../../domain/Book/Create/ListItemTextWithSubtext';
+import toCurrency from '../../../services/toCurrency';
 
 interface ItemInfoOnShowType {
   titleName: string;
@@ -26,7 +27,9 @@ export default function ItemInfoOnShow({
       >
         <ListItemTextWithSubtext
           text={titleName}
-          subtext={itemValue.toString()}
+          subtext={
+            typeof itemValue === 'number' ? toCurrency(itemValue) : itemValue
+          }
           inset
         />
       </ListItem>

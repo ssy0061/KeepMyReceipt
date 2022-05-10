@@ -1,4 +1,5 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
+import toCurrency from '../../../../services/toCurrency';
 import ListItem from '../ListItem';
 import sample from './sample.json';
 
@@ -20,8 +21,9 @@ export default function BookList() {
             <Typography>{sample.date.slice(8) + '일'}</Typography>
             {/* 오른쪽 끝에 수입과 지출 */}
             <Typography>
-              {sample.earn ? '+' + sample.earn : ''}
-              {sample.cost}
+              {sample.earn ? '+' + toCurrency(sample.earn) : ''}
+              <br />
+              {toCurrency(sample.cost)}
             </Typography>
           </Stack>
           <Divider />

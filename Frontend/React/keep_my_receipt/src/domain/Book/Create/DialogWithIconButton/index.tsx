@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {
   Backdrop,
   Button,
@@ -27,10 +27,7 @@ const Transition = React.forwardRef(function Transition(
   // <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function DialogWithIconButton({
-  icon,
-  content,
-}: DialogWithIconButtonType) {
+function DialogWithIconButton({ icon, content }: DialogWithIconButtonType) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // 아이콘 클릭 시 겹치는 메뉴 열리는 이벤트 차단
@@ -66,3 +63,5 @@ export default function DialogWithIconButton({
     </>
   );
 }
+
+export default memo(DialogWithIconButton);

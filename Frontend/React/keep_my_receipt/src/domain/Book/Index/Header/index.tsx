@@ -1,5 +1,6 @@
 import { Box, IconButton, Stack, Typography } from '@mui/material';
 import { ArrowLeft, ArrowRight } from '@mui/icons-material';
+import toCurrency from '../../../../services/toCurrency';
 
 export default function IndexHeader() {
   return (
@@ -18,10 +19,10 @@ export default function IndexHeader() {
       {/* 지출 & 수입 */}
       <Box marginY={3}>
         <Typography alignSelf="center">
-          지출 <b>200000원</b>
+          지출 <b>{toCurrency(200000)}</b>
         </Typography>
         <Typography>
-          수입 <b>1000000원</b>
+          수입 <b>{toCurrency(1000000)}</b>
         </Typography>
       </Box>
     </>

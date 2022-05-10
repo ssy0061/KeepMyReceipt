@@ -1,4 +1,5 @@
 import { Stack, Typography } from '@mui/material';
+import toCurrency from '../../../../services/toCurrency';
 
 interface ItemType {
   name: string;
@@ -24,7 +25,7 @@ export default function ListItem({ items }: { items: ItemType[] }) {
           </Stack>
 
           {/* 거래내역 금액 */}
-          <Typography>{item.amount}</Typography>
+          <Typography>{toCurrency(item.amount)}</Typography>
         </Stack>
       ))}
     </>

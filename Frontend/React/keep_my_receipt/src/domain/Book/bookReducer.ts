@@ -21,11 +21,18 @@ type BookState = {
 
 /* 액션 타입 */
 const MODULE_NAME = 'book';
+const UPDATE_BOOK = `${MODULE_NAME}/UPDATE_BOOK` as const;
 const CREATE_ITEM = `${MODULE_NAME}/CREATE_ITEM` as const;
 const UPDATE_ITEM = `${MODULE_NAME}/UPDATE_ITEM` as const;
 const DELETE_ITEM = `${MODULE_NAME}/DELETE_ITEM` as const;
 
 /* 액션 생성함수 */
+export const updateBook = (keyName: string, keyValue: string | number) => ({
+  type: UPDATE_BOOK,
+  keyName,
+  keyValue,
+});
+
 export const createItem = (
   indexToInsert?: number,
   itemName?: string,
@@ -55,6 +62,7 @@ export const deleteItem = (itemIndex: number) => ({
 
 /* 액션 생성함수 타입 */
 export type BookAction =
+  | ReturnType<typeof updateBook>
   | ReturnType<typeof createItem>
   | ReturnType<typeof updateItem>
   | ReturnType<typeof deleteItem>;
@@ -65,6 +73,13 @@ export default function bookReducer(
   action: BookAction,
 ): BookState {
   switch (action.type) {
+    case UPDATE_BOOK:
+      /** 거래 내역 수정 */
+      return {
+        ...state,
+        [action.keyName]: action.keyValue,
+      };
+
     case CREATE_ITEM:
       /** 아이템 추가 */
       // 새로 넣을 아이템 정의
