@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   CardActionArea,
@@ -41,6 +41,7 @@ export default function ClubListItem({
           res.data.data === '회원'
         ) {
           setJoined(true);
+          setWait(false);
         } else if (res.data.data === '대기') {
           setWait(true);
         }
@@ -49,7 +50,12 @@ export default function ClubListItem({
         console.log(e);
       });
   };
-  checkJoin ? checkJoined() : null;
+  // checkJoin ? checkJoined() : null;
+  useEffect(() => {
+    if (checkJoin) {
+      checkJoined();
+    }
+  });
   return (
     <Grid
       item

@@ -109,7 +109,7 @@ export default function Pagination({
   };
   return (
     <Stack>
-      {pageList()}
+      {totalPages === 1 ? null : pageList()}
       Pagination
       <p>
         페이지: {pageNumber}/{totalPages > 0 ? totalPages - 1 : 0} (0...n) __

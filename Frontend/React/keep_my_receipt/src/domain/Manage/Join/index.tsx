@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-import { Container, IconButton, Grid, Stack } from '@mui/material';
+import { Container, IconButton, Grid, Stack, Button } from '@mui/material';
 import Pagination from '../../../components/Pagination';
+import JoinApproveDialog from './ApproveDialog';
 
 interface listItemTypes {
   clubCrewId: number;
@@ -20,6 +21,7 @@ interface resopnseType {
 }
 
 export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
+  const [open, setOpen] = useState(false);
   const { id, name, description, image } = clubInfo;
   const [res, setRes] = useState<resopnseType>({
     pageNumber: 0,
@@ -30,6 +32,11 @@ export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
     list: [],
   });
   const { list } = res;
+  const [dialogInfo, setDialogInfo] = useState<listItemTypes>({
+    clubCrewId: 0,
+    name: '',
+    email: '',
+  });
   const getRequestList = async (page?: number) => {
     await axios
       .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}/crews/requests`, {
@@ -41,18 +48,36 @@ export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
       })
       .then((response) => {
         // console.log(response.data.data.list[0].name);
-        setRes(response.data.data);
+        const output = response.data.output;
+        if (output === 200) {
+          console.log(response.data.data);
+          setRes(response.data.data);
+        } else if (output === 0) {
+          console.log(response.data.msg);
+        }
       })
       .catch((e) => {
         console.log(e);
       });
   };
+
+  const onClick = (item: listItemTypes) => {
+    setDialogInfo(item);
+    setOpen(true);
+  };
+
   useEffect(() => {
     getRequestList();
   }, []);
   return (
     <Stack>
       {/* Dialog */}
+      <JoinApproveDialog
+        open={open}
+        setOpen={setOpen}
+        clubCrewInfo={dialogInfo}
+        updateInfo={getRequestList}
+      />
       {/* Table */}
       <Stack
         direction="column"
@@ -65,9 +90,18 @@ export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
         {/* 리스트 */}
         {list.length ? (
           list.map((item: any) => (
-            <span key={item.clubCrewId}>
-              {item.name} / {item.email}
-            </span>
+            <Stack direction="row" key={item.clubCrewId}>
+              <span>
+                {item.name} / {item.email}
+              </span>
+              <Button
+                onClick={() => {
+                  onClick(item);
+                }}
+              >
+                확인
+              </Button>
+            </Stack>
           ))
         ) : (
           <p>검색된 신청자가 없습니다.</p>

@@ -23,7 +23,12 @@ interface TabPanelProps {
 export default function ManageIndex() {
   // 모임 정보 가져오기
   const { id } = useParams();
-  const [clubInfo, setClubInfo] = useState<ClubInfoType>();
+  const [clubInfo, setClubInfo] = useState<ClubInfoType>({
+    id: 0,
+    name: '',
+    description: '',
+    image: '',
+  });
   const getClubInfo = async () => {
     await axios
       .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}`)
