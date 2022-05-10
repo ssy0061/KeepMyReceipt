@@ -55,6 +55,8 @@ export default function SignUpForm() {
   };
 
   // 유효성 검사
+  // let cansignup = true;
+  // const [canSignUp, setCanSignUp] = useState(true);
   const [helpEmailText, setEmailHelpText] = useState('');
   const [helpPasswordText, setPasswordHelpText] = useState('');
   const [helpPasswordCheckText, setPasswordCheckHelpText] = useState('');
@@ -66,8 +68,6 @@ export default function SignUpForm() {
       .then(function (response) {
         if (response.data.data == true) {
           setEmailHelpText('중복된 이메일입니다');
-        } else {
-          console.log('사용할 수 있는 이메일입니다.');
         }
       })
       .catch(function (error) {
@@ -106,9 +106,18 @@ export default function SignUpForm() {
     }
   };
 
+  // const okSignUp = () => {
+  //   if (
+  //     helpEmailText == '' &&
+  //     helpPasswordText == '' &&
+  //     helpPasswordCheckText == ''
+  //   ) {
+  //     cansignup = false;
+  //   }
+  // };
+
   // 회원가입 후 페이지 이동
   const navigate = useNavigate();
-
   const submitHandler = (event: any) => {
     event.preventDefault();
     setIsLoading(true);
@@ -139,6 +148,7 @@ export default function SignUpForm() {
         <Stack spacing={1.5}>
           <TextField
             onChange={onChangeName}
+            key={nickName}
             type="text"
             id="nickname"
             name="nickname"
@@ -150,6 +160,7 @@ export default function SignUpForm() {
             size="small"
           />
           <TextField
+            key={email}
             onChange={onChangeEmail}
             onBlur={onCheckEmail}
             placeholder="이메일을 입력해주세요"
@@ -166,6 +177,7 @@ export default function SignUpForm() {
           />
 
           <TextField
+            key={password}
             onChange={onChangePassword}
             onBlur={onCheckPasswordRight}
             id="password"
@@ -180,6 +192,7 @@ export default function SignUpForm() {
             size="small"
           />
           <TextField
+            key={checkPassword}
             onChange={onChangeCheckPassword}
             onBlur={onCheckPasswordEqual}
             type="password"
@@ -198,7 +211,7 @@ export default function SignUpForm() {
               <ColorButton
                 variant="contained"
                 type="submit"
-                // disabled={submitCheck(true)}
+                // disabled={cansignup}
               >
                 확인
               </ColorButton>

@@ -23,9 +23,6 @@ export default function ListItem() {
         .then(function (response) {
           if (response.data.output == 0) {
             console.log('로그아웃 실패');
-            console.log(response);
-            console.log(accessToken);
-            console.log(fcmToken);
           } else {
             console.log('로그아웃 성공');
             navigate('/');
@@ -87,7 +84,7 @@ export default function ListItem() {
       </Button>
       <Button
         onClick={() => {
-          onClickButton('/');
+          onClickButton(`/club/${1}/analytics/mainChart`);
         }}
         sx={{
           my: 2,

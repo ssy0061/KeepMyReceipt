@@ -3,7 +3,6 @@ import SimpleBottomNavigation from './footer';
 import BookIndex from './domain/Book/Index';
 import AlertIndex from './domain/Alert/Index';
 import LoginIndex from './domain/Account/Login';
-// import LogoutIndex from './domain/Account/Logout';
 import SignUpIndex from './domain/Account/SignUp';
 import { BrowserRouter, Routes, Route, Outlet, Link } from 'react-router-dom';
 import ClubIndex from './domain/Club/Index';
@@ -20,6 +19,7 @@ import ApproveIndex from './domain/Receipt/Approve';
 import ManageIndex from './domain/Manage';
 import MainChartIndex from './domain/Analytics';
 import SubChartIndex from './domain/Analytics/MediumTagChart';
+import './App.css';
 
 function App() {
   return (
@@ -34,6 +34,14 @@ function App() {
             <Route path="create" element={<ClubCreate />} />
             <Route path="search" element={<ClubSearch />} />
             <Route path=":id" element={<Outlet />}>
+              <Route path="alert" element={<Outlet />}>
+                <Route index element={<AlertIndex />} />
+                {/* 추가 */}
+              </Route>
+              <Route path="setting" element={<Outlet />}>
+                <Route index element={<SettingIndex />} />
+                {/* 추가 */}
+              </Route>
               <Route path="book" element={<Outlet />}>
                 <Route index element={<BookIndex />} />
                 <Route path="create" element={<BookCreate />} />
@@ -55,26 +63,14 @@ function App() {
               </Route>
             </Route>
           </Route>
-          <Route path="alert" element={<Outlet />}>
-            <Route index element={<AlertIndex />} />
-            {/* 추가 */}
-          </Route>
-          <Route path="login" element={<Outlet />}>
-            <Route index element={<LoginIndex />} />
-            {/* 추가 */}
-          </Route>
-          <Route path="signup" element={<Outlet />}>
-            <Route index element={<SignUpIndex />} />
-            {/* 추가 */}
-          </Route>
-          {/* <Route path="logout" element={<Outlet />}> */}
-          {/* <Route index element={<LogoutIndex />} /> */}
+        </Route>
+        <Route path="login" element={<Outlet />}>
+          <Route index element={<LoginIndex />} />
           {/* 추가 */}
-          {/* </Route> */}
-          <Route path="setting" element={<Outlet />}>
-            <Route index element={<SettingIndex />} />
-            {/* 추가 */}
-          </Route>
+        </Route>
+        <Route path="signup" element={<Outlet />}>
+          <Route index element={<SignUpIndex />} />
+          {/* 추가 */}
         </Route>
 
         {/* baseUrl/book이면 book index로 접속 */}

@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+@font-face {
+  font-family: EastSeaDokdoRegular;
+  src: url('/public/font/EastSeaDokdo-Regular.ttf');
+}
+
+@font-face {
+  font-family: BlackHanSans-Regular;
+  src: url('/public/font/BlackHanSans-Regular.ttf');
+}
