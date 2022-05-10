@@ -1,12 +1,14 @@
 import { memo } from 'react';
-import { Collapse, IconButton, List, ListItemButton } from '@mui/material';
+import { Collapse, List, ListItemButton } from '@mui/material';
 import { ExpandLess, ExpandMore, Info } from '@mui/icons-material';
 
 import useEditableList from '../../../../hooks/useEditableList';
+import DialogWithIconButton from '../DialogWithIconButton';
 import ListItemTextWithSubtext from '../ListItemTextWithSubtext';
 
 interface ItemCategoryType {
   name: string;
+  dialogContent: JSX.Element;
   list: string[];
   category: string;
   setCategory: (value: string) => void;
@@ -23,18 +25,9 @@ function ItemCategoryEditable(props: ItemCategoryType) {
   return (
     <>
       <List disablePadding>
-        <ListItemButton onClick={handleExpand}>
-          {/* 아이콘 */}
-          <IconButton
-            // 아이콘 클릭 시 물결 효과 제거
-            disableRipple
-            // 아이콘 클릭 시 메뉴 열리는 이벤트 차단
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <Info />
-          </IconButton>
+        <ListItemButton onClick={handleExpand} disableRipple>
+          {/* 아이콘 버튼 with 다이얼로그 */}
+          <DialogWithIconButton icon={<Info />} content={props.dialogContent} />
 
           {/* 분류명 & 선택된 항목 */}
           <ListItemTextWithSubtext text={props.name} subtext={props.category} />

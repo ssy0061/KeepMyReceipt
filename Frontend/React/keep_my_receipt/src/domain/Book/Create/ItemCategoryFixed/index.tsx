@@ -1,13 +1,8 @@
 import { memo, useState } from 'react';
-import {
-  Collapse,
-  IconButton,
-  List,
-  ListItemButton,
-  ListItemText,
-} from '@mui/material';
+import { Collapse, List, ListItemButton, ListItemText } from '@mui/material';
 import { ExpandLess, ExpandMore, Info } from '@mui/icons-material';
 
+import DialogWithIconButton from '../DialogWithIconButton';
 import ListItemTextWithSubtext from '../ListItemTextWithSubtext';
 
 interface ItemCategoryType {
@@ -15,9 +10,16 @@ interface ItemCategoryType {
   list: string[];
   category: string;
   setCategory: (value: string) => void;
+  dialogContent: JSX.Element;
 }
 
-function ItemCategory({ name, list, category, setCategory }: ItemCategoryType) {
+function ItemCategory({
+  name,
+  list,
+  category,
+  setCategory,
+  dialogContent,
+}: ItemCategoryType) {
   // 세부 목록 열림 / 닫힘 상태
   const [open, setOpen] = useState(false);
 
@@ -34,18 +36,9 @@ function ItemCategory({ name, list, category, setCategory }: ItemCategoryType) {
   return (
     <>
       <List disablePadding>
-        <ListItemButton onClick={handleExpand}>
-          {/* 아이콘 */}
-          <IconButton
-            // 아이콘 클릭 시 물결 효과 제거
-            disableRipple
-            // 아이콘 클릭 시 메뉴 열리는 이벤트 차단
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <Info />
-          </IconButton>
+        <ListItemButton onClick={handleExpand} disableRipple>
+          {/* 아이콘 버튼 with 다이얼로그 */}
+          <DialogWithIconButton icon={<Info />} content={dialogContent} />
 
           {/* 분류명 & 선택된 항목 */}
           <ListItemTextWithSubtext text={name} subtext={category} />

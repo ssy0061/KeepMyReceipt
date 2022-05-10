@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
 import { Divider, List, Stack } from '@mui/material';
+import { Info } from '@mui/icons-material';
 
 // 컴포넌트
+import DialogWithIconButton from '../DialogWithIconButton';
 import ItemCategoryEditable from '../ItemCategoryEditable';
 import ItemCategoryFixed from '../ItemCategoryFixed';
+import { MainCategoryDialog } from '../ItemDialogs';
 // 훅
 import useToggle from '../../../../hooks/useToggle';
 import useEditableItem from '../../../../hooks/useEditableItem';
@@ -81,8 +84,17 @@ export default function Item({ item, itemIndex, dispatch }: ItemType) {
         justifyContent="space-between"
         alignItems="center"
         marginY={1}
+        marginLeft={2}
       >
-        <span style={{ marginLeft: '3.5rem' }}>유형</span>
+        {/* 아이콘 버튼 & 다이얼로그 */}
+        <Stack direction="row" alignItems="center">
+          <DialogWithIconButton
+            icon={<Info />}
+            content={<MainCategoryDialog />}
+          />
+          <span>유형</span>
+        </Stack>
+        {/* 유형 선택 토글 버튼 */}
         <ToggleButtons />
       </Stack>
       <Divider />
@@ -90,6 +102,7 @@ export default function Item({ item, itemIndex, dispatch }: ItemType) {
       {/* 대분류 */}
       <ItemCategoryFixed
         name="대분류"
+        dialogContent={<></>}
         list={largeCategories[toggleValue]}
         category={item.largeCategory}
         setCategory={setLargeCategory}
@@ -98,6 +111,7 @@ export default function Item({ item, itemIndex, dispatch }: ItemType) {
 
       <ItemCategoryEditable
         name="중분류"
+        dialogContent={<p>설명</p>}
         list={mediumCategories[item.largeCategory]}
         category={item.mediumCategory}
         setCategory={dispatchAdapter('mediumCategory')}
@@ -106,6 +120,7 @@ export default function Item({ item, itemIndex, dispatch }: ItemType) {
 
       <ItemCategoryEditable
         name="태그 1"
+        dialogContent={<p>설명</p>}
         list={tag1Categories}
         category={item.tag1}
         setCategory={dispatchAdapter('tag1')}
@@ -114,6 +129,7 @@ export default function Item({ item, itemIndex, dispatch }: ItemType) {
 
       <ItemCategoryEditable
         name="태그 2"
+        dialogContent={<p>설명</p>}
         list={tag2Categories[item.tag1]}
         category={item.tag2}
         setCategory={dispatchAdapter('tag2')}
