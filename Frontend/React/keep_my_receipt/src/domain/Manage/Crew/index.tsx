@@ -40,8 +40,13 @@ export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
         },
       })
       .then((res) => {
-        console.log(res.data.data);
-        setRes(res.data.data);
+        const output = res.data.output;
+        if (output === 200) {
+          // console.log(res.data.data);
+          setRes(res.data.data);
+        } else if (output === 0) {
+          console.log(res.data.msg);
+        }
       })
       .catch((e) => {
         console.log(e);

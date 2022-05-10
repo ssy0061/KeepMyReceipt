@@ -33,8 +33,14 @@ export default function ManageIndex() {
     await axios
       .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}`)
       .then((res) => {
-        console.log(res.data.data);
-        setClubInfo(res.data.data);
+        // console.log(res.data.data);
+        const output = res.data.output;
+        if (output === 200) {
+          // console.log(res.data.data);
+          setClubInfo(res.data.data);
+        } else if (output === 0) {
+          console.log(res.data.msg);
+        }
       })
       .catch((e) => {
         console.log(e);
