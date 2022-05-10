@@ -76,7 +76,7 @@ export default function ManageIndex() {
         {/* Header */}
         <Stack
           direction="row"
-          spacing={3}
+          spacing={2}
           alignItems="center"
           justifyContent="flex-start"
         >
@@ -90,7 +90,7 @@ export default function ManageIndex() {
           >
             {clubInfo ? (!clubInfo.image ? clubInfo.name[0] : null) : null}
           </Avatar>
-          <h2>{clubInfo ? clubInfo.name : '모임관리'}</h2>
+          <h2>{clubInfo ? clubInfo.name : null}'s 모임관리</h2>
         </Stack>
 
         {/* Tab */}
@@ -127,7 +127,7 @@ export default function ManageIndex() {
             </Tabs>
           </Box>
           <TabPanel value={value} index={0}>
-            <ManageCrew />
+            <ManageCrew clubInfo={clubInfo} />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <ManageJoin clubInfo={clubInfo} />
