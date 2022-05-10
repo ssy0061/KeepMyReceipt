@@ -40,7 +40,7 @@ export default function CreateForm({
               name="intro"
               value={intro}
               onChange={onChange}
-              inputProps={{ maxLength: 20 }}
+              inputProps={{ maxLength: 50 }}
               maxRows={4}
             />
           </Grid>

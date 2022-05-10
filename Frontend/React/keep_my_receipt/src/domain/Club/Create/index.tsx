@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { IconButton, Stack, Container } from '@mui/material';
-import { ArrowBackIosNew, ContactlessOutlined } from '@mui/icons-material';
+import { ArrowBackIosNew } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CreateImage from './image';
@@ -43,7 +43,7 @@ export default function GroupCreate() {
     const imgUrl = imgFile
       ? await axios
           .post(
-            'http://k6d104.p.ssafy.io:5555/fast/uploadImage',
+            'https://k6d104.p.ssafy.io/fast/uploadImage',
             { image: imgFile },
             {
               headers: {

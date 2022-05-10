@@ -133,7 +133,7 @@ export default function ManageIndex() {
             <ManageJoin clubInfo={clubInfo} />
           </TabPanel>
           <TabPanel value={value} index={2}>
-            <ManageClub />
+            <ManageClub clubInfo={clubInfo} getClubInfo={getClubInfo} />
           </TabPanel>
         </Stack>
       </Grid>
