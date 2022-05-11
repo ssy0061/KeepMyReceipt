@@ -29,6 +29,7 @@ export default function AlarmItem() {
           }}
         />
       </IconButton>
+
       <Menu
         sx={{ mt: '45px' }}
         id="menu-appbar"
@@ -37,7 +38,6 @@ export default function AlarmItem() {
           vertical: 'top',
           horizontal: 'right',
         }}
-        // keepMounted
         transformOrigin={{
           vertical: 'top',
           horizontal: 'right',

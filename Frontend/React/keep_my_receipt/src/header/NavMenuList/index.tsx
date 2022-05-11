@@ -1,12 +1,11 @@
 import Box from '@mui/material/Box';
-import Item from '../NavMenuListItem';
+import Item from './ListItem';
 
 export default function List() {
   return (
     <div>
       <Box
         sx={{
-          bordr: 1,
           float: 'right',
           display: { xs: 'none', md: 'flex' },
         }}

@@ -31,7 +31,9 @@ export default function LeaveClubDialog({
       .delete('api/spring/club/1/crew')
       .then(function (response) {
         if (response.data.msg == '탈퇴할 수 없는 회원입니다.') {
-          alert('탈퇴할 수 없는 회원입니다.');
+          alert('모임의 리더는 탈퇴할 수 없습니다.');
+        } else {
+          alert('가입한 모임이 없습니다.');
         }
       })
       .catch(function (error) {

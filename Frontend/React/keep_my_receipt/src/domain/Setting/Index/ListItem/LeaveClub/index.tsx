@@ -4,7 +4,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ErrorIcon from '@mui/icons-material/Error';
 import LeaveClubDialog from '../../Dialog/LeaveClubDialog';
 
-export default function LeaveClub() {
+export default function LeaveClub(props: any) {
   const [open, setOpen] = useState(false);
   const onClick = () => {
     setOpen(true);

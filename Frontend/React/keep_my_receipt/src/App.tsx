@@ -33,10 +33,14 @@ function App() {
         <Route path="/" element={<Outlet />}>
           <Route index element={<p>랜딩 페이지</p>} />
           <Route path="club" element={<Outlet />}>
+            {/* 로그인 후, 모임 선택 전 nav */}
+            {/* <LoginNavigation /> */}
             <Route index element={<ClubIndex />} />
             <Route path="create" element={<ClubCreate />} />
             <Route path="search" element={<ClubSearch />} />
             <Route path=":id" element={<Outlet />}>
+              {/* 로그인 후, 모임 선택 후 nav */}
+              {/* <Navigation /> */}
               <Route path="alert" element={<Outlet />}>
                 <Route index element={<AlertIndex />} />
                 {/* 추가 */}
@@ -84,7 +88,8 @@ function App() {
         <Route path="/login/index" element={<LoginIndex />} />
         <Route path="/setting/index" element={<SettingIndex />} />
       </Routes>
-      <SimpleBottomNavigation />
+      {/* 비로그인시 하단 navbar */}
+      {/* <SimpleBottomNavigation /> */}
     </BrowserRouter>
   );
 }
