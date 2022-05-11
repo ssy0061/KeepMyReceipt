@@ -134,6 +134,11 @@ public class ClubCrewController {
         try {
             // String auth값 authCode로 변환
             AuthCode authCode = AuthCode.valueOf(auth);
+
+            if (authCode == AuthCode.NONE) {
+                throw new ApiMessageException("지원하지 않는 권한입니다.");
+            }
+
             Page<ClubCrew> page = clubCrewService.getClubCrews(clubId, getCurrentCrewId(), authCode, pageable);
 
             // 반환 DTO에 맞도록 가공
@@ -145,7 +150,7 @@ public class ClubCrewController {
 
             return responseService.getSingleResult(pagingListResDTO);
         } catch (IllegalArgumentException iae) {
-            throw new ApiMessageException("지원하지 않는 상태입니다.");
+            throw new ApiMessageException("지원하지 않는 권한입니다.");
         }
     }
 
