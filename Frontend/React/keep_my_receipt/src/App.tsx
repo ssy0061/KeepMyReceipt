@@ -1,10 +1,12 @@
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import './App.css';
+
 import Navigation from './header';
 import SimpleBottomNavigation from './footer';
 import BookIndex from './domain/Book/Index';
 import AlertIndex from './domain/Alert/Index';
 import LoginIndex from './domain/Account/Login';
 import SignUpIndex from './domain/Account/SignUp';
-import { BrowserRouter, Routes, Route, Outlet, Link } from 'react-router-dom';
 import ClubIndex from './domain/Club/Index';
 import ClubCreate from './domain/Club/Create';
 import ClubSearch from './domain/Club/Search';
@@ -19,7 +21,8 @@ import ApproveIndex from './domain/Receipt/Approve';
 import ManageIndex from './domain/Manage';
 import MainChartIndex from './domain/Analytics';
 import SubChartIndex from './domain/Analytics/MediumTagChart';
-import './App.css';
+import BudgetReport from './domain/Report/Budget';
+import AssetReport from './domain/Report/Asset';
 
 function App() {
   return (
@@ -57,6 +60,10 @@ function App() {
                 <Route path="mainChart" element={<MainChartIndex />} />
                 <Route path="subChart" element={<SubChartIndex />} />
                 {/* 추가 */}
+              </Route>
+              <Route path="report" element={<Outlet />}>
+                <Route path="asset" element={<AssetReport />} />
+                <Route path="budget" element={<BudgetReport />} />
               </Route>
               <Route path="manage" element={<Outlet />}>
                 <Route index element={<ManageIndex />} />
