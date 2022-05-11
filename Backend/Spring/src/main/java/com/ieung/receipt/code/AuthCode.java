@@ -11,7 +11,8 @@ public enum AuthCode implements BaseEnumCode<String> {
     LEADER("리더"),
     MANAGER("관리자"),
     NORMAL("회원"),
-    NONE("대기");
+    NONE("대기"),
+    ALL("all"); // 검색에만 사용
 
     private final String value;
 }

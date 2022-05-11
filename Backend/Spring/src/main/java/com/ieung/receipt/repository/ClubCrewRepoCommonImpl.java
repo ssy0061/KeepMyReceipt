@@ -8,6 +8,7 @@ import com.ieung.receipt.entity.QCrew;
 import com.ieung.receipt.util.QueryDslUtil;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -121,6 +123,34 @@ public class ClubCrewRepoCommonImpl implements ClubCrewRepoCommon {
     }
 
     @Override
+    public Page<ClubCrew> findByClubIdAndAuthCode(Long clubId, AuthCode authCode, Pageable pageable) {
+        List<OrderSpecifier> orders = getAllOrderSpecifiers(pageable);
+
+        List<ClubCrew> result = queryFactory
+                .select(QClubCrew.clubCrew)
+                .from(QClubCrew.clubCrew)
+                .innerJoin(QClubCrew.clubCrew.crew, QCrew.crew)
+                .fetchJoin()
+                .where(QClubCrew.clubCrew.club.id.eq(clubId),
+                        QClubCrew.clubCrew.auth.eq(authCode))
+                .orderBy(orders.stream().toArray(OrderSpecifier[]::new))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        long total = queryFactory
+                .select(QClubCrew.clubCrew)
+                .from(QClubCrew.clubCrew)
+                .innerJoin(QClubCrew.clubCrew.crew, QCrew.crew)
+                .fetchJoin()
+                .where(QClubCrew.clubCrew.club.id.eq(clubId),
+                        QClubCrew.clubCrew.auth.eq(authCode))
+                .fetch().size();
+
+        return new PageImpl<>(result, pageable, total);
+    }
+
+    @Override
     public Page<ClubCrew> findRequestsByClubId(Long clubId, Pageable pageable) {
         List<OrderSpecifier> orders = getAllOrderSpecifiers(pageable);
 
@@ -181,7 +211,14 @@ public class ClubCrewRepoCommonImpl implements ClubCrewRepoCommon {
                         ORDERS.add(orderId);
                         break;
                     case "auth":
-                        OrderSpecifier<?> orderName = QueryDslUtil.getSortedColumn(direction, QClubCrew.clubCrew, "auth");
+                        List<String> list = new ArrayList<>();
+                        list.addAll(Arrays.asList("리더", "관리자", "회원"));
+                        OrderSpecifier<?> orderName;
+                        if (direction == Order.ASC) {
+                            orderName = Expressions.stringTemplate("FIELD({0}, {1})", QClubCrew.clubCrew.auth, list).asc();
+                        } else {
+                            orderName = Expressions.stringTemplate("FIELD({0}, {1})", QClubCrew.clubCrew.auth, list).desc();
+                        }
                         ORDERS.add(orderName);
                         break;
                     case "create_date":
