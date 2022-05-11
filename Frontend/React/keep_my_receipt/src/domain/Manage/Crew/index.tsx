@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Stack, Button } from '@mui/material';
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
+import * as qs from 'qs';
+import CrewMenu from './Menu';
 
 interface listItemTypes {
   clubCrewId: number;
@@ -30,16 +32,21 @@ export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
     list: [],
   });
   const { list } = res;
+  const crewListAxios = axios.create({
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: 'repeat' }),
+  });
   const getCrewList = async (page?: number) => {
-    await axios
+    await crewListAxios
       .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}/crews`, {
         params: {
           page: page ? page : 0,
           size: 5,
-          sort: 'id,ASC',
+          sort: ['auth', 'id'],
         },
       })
       .then((res) => {
+        console.log(res);
         const output = res.data.output;
         if (output === 200) {
           // console.log(res.data.data);
@@ -52,6 +59,11 @@ export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
         console.log(e);
       });
   };
+
+  const onClick = (auth: string) => {
+    console.log('메뉴 펼치기');
+  };
+
   useEffect(() => {
     getCrewList();
   }, []);
@@ -70,15 +82,16 @@ export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
         {/* <h3>테이블 컴포넌트</h3> */}
         {/* 리스트 */}
         {list.length ? (
-          list.map((item: any) => (
-            <Stack direction="row" key={item.clubCrewId}>
+          list.map((crew: any) => (
+            <Stack direction="row" key={crew.clubCrewId}>
               <span>
-                {item.name} / {item.email} / {item.auth}
+                {crew.name} / {crew.email} / {crew.auth}
               </span>
+              <CrewMenu crewInfo={crew} getCrewList={getCrewList} />
             </Stack>
           ))
         ) : (
-          <p>검색된 회원이 없습니다.</p>
+          <p>회원이 없습니다.</p>
         )}
 
         {/* Pagination */}

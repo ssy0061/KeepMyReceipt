@@ -32,6 +32,7 @@ export default function SearchList({ clubList }: { clubList: any }) {
             // 모임으로 이동
             // console.log(`${id}번 모임으로 이동`);
             navigate(`../${info.id}/book`);
+            window.scrollTo(0, 0);
           } else if (check.data === '대기') {
             setDialogInfo(info);
             setOpenWait(true);

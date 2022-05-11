@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Grid, Container, Stack } from '@mui/material';
 import axios from 'axios';
 import IndexList from './List';
@@ -45,6 +44,7 @@ export default function ClubIndex() {
         // console.log(response);
         // console.log(response.data.data);
         setRes(response.data.data);
+        window.scrollTo(0, 0);
       })
       .catch((e) => {
         console.log(e);

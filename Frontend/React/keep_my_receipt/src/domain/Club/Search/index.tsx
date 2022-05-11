@@ -59,6 +59,7 @@ export default function GroupSearch() {
       })
       .then((response) => {
         setRes(response.data.data);
+        window.scrollTo(0, 0);
       })
       .catch((e) => {
         console.log(e);

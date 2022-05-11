@@ -80,23 +80,26 @@ export default function ManageIndex() {
     <Container maxWidth="md">
       <Grid container direction="column" sx={{ marginBottom: 3 }}>
         {/* Header */}
-        <Stack
-          direction="row"
-          spacing={2}
-          alignItems="center"
-          justifyContent="flex-start"
-        >
-          <Avatar
-            // variant="rounded"
-            sx={{
-              width: '3rem',
-              height: '3rem',
-            }}
-            src={clubInfo ? clubInfo.image : ''}
+        <Stack>
+          <h2>모임관리</h2>
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            justifyContent="flex-start"
           >
-            {clubInfo ? (!clubInfo.image ? clubInfo.name[0] : null) : null}
-          </Avatar>
-          <h2>{clubInfo ? clubInfo.name : null}'s 모임관리</h2>
+            <Avatar
+              // variant="rounded"
+              sx={{
+                width: '2rem',
+                height: '2rem',
+              }}
+              src={clubInfo ? clubInfo.image : ''}
+            >
+              {clubInfo ? (!clubInfo.image ? clubInfo.name[0] : null) : null}
+            </Avatar>
+            <h4>{clubInfo ? clubInfo.name : null}</h4>
+          </Stack>
         </Stack>
 
         {/* Tab */}
@@ -126,7 +129,7 @@ export default function ManageIndex() {
                 sx={{ fontSize: '1rem', fontWeight: 'bold' }}
               />
               <Tab
-                label="모임"
+                label="모임 정보"
                 // {...a11yProps(2)}
                 sx={{ fontSize: '1rem', fontWeight: 'bold' }}
               />

@@ -8,6 +8,7 @@ export default function IndexList({ clubList }: { clubList: any }) {
   // console.log(clubList);
   const onClick = (id: number) => {
     navigate(`./${id}/book`);
+    window.scrollTo(0, 0);
   };
   return (
     <Grid container justifyContent="center">

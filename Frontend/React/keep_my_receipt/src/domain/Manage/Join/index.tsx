@@ -104,7 +104,7 @@ export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
             </Stack>
           ))
         ) : (
-          <p>검색된 신청자가 없습니다.</p>
+          <p>신청자가 없습니다.</p>
         )}
 
         {/* Pagination */}
