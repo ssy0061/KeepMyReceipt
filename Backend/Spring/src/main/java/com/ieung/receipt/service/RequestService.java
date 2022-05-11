@@ -49,19 +49,31 @@ public class RequestService {
      * @param clubId, crewId, stateCode, pageable
      */
     public Page<Request> getRequests(long clubId, Long crewId, StateCode stateCode, Pageable pageable) {
+        Page<Request> result;
+
         AuthCode authCode = clubCrewRepository.findAuthCodeByClubIdAndCrewId(clubId, crewId);
         if (authCode == null) {
             throw new ApiMessageException("가입된 모임이 아닙니다.");
-        } else if (authCode == AuthCode.NONE || authCode == AuthCode.NORMAL) {
-            throw new AccessDeniedException("");
-        }
 
-        Page<Request> result;
+        // 리더 혹은 관리자일 경우 모두 출력
+        } else if (authCode == AuthCode.LEADER || authCode == AuthCode.MANAGER) {
+            if (stateCode == StateCode.ALL) {
+                result = requestRepository.findByClubId(clubId, pageable);
+            } else {
+                result = requestRepository.findByClubIdAndState(clubId, stateCode, pageable);
+            }
 
-        if (stateCode == StateCode.ALL) {
-            result = requestRepository.findByClubId(clubId, pageable);
+        // 일반 회원 일 경우 자신의 청구 목록만 출력
+        } else if (authCode == AuthCode.NORMAL) {
+            if (stateCode == StateCode.ALL) {
+                result = requestRepository.findByClubIdAndCrewId(clubId, crewId, pageable);
+            } else {
+                result = requestRepository.findByClubIdAndCrewIdAndState(clubId, crewId, stateCode, pageable);
+            }
+
+        // 가입 승인 대기자일 경우
         } else {
-            result = requestRepository.findByClubIdAndState(clubId, stateCode, pageable);
+            throw new AccessDeniedException("");
         }
 
         return result;
@@ -160,25 +172,5 @@ public class RequestService {
         } else {
             throw new AccessDeniedException("");
         }
-    }
-
-    /**
-     * 나의 청구 요청 목록 조회
-     * @param clubId, crewId, stateCode, pageable
-     */
-    public Page<Request> getMyRequests(long clubId, Long crewId, StateCode stateCode, Pageable pageable) {
-        if (!clubCrewRepository.findExistByClubIdAndCrewId(clubId, crewId)) {
-            throw new ApiMessageException("가입된 모임이 아닙니다.");
-        }
-
-        Page<Request> result;
-
-        if (stateCode == StateCode.ALL) {
-            result = requestRepository.findByClubIdAndCrewId(clubId, crewId, pageable);
-        } else {
-            result = requestRepository.findByClubIdAndCrewIdAndState(clubId, crewId, stateCode, pageable);
-        }
-
-        return result;
     }
 }

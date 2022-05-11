@@ -130,29 +130,4 @@ public class RequestController {
 
         return responseService.getSuccessResult();
     }
-
-    // 본인이 작성한 청구 목록 조회
-    @Operation(summary = "나의 청구 목록 조회", description = "나의 청구 목록 조회")
-    @GetMapping(value = "/club/{clubId}/myRequests", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody SingleResult<PagingListResDTO<RequestSimpleResDTO>> getMyRequests(@PathVariable @NotBlank long clubId,
-                                                                                         @RequestParam(value="state", defaultValue = "ALL") String state,
-                                                                                         @ParameterObject @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-        try {
-            // String state값 stateCode로 변환
-            StateCode stateCode = StateCode.valueOf(state);
-            Page<Request> page = requestService.getMyRequests(clubId, getCurrentCrewId(), stateCode, pageable);
-
-            // 반환 DTO에 맞도록 가공
-            List<RequestSimpleResDTO> clubCrews = IntStream.range(0, page.getContent().size())
-                    .mapToObj(i -> page.getContent().get(i).toRequestSimpleResDTO())
-                    .collect(Collectors.toList());
-
-            PagingListResDTO pagingListResDTO = new PagingListResDTO(page, clubCrews);
-
-            return responseService.getSingleResult(pagingListResDTO);
-
-        } catch (IllegalArgumentException iae) {
-            throw new ApiMessageException("지원하지 않는 상태입니다.");
-        }
-    }
 }
