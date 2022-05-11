@@ -17,18 +17,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionReqDTO {
-    @NotNull
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     @PastOrPresent
-    @Schema(description = "거래 날짜", required = true, example = "2022-05-01")
+    @Schema(description = "거래 날짜", example = "2022-05-01")
     private LocalDate date;
 
-    @NotNull
     @NumberFormat(style = NumberFormat.Style.NUMBER)
-    @Schema(description = "금액", required = true, example = "15000")
-    private int price;
+    @Schema(description = "금액", example = "15000")
+    private int totalPrice;
+
+    @Schema(description = "연관 영수증 청구 내역 id", example = "1")
+    private Long requestId;
 
     @NotNull
     @Schema(description = "세부 거래 항목", required = true)
-    private List<TransactionDetailReqDTO> list;
+    private List<TransactionDetailReqDTO> items;
 }

@@ -141,4 +141,5 @@ public class ClubController {
 
         return responseService.getSuccessResult();
     }
+
 }

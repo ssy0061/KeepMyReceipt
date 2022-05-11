@@ -37,19 +37,16 @@ public class Transaction extends BaseEntity {
     @Column(nullable = false)
     private int price;
 
-    // 메모
-    @Column(nullable = false)
-    private String memo;
-
     // 승인자 crewId
     @Column(nullable = false)
     private Long approveCrewId;
 
     // 신청자 crewId
     @Column(nullable = false)
-    private int requestCrewId;
+    private Long requestCrewId;
 
-    // 청구 내역
-    @Column
+    // 연관된 청구 내역
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
     private Request request;
 }

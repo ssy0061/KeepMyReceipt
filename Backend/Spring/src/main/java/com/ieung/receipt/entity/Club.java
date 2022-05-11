@@ -1,5 +1,7 @@
 package com.ieung.receipt.entity;
 
+import com.ieung.receipt.code.YNCode;
+import com.ieung.receipt.converter.YNCodeConverter;
 import com.ieung.receipt.dto.res.ClubResDTO;
 import lombok.*;
 
@@ -33,6 +35,10 @@ public class Club {
     @Column(length = 255)
     private String image;
 
+    // 대분류 사용 여부
+    @Convert(converter = YNCodeConverter.class)
+    @Column(nullable = false, length = 1, columnDefinition = "varchar(1) default 'Y'")
+    private YNCode isActiveCategory;
 
     public void updateName(String name) {
         this.name = name;
@@ -44,6 +50,10 @@ public class Club {
 
     public void updateImage(String image) {
         this.image = image;
+    }
+
+    public void updateIsActiveCategory(YNCode isActiveCategory) {
+        this.isActiveCategory = isActiveCategory;
     }
 
     // Club을 ClubResDTO 객체로 변환

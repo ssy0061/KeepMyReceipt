@@ -27,9 +27,9 @@ public class TransactionDetail {
     @JoinColumn(name = "transaction_id", nullable = false)
     private Transaction transaction;
 
-    // 상세 항목 내용
+    // 상세 항목명
     @Column(length = 255, nullable = false)
-    private String content;
+    private String name;
 
     // 개수
     @Column(nullable = false)
@@ -40,7 +40,7 @@ public class TransactionDetail {
     private Integer price;
 
     // Tag 테이블과 매핑 예정
-    @Column(nullable = false)
+    @Column
     private Long largeTagId;
 
     // Tag 테이블과 매핑 예정
@@ -48,10 +48,10 @@ public class TransactionDetail {
     private Long smallTagId;
 
     // 대분류
-    @Column(nullable = false)
+    @Column
     private Long largeCategoryId;
 
     // 소분류
-    @Column(nullable = false)
+    @Column
     private Long smallCategoryId;
 }
