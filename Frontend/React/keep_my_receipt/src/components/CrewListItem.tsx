@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   IconButton,
+  Chip,
   Grid,
   Stack,
   Typography,
@@ -50,15 +51,31 @@ export default function CrewListItem({
       }}
     >
       <CardActionArea onClick={onClick}>
-        <CardContent sx={{ padding: '0.8rem', paddingBottom: '0.8rem' }}>
+        <CardContent sx={{ padding: '0.8rem' }}>
           <Stack
             direction="row"
             justifyContent="space-between"
             alignItems="center"
           >
             <Stack direction="column" width="15rem">
-              <Typography variant="h6">{name}</Typography>
-              <Typography>{email}</Typography>
+              {auth ? (
+                <Chip
+                  label={auth}
+                  variant={auth !== '리더' ? 'outlined' : 'filled'}
+                  sx={{
+                    backgroundColor: auth === '리더' ? '#ffaa00' : null,
+                    width: '5rem',
+                    height: '1.3rem',
+                    color: auth === '리더' ? 'white' : 'black',
+                    borderColor: auth === '관리자' ? '#ffaa00' : null,
+                  }}
+                />
+              ) : null}
+              <Typography variant="h6" paddingLeft={1}>
+                {name}
+              </Typography>
+
+              <Typography paddingLeft={1}>{email}</Typography>
             </Stack>
             <IconButton color="primary">
               {auth ? (
