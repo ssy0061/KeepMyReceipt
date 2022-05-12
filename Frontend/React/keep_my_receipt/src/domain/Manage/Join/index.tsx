@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
-import { Container, IconButton, Grid, Stack, Button } from '@mui/material';
+import { Stack } from '@mui/material';
 import Pagination from '../../../components/Pagination';
 import JoinApproveDialog from './ApproveDialog';
+import CrewListItem from '../../../components/CrewListItem';
 
-interface listItemTypes {
+interface crewInforTypes {
   clubCrewId: number;
   name: string;
   email: string;
@@ -17,7 +17,7 @@ interface resopnseType {
   totalPages: number;
   numberOfElements: number;
   totalElements: number;
-  list: listItemTypes[];
+  list: crewInforTypes[];
 }
 
 export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
@@ -32,7 +32,7 @@ export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
     list: [],
   });
   const { list } = res;
-  const [dialogInfo, setDialogInfo] = useState<listItemTypes>({
+  const [dialogInfo, setDialogInfo] = useState<crewInforTypes>({
     clubCrewId: 0,
     name: '',
     email: '',
@@ -61,8 +61,8 @@ export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
       });
   };
 
-  const onClick = (item: listItemTypes) => {
-    setDialogInfo(item);
+  const onClick = (crewInfo: crewInforTypes) => {
+    setDialogInfo(crewInfo);
     setOpen(true);
   };
 
@@ -86,22 +86,14 @@ export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
         spacing={2}
         marginTop={2}
       >
-        {/* <h3>테이블 컴포넌트</h3> */}
         {/* 리스트 */}
         {list.length ? (
-          list.map((item: any) => (
-            <Stack direction="row" key={item.clubCrewId}>
-              <span>
-                {item.name} / {item.email}
-              </span>
-              <Button
-                onClick={() => {
-                  onClick(item);
-                }}
-              >
-                확인
-              </Button>
-            </Stack>
+          list.map((crewInfo: any) => (
+            <CrewListItem
+              crewInfo={crewInfo}
+              key={crewInfo.clubCrewId}
+              onClickToApprove={onClick}
+            />
           ))
         ) : (
           <p>신청자가 없습니다.</p>

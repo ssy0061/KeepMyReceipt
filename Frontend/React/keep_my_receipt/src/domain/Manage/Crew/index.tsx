@@ -4,6 +4,7 @@ import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import * as qs from 'qs';
 import CrewMenu from './Menu';
+import CrewListItem from '../../../components/CrewListItem';
 
 interface listItemTypes {
   clubCrewId: number;
@@ -79,16 +80,14 @@ export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
         spacing={2}
         marginTop={2}
       >
-        {/* <h3>테이블 컴포넌트</h3> */}
         {/* 리스트 */}
         {list.length ? (
-          list.map((crew: any) => (
-            <Stack direction="row" key={crew.clubCrewId}>
-              <span>
-                {crew.name} / {crew.email} / {crew.auth}
-              </span>
-              <CrewMenu crewInfo={crew} getCrewList={getCrewList} />
-            </Stack>
+          list.map((crewInfo: any) => (
+            <CrewListItem
+              crewInfo={crewInfo}
+              key={crewInfo.clubCrewId}
+              getCrewList={getCrewList}
+            />
           ))
         ) : (
           <p>회원이 없습니다.</p>

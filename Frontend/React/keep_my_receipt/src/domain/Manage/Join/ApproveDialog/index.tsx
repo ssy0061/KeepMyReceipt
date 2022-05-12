@@ -74,14 +74,19 @@ export default function JoinApproveDialog({
       >
         <Close sx={{ fontSize: '1.8rem' }} />
       </IconButton>
-      <DialogTitle id="join-dialog-title" width="15rem">
+      <DialogTitle
+        id="join-dialog-title"
+        width="15rem"
+        color="black"
+        fontWeight="bold"
+      >
         가입 승인
       </DialogTitle>
-      <DialogContent>
-        <DialogContentText id="join-dialog-description">
+      <DialogContent sx={{ paddingBottom: 0 }}>
+        <DialogContentText id="join-dialog-description" color="black">
           {name}
         </DialogContentText>
-        <DialogContentText id="join-dialog-description2">
+        <DialogContentText id="join-dialog-description2" color="black">
           {email}
         </DialogContentText>
       </DialogContent>

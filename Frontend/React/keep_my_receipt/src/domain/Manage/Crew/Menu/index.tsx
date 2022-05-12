@@ -4,15 +4,15 @@ import { IconButton, Menu, MenuItem, Stack } from '@mui/material';
 import { ManageAccounts } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
-interface crewInfoType {
+interface crewInfoTypes {
   clubCrewId: number;
   name: string;
   email: string;
-  auth: string;
+  auth?: any;
 }
 
 interface CrewMenuProps {
-  crewInfo: crewInfoType;
+  crewInfo: crewInfoTypes;
   getCrewList: any;
 }
 
@@ -72,7 +72,7 @@ export default function CrewMenu({ crewInfo, getCrewList }: CrewMenuProps) {
             aria-haspopup="true"
             onClick={handleClick}
           >
-            <ManageAccounts />
+            <ManageAccounts sx={{ fontSize: '2rem' }} />
           </IconButton>
           <Menu
             id="long-menu"
