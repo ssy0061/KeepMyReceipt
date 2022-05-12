@@ -25,9 +25,6 @@ export default function NavBar() {
   };
 
   useEffect(() => {
-    console.log(id);
-    console.log(accessToken);
-    console.log(isLogin);
     if (accessToken) {
       axios.defaults.headers.common['Authorization'] = accessToken;
       setIsLogin(true);
@@ -58,29 +55,9 @@ export default function NavBar() {
           >
             {/* 모바일용 세줄 메뉴 */}
             <ResponsiveDrawer />
+
             {/* 로고 */}
             <LogoItem />
-            {/* 0. 내모임 */}
-            {isLogin ? (
-              <Button
-                onClick={() => {
-                  onClickButton(`/club`);
-                }}
-                sx={{
-                  my: 2,
-                  mr: 1,
-                  color: 'white',
-                  display: 'block',
-                  float: 'right',
-                }}
-              >
-                {' '}
-                내 모임
-              </Button>
-            ) : (
-              ''
-            )}
-
             {/* 로그인 한 경우, 메뉴 */}
             {isLogin && id ? <NavMenuItem /> : ''}
 

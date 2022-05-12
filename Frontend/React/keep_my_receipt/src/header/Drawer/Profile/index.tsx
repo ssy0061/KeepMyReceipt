@@ -15,7 +15,6 @@ export default function Profile() {
       .get(`/api/spring/crew/info`)
       .then(function (response) {
         userName = response.data.data.name;
-        console.log('이름 가져오기 성공');
       })
       .catch(function (error) {
         console.log(error);
@@ -29,7 +28,6 @@ export default function Profile() {
       .then(function (response) {
         clubName = response.data.data.name;
         clubImage = response.data.data.image;
-        console.log('이름 가져오기 실패');
       })
       .catch(function (error) {
         console.log(error);

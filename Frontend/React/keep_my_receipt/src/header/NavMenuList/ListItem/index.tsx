@@ -6,24 +6,24 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function ListItem() {
-  // ver 3. 모임 선택 후
-  const { id } = useParams();
+  const [isLogin, setIsLogin] = useState(false);
+  const myAccessToken = sessionStorage.getItem('accessToken');
 
-  React.useEffect(() => {
-    console.log(id);
-    if (id) {
-      setISClub(true);
+  useEffect(() => {
+    if (myAccessToken) {
+      setIsLogin(true);
+    } else {
+      setIsLogin(false);
     }
-  });
-  // console.log(id);
-  const [isClub, setISClub] = useState(false);
+  }, []);
 
+  const { id } = useParams();
   const navigate = useNavigate();
-  //하단 후버 메뉴
-
+  let userAuth = '';
+  const [userAuthNum, setUserAuthNum] = useState(3);
   const [addMenu, setAddMenu] = React.useState<null | HTMLElement>(null);
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     if (addMenu == null) {
@@ -63,6 +63,35 @@ export default function ListItem() {
   const onClickButton = (url: string) => {
     navigate(url);
   };
+
+  // 권한별로 navbar 메뉴 다르게 보여주기
+
+  // 현재 유저 권한 조회하기
+  const onClick = async () => {
+    await axios
+      .get(`api/spring/club/${id}/crew/auth`)
+      .then((res) => {
+        if (res.data) {
+          const check = res.data;
+          userAuth = check.data;
+          if (userAuth === '리더') {
+            setUserAuthNum(1);
+          } else if (userAuth === '관리자') {
+            setUserAuthNum(2);
+          } else if (userAuth === '회원') {
+            setUserAuthNum(3);
+          }
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        return;
+      });
+  };
+
+  React.useEffect(() => {
+    onClick();
+  }, []);
 
   // 메뉴 > 로그인 로그아웃
   let mystring = '로그인';
@@ -107,20 +136,24 @@ export default function ListItem() {
       </Button>
 
       {/* 4. 모임관리 */}
-      <Button
-        onClick={() => {
-          onClickButton(`/club/${id}/manage`);
-        }}
-        sx={{
-          my: 2,
-          mr: 1,
-          color: 'white',
-          display: 'block',
-          float: 'right',
-        }}
-      >
-        모임관리
-      </Button>
+      {userAuthNum == 1 ? (
+        <Button
+          onClick={() => {
+            onClickButton(`/club/${id}/manage`);
+          }}
+          sx={{
+            my: 2,
+            mr: 1,
+            color: 'white',
+            display: 'block',
+            float: 'right',
+          }}
+        >
+          모임관리
+        </Button>
+      ) : (
+        ''
+      )}
 
       {/* 3. 분석 */}
       <Button
@@ -168,20 +201,22 @@ export default function ListItem() {
           <MenuItem
             onClick={() => {
               listMenuClick(`/club/${id}/receipt/requestList`);
-              // listMenuClick(`club/1/receipt/requestList`);
             }}
           >
             <Typography textAlign="center">영수증 내역</Typography>
           </MenuItem>
 
-          <MenuItem
-            onClick={() => {
-              listMenuClick(`/club/${id}/book`);
-              // listMenuClick(`club/1/book`);
-            }}
-          >
-            <Typography textAlign="center">거래 내역</Typography>
-          </MenuItem>
+          {userAuthNum <= 2 ? (
+            <MenuItem
+              onClick={() => {
+                listMenuClick(`/club/${id}/book`);
+              }}
+            >
+              <Typography textAlign="center">거래 내역</Typography>
+            </MenuItem>
+          ) : (
+            ''
+          )}
         </Menu>
       </Button>
 
@@ -215,22 +250,44 @@ export default function ListItem() {
           <MenuItem
             onClick={() => {
               addMenuClick(`/club/${id}/receipt/camera`);
-              // addMenuClick(`club/1/receipt/camera`);
             }}
           >
             <Typography textAlign="center">영수증 등록</Typography>
           </MenuItem>
 
-          <MenuItem
-            onClick={() => {
-              addMenuClick(`/club/${id}/book/create`);
-              // addMenuClick(` club/1/book/create`);
-            }}
-          >
-            <Typography textAlign="center">거래 등록</Typography>
-          </MenuItem>
+          {userAuthNum <= 2 ? (
+            <MenuItem
+              onClick={() => {
+                addMenuClick(`/club/${id}/book/create`);
+              }}
+            >
+              <Typography textAlign="center">거래 등록</Typography>
+            </MenuItem>
+          ) : (
+            ''
+          )}
         </Menu>
       </Button>
+      {/* 0. 내모임 */}
+      {isLogin ? (
+        <Button
+          onClick={() => {
+            onClickButton(`/club`);
+          }}
+          sx={{
+            my: 2,
+            mr: 1,
+            color: 'white',
+            display: 'block',
+            float: 'right',
+          }}
+        >
+          {' '}
+          내 모임
+        </Button>
+      ) : (
+        ''
+      )}
     </div>
   );
 }
