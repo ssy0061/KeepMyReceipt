@@ -41,6 +41,23 @@ export default function CrewMenu({ crewInfo, getCrewList }: CrewMenuProps) {
           // 관리자 <-> 회원 변경은 새로 조회
           getCrewList();
         }
+      })
+      .catch((e) => {
+        console.log(e.response.data.msg);
+      });
+    setAnchorEl(null);
+  };
+  const deleteCrew = async () => {
+    await axios
+      .delete(
+        `https://k6d104.p.ssafy.io/api/spring/club/crew/${clubCrewId}/kick`,
+      )
+      .then((res) => {
+        console.log(res);
+        getCrewList();
+      })
+      .catch((e) => {
+        console.log(e.response.data.msg);
       });
     setAnchorEl(null);
   };
@@ -88,7 +105,7 @@ export default function CrewMenu({ crewInfo, getCrewList }: CrewMenuProps) {
               {auth === '관리자' ? '회원으로' : '관리자로'} 변경
             </MenuItem>
             <MenuItem onClick={() => changeAuth('LEADER')}>리더 위임</MenuItem>
-            <MenuItem onClick={handleClose}>추방</MenuItem>
+            <MenuItem onClick={deleteCrew}>추방</MenuItem>
           </Menu>
         </>
       ) : null}

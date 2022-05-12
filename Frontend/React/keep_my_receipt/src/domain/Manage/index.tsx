@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Grid, Tabs, Tab, Box, Stack, Avatar } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import ManageClub from './Club';
@@ -23,6 +23,7 @@ interface TabPanelProps {
 }
 
 export default function ManageIndex() {
+  const navigate = useNavigate();
   // 모임 정보 가져오기
   const { id } = useParams();
   const [clubInfo, setClubInfo] = useState<ClubInfoType>({
@@ -31,6 +32,26 @@ export default function ManageIndex() {
     description: '',
     image: '',
   });
+  const checkCrewAuth = async () => {
+    // 모임 내 권한 조회를 통해 가입 여부 확인
+    await axios
+      .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}/crew/auth`)
+      .then((res) => {
+        if (res.data) {
+          const check = res.data;
+          if (check.data !== '리더') {
+            // 내 모임으로 이동
+            navigate(`/club`);
+            window.scrollTo(0, 0);
+          }
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        return;
+      });
+  };
+
   const getClubInfo = async () => {
     await axios
       .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}`)
@@ -76,6 +97,7 @@ export default function ManageIndex() {
     };
   };
   useEffect(() => {
+    checkCrewAuth();
     getClubInfo();
   }, []);
   return (

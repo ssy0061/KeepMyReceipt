@@ -1,6 +1,6 @@
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import { Button, Stack } from '@mui/material';
+import { Button, Stack, Box } from '@mui/material';
 import axios from 'axios';
 import SettingItem from './Icons/SettingItem';
 import NavMenuItem from './NavMenuList';
@@ -34,53 +34,51 @@ export default function NavBar() {
   }, []);
 
   return (
-    <>
-      <header>
-        <AppBar
+    <Box height="68.5px">
+      <AppBar
+        sx={{
+          top: 0,
+          left: 0,
+          right: 0,
+          width: '100%',
+          // position: 'fixed',
+          margin: '80',
+        }}
+        style={{ background: '#ffa500' }}
+      >
+        <Toolbar
           sx={{
-            top: 0,
-            left: 0,
-            right: 0,
-            width: '100%',
-            // position: 'fixed',
-            margin: '80',
+            direction: 'row',
+            float: 'right',
           }}
-          style={{ background: '#ffa500' }}
         >
-          <Toolbar
-            sx={{
-              direction: 'row',
-              float: 'right',
-            }}
-          >
-            {/* 모바일용 세줄 메뉴 */}
-            <ResponsiveDrawer />
+          {/* 모바일용 세줄 메뉴 */}
+          <ResponsiveDrawer />
 
-            {/* 로고 */}
-            <LogoItem />
-            {/* 로그인 한 경우, 메뉴 */}
-            {isLogin && id ? <NavMenuItem /> : ''}
+          {/* 로고 */}
+          <LogoItem />
+          {/* 로그인 한 경우, 메뉴 */}
+          {isLogin && id ? <NavMenuItem /> : ''}
 
-            {/* 로그인 한 경우, 알림, 설정 아이콘 */}
-            {isLogin ? (
-              <Stack
-                direction="row"
-                alignItems="start"
-                sx={{
-                  direction: 'row',
-                  marginLeft: 'auto',
-                  marginRight: 0,
-                }}
-              >
-                <AlarmItem />
-                <SettingItem />
-              </Stack>
-            ) : (
-              ''
-            )}
-          </Toolbar>
-        </AppBar>
-      </header>
-    </>
+          {/* 로그인 한 경우, 알림, 설정 아이콘 */}
+          {isLogin ? (
+            <Stack
+              direction="row"
+              alignItems="start"
+              sx={{
+                direction: 'row',
+                marginLeft: 'auto',
+                marginRight: 0,
+              }}
+            >
+              <AlarmItem />
+              <SettingItem />
+            </Stack>
+          ) : (
+            ''
+          )}
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 }
