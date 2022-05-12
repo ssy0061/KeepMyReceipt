@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconButton, Box, TextField, Fade } from '@mui/material';
+import { IconButton, Box, TextField, Fade, styled } from '@mui/material';
 import { Search, Close } from '@mui/icons-material';
 
 SearchBar.defaultProps = {
@@ -19,6 +19,12 @@ interface searchBarProps {
   close?: boolean;
   onSearch?: any;
 }
+
+const SearchTextField = styled(TextField)({
+  '& .MuiInput-underline:after': {
+    borderBottomColor: '#ffaa00',
+  },
+});
 
 export default function SearchBar({
   value,
@@ -63,7 +69,7 @@ export default function SearchBar({
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <TextField
+          <SearchTextField
             onChange={onChange}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
