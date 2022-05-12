@@ -196,7 +196,7 @@ public class ClubCrewService {
     public void toNormal(ClubCrew clubCrew) {
         // 대상 회원이 관리자 회원인지 확인
         if (clubCrew.getAuth() == AuthCode.MANAGER) {
-            clubCrew.updateAuth(AuthCode.NONE);
+            clubCrew.updateAuth(AuthCode.NORMAL);
             clubCrewRepository.save(clubCrew);
         } else {
             throw new ApiMessageException("변경할 수 없는 회원입니다.");
