@@ -1,13 +1,14 @@
 package com.ieung.receipt.entity;
 
+import com.ieung.receipt.dto.res.TransactionDetailResDTO;
+import com.ieung.receipt.dto.res.TransactionDetailSimpleResDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Builder
 @Getter
@@ -27,31 +28,83 @@ public class TransactionDetail {
     @JoinColumn(name = "transaction_id", nullable = false)
     private Transaction transaction;
 
+    // 지불 날짜
+    @Column(nullable = false)
+    private LocalDate payDate;
+
     // 상세 항목명
     @Column(length = 255, nullable = false)
     private String name;
-
-    // 개수
-    @Column(nullable = false)
-    private Integer count;
 
     // 가격
     @Column(nullable = false)
     private Integer price;
 
-    // Tag 테이블과 매핑 예정
+    // 연관된 부모 태그
     @Column
-    private Long largeTagId;
+    private String largeTag;
 
-    // Tag 테이블과 매핑 예정
+    // 연관된 자식 태그
     @Column
-    private Long smallTagId;
+    private String smallTag;
+
+    // 유형
+    @Column(nullable = false)
+    private String type;
 
     // 대분류
-    @Column
-    private Long largeCategoryId;
+    @Column(nullable = false)
+    private String largeCategory;
 
     // 소분류
-    @Column
-    private Long smallCategoryId;
+    @Column(nullable = false)
+    private String smallCategory;
+
+    // 메모
+    @Column(length = 255)
+    private String memo;
+
+    public void updateTags(Tag tag) {
+        if (tag == null) {
+            smallTag = null;
+            largeTag = null;
+        } else if (tag.getTagLevel() == 1) {
+                smallTag = null;
+                largeTag = tag.getTagName();
+        } else {
+            smallTag = tag.getParentTag();
+            largeTag = tag.getTagName();
+        }
+    }
+
+    public void updateCategory(String largeCategory, String smallCategory) {
+        this.largeCategory = largeCategory;
+        this.smallCategory = smallCategory;
+    }
+
+    public TransactionDetailSimpleResDTO toTransactionDetailSimpleResDTO() {
+        return TransactionDetailSimpleResDTO.builder()
+                .transactionDetailId(id)
+                .transactionId(transaction.getId())
+                .date(payDate.toString())
+                .largeTag(largeTag)
+                .smallTag(smallTag)
+                .name(name)
+                .price(Math.abs(price))
+                .build();
+    }
+
+    public TransactionDetailResDTO toTransactionDetailResDTO() {
+        return TransactionDetailResDTO.builder()
+                .transactionDetailId(id)
+                .name(name)
+                .price(Math.abs(price))
+                .type(type)
+                .largeCategory(largeCategory)
+                .smallCategory(smallCategory)
+                .largeTag(largeTag)
+                .smallTag(smallTag)
+                .memo(memo)
+                .build();
+    }
 }

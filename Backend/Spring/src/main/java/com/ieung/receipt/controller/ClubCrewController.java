@@ -2,17 +2,13 @@ package com.ieung.receipt.controller;
 
 import com.ieung.receipt.code.AuthCode;
 import com.ieung.receipt.code.NotiCode;
-import com.ieung.receipt.dto.notification.NotificationData;
-import com.ieung.receipt.dto.notification.NotificationRequestDTO;
 import com.ieung.receipt.dto.res.ClubCrewResDTO;
 import com.ieung.receipt.dto.res.CrewReqsResDTO;
 import com.ieung.receipt.dto.res.PagingListResDTO;
 import com.ieung.receipt.entity.ClubCrew;
 import com.ieung.receipt.entity.Crew;
 import com.ieung.receipt.entity.CrewToken;
-import com.ieung.receipt.entity.Notification;
 import com.ieung.receipt.exception.ApiMessageException;
-import com.ieung.receipt.repository.NotificationRepository;
 import com.ieung.receipt.service.*;
 import com.ieung.receipt.service.common.CommonResult;
 import com.ieung.receipt.service.common.ResponseService;
@@ -29,10 +25,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -50,7 +44,6 @@ public class ClubCrewController {
     private final CrewTokenService crewTokenService;
     private final ResponseService responseService;
     private final NotificationService notificationService;
-    private final PushService pushService;
 
     /**
      * 모임 가입 요청 : post /{clubId}/crew

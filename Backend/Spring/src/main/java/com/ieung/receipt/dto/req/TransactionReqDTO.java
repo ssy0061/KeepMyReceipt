@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
@@ -17,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionReqDTO {
-    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @PastOrPresent
     @Schema(description = "거래 날짜", example = "2022-05-01")
     private LocalDate date;
@@ -30,6 +31,7 @@ public class TransactionReqDTO {
     private Long requestId;
 
     @NotNull
+    @Valid
     @Schema(description = "세부 거래 항목", required = true)
-    private List<TransactionDetailReqDTO> items;
+    private List<TransactionDetailReqDTO> list;
 }

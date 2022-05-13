@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class RequestReqDTO {
     @NotNull
-    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @PastOrPresent
     @Schema(description = "지불 날짜", required = true, example = "2022-05-01")
     private LocalDate date;

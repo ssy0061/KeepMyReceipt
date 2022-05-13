@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Builder
 @Getter
@@ -49,4 +50,8 @@ public class Transaction extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     private Request request;
+
+    // 연관된 상세 거래 내역 리스트
+    @OneToMany(mappedBy = "transaction", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<TransactionDetail> transactionDetails;
 }

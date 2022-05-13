@@ -2,6 +2,7 @@ package com.ieung.receipt.service;
 
 import com.ieung.receipt.code.AuthCode;
 import com.ieung.receipt.code.StateCode;
+import com.ieung.receipt.code.YNCode;
 import com.ieung.receipt.dto.req.ClubReqDTO;
 import com.ieung.receipt.entity.Crew;
 import com.ieung.receipt.entity.Club;
@@ -36,6 +37,7 @@ public class ClubService {
         Club group = Club.builder()
                 .name(clubReqDTO.getName())
                 .description(clubReqDTO.getDescription())
+                .isActiveCategory(YNCode.Y)
                 .image(clubReqDTO.getImage())
                 .build();
 
@@ -88,7 +90,7 @@ public class ClubService {
             Long clubCrewCnt = clubCrewRepository.findCountByClubId(clubId);
 
             if (clubCrewCnt > 1) {
-                new ApiMessageException("회원 수가 1일때만 삭제할 수 있습니다.");
+                throw new ApiMessageException("회원 수가 1일때만 삭제할 수 있습니다.");
             } else {
                 clubCrewRepository.delete(clubCrew);
                 clubRepository.delete(clubCrew.getClub());
@@ -134,5 +136,60 @@ public class ClubService {
     @Transactional(readOnly = false)
     public Page<Club> getRequestedClubs(Long crewId, Pageable pageable) {
         return clubRepository.findRequestedClubByCrewId(crewId, pageable);
+    }
+
+    /**
+     * 대분류 활성화 여부 조회
+     * @param crewId, clubId
+     */
+    public YNCode getIsActiveCategory(Long crewId, Long clubId) {
+        ClubCrew clubCrew = clubCrewRepository.findByClubIdAndCrewId(clubId, crewId)
+                .orElseThrow(() -> new AccessDeniedException(""));
+
+        return clubCrew.getClub().getIsActiveCategory();
+    }
+
+    /**
+     * 대분류 활성화
+     * @param crewId, clubId
+     */
+    @Transactional(readOnly = false)
+    public void activeCategory(Long crewId, long clubId) {
+        ClubCrew clubCrew = clubCrewRepository.findByClubIdAndCrewId(clubId, crewId)
+                .orElseThrow(() -> new AccessDeniedException(""));
+
+        if (clubCrew.getAuth() == AuthCode.LEADER) {
+            Club club = clubCrew.getClub();
+            if (club.getIsActiveCategory() == YNCode.Y) {
+                throw new ApiMessageException("이미 활성화된 옵션입니다.");
+            }
+
+            club.updateIsActiveCategory(YNCode.Y);
+            clubRepository.save(club);
+        } else {
+            throw new AccessDeniedException("");
+        }
+    }
+
+    /**
+     * 대분류 비활성화
+     * @param crewId, clubId
+     */
+    @Transactional(readOnly = false)
+    public void inactiveCategory(Long crewId, long clubId) {
+        ClubCrew clubCrew = clubCrewRepository.findByClubIdAndCrewId(clubId, crewId)
+                .orElseThrow(() -> new AccessDeniedException(""));
+
+        if (clubCrew.getAuth() == AuthCode.LEADER) {
+            Club club = clubCrew.getClub();
+            if (club.getIsActiveCategory() == YNCode.N) {
+                throw new ApiMessageException("이미 비활성화된 옵션입니다.");
+            }
+
+            club.updateIsActiveCategory(YNCode.N);
+            clubRepository.save(club);
+        } else {
+            throw new AccessDeniedException("");
+        }
     }
 }

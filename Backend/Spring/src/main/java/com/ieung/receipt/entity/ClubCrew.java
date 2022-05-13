@@ -23,7 +23,7 @@ public class ClubCrew extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "club_crew_id")
-    private long id;
+    private Long id;
 
     // 모임
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,5 +1,6 @@
 package com.ieung.receipt.controller;
 
+import com.ieung.receipt.code.YNCode;
 import com.ieung.receipt.dto.req.ClubReqDTO;
 import com.ieung.receipt.dto.res.ClubResDTO;
 import com.ieung.receipt.dto.res.PagingListResDTO;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -65,7 +65,7 @@ public class ClubController {
 
     // 가입한 모임 조회
     @Operation(summary = "가입한 모임 조회", description = "가입한 모임 조회")
-    @GetMapping(value = "/clubs/joined",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/clubs/joined", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody SingleResult<PagingListResDTO<ClubResDTO>> getJoinedClub( @ParameterObject @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) throws Exception {
         Page<Club> page = clubService.getJoinedClubs(getCurrentCrewId(), pageable);
 
@@ -81,7 +81,7 @@ public class ClubController {
 
     // 가입 신청한 모임 조회
     @Operation(summary = "가입 신청한 모임 조회", description = "가입 신청한 모임 조회")
-    @GetMapping(value = "/clubs/requested",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/clubs/requested", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody SingleResult<PagingListResDTO<ClubResDTO>> getRequestClub(@ParameterObject @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) throws Exception {
         Page<Club> page = clubService.getRequestedClubs(getCurrentCrewId(), pageable);
 
@@ -97,7 +97,7 @@ public class ClubController {
 
     // 특정 모임 조회
     @Operation(summary = "특정 모임 조회", description = "특정 모임 조회")
-    @GetMapping(value = "/club/{clubId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/club/{clubId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody SingleResult<ClubResDTO> getClub(@PathVariable @NotBlank long clubId) throws Exception {
         Club club = clubService.getClub(clubId);
 
@@ -142,4 +142,30 @@ public class ClubController {
         return responseService.getSuccessResult();
     }
 
+    // 대분류 활성화 여부 확인
+    @Operation(summary = "대분류 활성화 여부 확인", description = "대분류 활성화 여부 확인")
+    @GetMapping(value = "/club/{clubId}/isActiveCategory", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody SingleResult<Boolean> getIsActiveCategory(@PathVariable @NotBlank long clubId) {
+        YNCode result = clubService.getIsActiveCategory(getCurrentCrewId(), clubId);
+
+        return responseService.getSingleResult(result == YNCode.Y);
+    }
+
+    // 대분류 활성화
+    @Operation(summary = "대분류 활성화", description = "대분류 활성화")
+    @PutMapping(value = "/club/{clubId}/isActiveCategory/active", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody CommonResult activeCategory(@PathVariable @NotBlank long clubId) {
+        clubService.activeCategory(getCurrentCrewId(), clubId);
+
+        return responseService.getSuccessResult();
+    }
+
+    // 대분류 비활성화
+    @Operation(summary = "대분류 비활성화", description = "대분류 비활성화")
+    @PutMapping(value = "/club/{clubId}/isActiveCategory/inactive", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody CommonResult inActiveCategory(@PathVariable @NotBlank long clubId) {
+        clubService.inactiveCategory(getCurrentCrewId(), clubId);
+
+        return responseService.getSuccessResult();
+    }
 }
