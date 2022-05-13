@@ -40,35 +40,27 @@ export default function SignUpForm() {
   // 대기중 버튼
   const [isLoading, setIsLoading] = useState(false);
 
-  const onChangeName = (e: any) => {
-    setNickName(e.target.value);
-  };
-
-  const onChangeEmail = (e: any) => {
-    setEmail(e.target.value);
-  };
-
-  const onChangePassword = (e: any) => {
-    setPassword(e.target.value);
-  };
-  const onChangeCheckPassword = (e: any) => {
-    setCheckPassword(e.target.value);
-  };
-
   // 유효성 검사
-  // let cansignup = true;
-  // const [canSignUp, setCanSignUp] = useState(true);
   const [helpEmailText, setEmailHelpText] = useState('');
   const [helpPasswordText, setPasswordHelpText] = useState('');
   const [helpPasswordCheckText, setPasswordCheckHelpText] = useState('');
 
+  // 제출
+
+  const onNickName = (e: any) => {
+    setNickName(e.target.value);
+  };
   const onCheckEmail = (e: any) => {
+    setEmail(e.target.value);
     // 1. 이메일 중복 확인 ** 오류
     axios
       .get(`/api/spring/crew/checkEmail/${email}`)
       .then(function (response) {
+        console.log(response.data);
         if (response.data.data == true) {
           setEmailHelpText('중복된 이메일입니다');
+        } else {
+          setEmailHelpText('');
         }
       })
       .catch(function (error) {
@@ -76,16 +68,17 @@ export default function SignUpForm() {
       });
 
     // 2. 이메일 형식
-    const regEmail =
-      /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
-    if (regEmail.test(email) === false) {
-      setEmailHelpText('이메일 형식이 맞지 않습니다.');
-    } else {
-      setEmailHelpText('');
-    }
+    // const regEmail =
+    //   /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+    // if (regEmail.test(email) === false) {
+    //   setEmailHelpText('이메일 형식이 맞지 않습니다.');
+    // } else {
+    //   setEmailHelpText('');
+    // }
   };
 
   const onCheckPasswordRight = (e: any) => {
+    setPassword(e.target.value);
     // 3. 비밀번호 8자이상 + (영문 + 숫자 + 특수문자 1개 이상)
     const regExp =
       /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,16}$/;
@@ -99,6 +92,7 @@ export default function SignUpForm() {
   };
 
   const onCheckPasswordEqual = (e: any) => {
+    setCheckPassword(e.target.value);
     // 4. 비밀번호와 비밀번호 확인 일치
     if (password != checkPassword) {
       setPasswordCheckHelpText('비밀번호가 일치하지 않습니다.');
@@ -111,7 +105,7 @@ export default function SignUpForm() {
   const navigate = useNavigate();
   const submitHandler = (event: any) => {
     event.preventDefault();
-    setIsLoading(true);
+
     axios
       .post('/api/spring/crew/signup', {
         email: email,
@@ -119,6 +113,10 @@ export default function SignUpForm() {
         name: nickName,
       })
       .then(function (response) {
+        console.log(response.data);
+        console.log(email);
+        console.log(password);
+        console.log(nickName);
         setIsLoading(false);
         const errorMessage = response.data.msg;
         if (response.data.output == 0) {
@@ -139,60 +137,41 @@ export default function SignUpForm() {
       <form onSubmit={submitHandler}>
         <Stack spacing={1.5}>
           <TextField
-            onChange={onChangeName}
-            key={nickName}
+            onBlur={onNickName}
             type="text"
-            id="nickname"
-            name="nickname"
             required
             fullWidth
             label="이름"
-            autoComplete="current-password"
             variant="outlined"
             size="small"
           />
           <TextField
-            key={email}
-            onChange={onChangeEmail}
             onBlur={onCheckEmail}
             placeholder="이메일을 입력해주세요"
-            id="email"
-            name="email"
             required
             fullWidth
             label="이메일"
             type="email"
             helperText={helpEmailText}
-            autoComplete="current-password"
             variant="outlined"
             size="small"
           />
 
           <TextField
-            key={password}
-            onChange={onChangePassword}
             onBlur={onCheckPasswordRight}
-            id="password"
-            name="password"
             required
             fullWidth
             label="비밀번호"
             type="password"
-            autoComplete="current-password"
             variant="outlined"
             helperText={helpPasswordText}
             size="small"
           />
           <TextField
-            key={checkPassword}
-            onChange={onChangeCheckPassword}
             onBlur={onCheckPasswordEqual}
             type="password"
-            id="password-check"
-            name="password-check"
             fullWidth
             label="비밀번호 확인"
-            autoComplete="current-password"
             helperText={helpPasswordCheckText}
             variant="outlined"
             size="small"
@@ -200,11 +179,7 @@ export default function SignUpForm() {
           />
           <Stack>
             {!isLoading && (
-              <ColorButton
-                variant="contained"
-                type="submit"
-                // disabled={cansignup}
-              >
+              <ColorButton variant="contained" type="submit">
                 확인
               </ColorButton>
             )}
