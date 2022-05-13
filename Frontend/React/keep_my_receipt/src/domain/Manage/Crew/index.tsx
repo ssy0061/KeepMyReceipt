@@ -52,7 +52,7 @@ export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
         },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         const output = res.data.output;
         if (output === 200) {
           // console.log(res.data.data);

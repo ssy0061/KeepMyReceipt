@@ -69,7 +69,11 @@ export default function ClubIndex() {
             alignItems="center"
             sx={{ marginTop: '1rem' }}
           >
-            {list.length ? <IndexList clubList={list} /> : <p>모임 없음</p>}
+            {list.length ? (
+              <IndexList clubList={list} getClubList={getClubList} />
+            ) : (
+              <p>모임 없음</p>
+            )}
           </Stack>
           {/* 페이지네이션 */}
           <Pagination

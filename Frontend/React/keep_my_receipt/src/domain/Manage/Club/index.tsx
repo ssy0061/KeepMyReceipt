@@ -78,7 +78,7 @@ export default function ManageClub({ clubInfo, getClubInfo }: ManageClubProps) {
         image: imgUrl ? imgUrl : image,
       })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
       })
       .catch((e) => {
         console.log(e);

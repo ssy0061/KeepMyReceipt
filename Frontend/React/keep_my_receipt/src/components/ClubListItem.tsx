@@ -8,8 +8,9 @@ import {
   Avatar,
   Typography,
   Grid,
+  IconButton,
 } from '@mui/material';
-import { Done, AccessTime } from '@mui/icons-material';
+import { Done, AccessTime, Delete } from '@mui/icons-material';
 
 interface ClubInfoType {
   id: number;
@@ -22,10 +23,14 @@ export default function ClubListItem({
   clubInfo,
   onClick,
   checkJoin,
+  leave,
+  onClickToLeave,
 }: {
   clubInfo: ClubInfoType;
   onClick?: any;
   checkJoin?: boolean;
+  leave?: boolean;
+  onClickToLeave?: any;
 }) {
   const { id, name, description, image } = clubInfo;
   // 가입 여부 확인하여 표시
@@ -102,6 +107,25 @@ export default function ClubListItem({
           </CardContent>
         </CardActionArea>
       </Card>
+      {leave ? (
+        <IconButton
+          onClick={onClickToLeave}
+          sx={{
+            position: 'absolute',
+            right: '0.1rem',
+            bottom: '0.1rem',
+            fontSize: '1.5rem',
+            color: '#c5c7d4',
+            opacity: 0.5,
+            padding: 0.5,
+            '&:hover': {
+              color: 'black',
+            },
+          }}
+        >
+          <Delete sx={{ fontSize: '2rem' }} />
+        </IconButton>
+      ) : null}
       {joined ? (
         <Done
           sx={{

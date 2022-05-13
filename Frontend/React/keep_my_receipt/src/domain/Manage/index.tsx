@@ -62,7 +62,7 @@ export default function ManageIndex() {
     image: '',
   });
   const checkCrewAuth = async () => {
-    // 모임 내 권한 조회를 통해 가입 여부 확인
+    // 모임 내 권한 조회를 통해 가입 여부& 권한 확인
     await axios
       .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}/crew/auth`)
       .then((res) => {
@@ -70,6 +70,7 @@ export default function ManageIndex() {
           const check = res.data;
           if (check.data !== '리더') {
             // 내 모임으로 이동
+            alert('권한이 없습니다.');
             navigate(`/club`);
             window.scrollTo(0, 0);
           }
