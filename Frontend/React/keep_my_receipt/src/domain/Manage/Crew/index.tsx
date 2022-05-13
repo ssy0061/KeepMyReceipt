@@ -88,6 +88,7 @@ export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
               crewInfo={crewInfo}
               key={crewInfo.clubCrewId}
               getCrewList={getCrewList}
+              filter={filter}
             />
           ))
         ) : (

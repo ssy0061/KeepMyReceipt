@@ -14,9 +14,14 @@ interface crewInfoTypes {
 interface CrewMenuProps {
   crewInfo: crewInfoTypes;
   getCrewList: any;
+  filter?: string;
 }
 
-export default function CrewMenu({ crewInfo, getCrewList }: CrewMenuProps) {
+export default function CrewMenu({
+  crewInfo,
+  getCrewList,
+  filter,
+}: CrewMenuProps) {
   const navigate = useNavigate();
   const { clubCrewId, name, email, auth } = crewInfo;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -39,7 +44,7 @@ export default function CrewMenu({ crewInfo, getCrewList }: CrewMenuProps) {
           navigate('../../../');
         } else {
           // 관리자 <-> 회원 변경은 새로 조회
-          getCrewList();
+          getCrewList(0, filter);
         }
       })
       .catch((e) => {
@@ -54,7 +59,7 @@ export default function CrewMenu({ crewInfo, getCrewList }: CrewMenuProps) {
       )
       .then((res) => {
         console.log(res);
-        getCrewList();
+        getCrewList(0, filter);
       })
       .catch((e) => {
         console.log(e.response.data.msg);

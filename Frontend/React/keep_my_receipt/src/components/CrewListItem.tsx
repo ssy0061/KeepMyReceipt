@@ -23,10 +23,12 @@ export default function CrewListItem({
   crewInfo,
   onClickToApprove,
   getCrewList,
+  filter,
 }: {
   crewInfo: CrewInfoTypes;
   onClickToApprove?: any;
   getCrewList?: any;
+  filter?: string;
 }) {
   const { clubCrewId, name, email, auth } = crewInfo;
 
@@ -79,7 +81,11 @@ export default function CrewListItem({
             </Stack>
             <IconButton color="primary">
               {auth ? (
-                <CrewMenu crewInfo={crewInfo} getCrewList={getCrewList} />
+                <CrewMenu
+                  crewInfo={crewInfo}
+                  getCrewList={getCrewList}
+                  filter={filter}
+                />
               ) : (
                 <Add sx={{ fontSize: '2rem' }} />
               )}
