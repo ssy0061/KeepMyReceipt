@@ -2,8 +2,8 @@ import { memo, useState } from 'react';
 import { Collapse, List, ListItemButton, ListItemText } from '@mui/material';
 import { ExpandLess, ExpandMore, Info } from '@mui/icons-material';
 
-import DialogWithIconButton from '../DialogWithIconButton';
-import ListItemTextWithSubtext from '../ListItemTextWithSubtext';
+import DialogWithIconButton from '../../../../components/DialogWithIconButton';
+import ListItemTextWithSubtext from '../../../../components/ListItemTextWithSubtext';
 
 interface ItemCategoryType {
   name: string;

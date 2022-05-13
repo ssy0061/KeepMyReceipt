@@ -2,9 +2,9 @@ import { memo } from 'react';
 import { Collapse, List, ListItemButton } from '@mui/material';
 import { ExpandLess, ExpandMore, Info } from '@mui/icons-material';
 
-import useEditableList from '../../../../hooks/useEditableList';
-import DialogWithIconButton from '../DialogWithIconButton';
-import ListItemTextWithSubtext from '../ListItemTextWithSubtext';
+import useEditableList from '..';
+import DialogWithIconButton from '../../../../components/DialogWithIconButton';
+import ListItemTextWithSubtext from '../../../../components/ListItemTextWithSubtext';
 
 interface ItemCategoryType {
   name: string;
