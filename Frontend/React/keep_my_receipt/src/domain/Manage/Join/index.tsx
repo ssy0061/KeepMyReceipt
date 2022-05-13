@@ -84,7 +84,7 @@ export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
         justifyContent="center"
         alignItems="center"
         spacing={2}
-        marginTop={2}
+        marginTop={1}
       >
         {/* 리스트 */}
         {list.length ? (

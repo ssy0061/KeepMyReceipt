@@ -14,11 +14,13 @@ export default function Pagination({
   paginationSize,
   onClickPage,
   bgColor,
+  filter,
 }: {
   pageInfo: pageInfoType;
   paginationSize: number;
   onClickPage: any;
   bgColor?: string;
+  filter?: string;
 }) {
   // api로 받은 page 정보
   const { pageNumber, size, totalPages, numberOfElements, totalElements } =
@@ -29,7 +31,11 @@ export default function Pagination({
 
   // 새 page를 얻기 위한 api 요청
   const onClick = (newPage: number) => {
-    onClickPage(newPage);
+    if (filter) {
+      onClickPage(newPage, filter);
+    } else {
+      onClickPage(newPage);
+    }
   };
   const onClickForword = () => {
     onClickPage(paginationSize * (pagiNum + 1));

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Button } from '@mui/material';
+import { Stack, Button, Checkbox, FormControlLabel } from '@mui/material';
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import * as qs from 'qs';
 import CrewMenu from './Menu';
 import CrewListItem from '../../../components/CrewListItem';
+import CrewCheckBoxFilter from './CheckBoxFilter';
 
 interface listItemTypes {
   clubCrewId: number;
@@ -23,6 +24,7 @@ interface resopnseType {
 }
 
 export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
+  const [filter, setFilter] = useState('ALL');
   const { id, name, description, image } = clubInfo;
   const [res, setRes] = useState<resopnseType>({
     pageNumber: 0,
@@ -33,14 +35,17 @@ export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
     list: [],
   });
   const { list } = res;
+
+  // axios
   const crewListAxios = axios.create({
     paramsSerializer: (params) =>
       qs.stringify(params, { arrayFormat: 'repeat' }),
   });
-  const getCrewList = async (page?: number) => {
+  const getCrewList = async (page?: number, auth?: string) => {
     await crewListAxios
       .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}/crews`, {
         params: {
+          auth: auth ? auth : 'ALL',
           page: page ? page : 0,
           size: 5,
           sort: ['auth', 'id'],
@@ -61,24 +66,20 @@ export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
       });
   };
 
-  const onClick = (auth: string) => {
-    console.log('메뉴 펼치기');
-  };
-
   useEffect(() => {
     getCrewList();
   }, []);
   return (
     <Stack>
-      {/* Dialog */}
-
-      {/* Table */}
+      {/* 필터(관리자/회원) */}
+      <CrewCheckBoxFilter getCrewList={getCrewList} setFilter={setFilter} />
+      {/* 내용 */}
       <Stack
         direction="column"
         justifyContent="center"
         alignItems="center"
         spacing={2}
-        marginTop={2}
+        marginTop={1}
       >
         {/* 리스트 */}
         {list.length ? (
@@ -99,6 +100,7 @@ export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
           paginationSize={5}
           onClickPage={getCrewList}
           bgColor="#ffaa00"
+          filter={filter}
         />
       </Stack>
     </Stack>

@@ -8,6 +8,7 @@ import {
   Stack,
   Avatar,
   styled,
+  Typography,
 } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -133,8 +134,8 @@ export default function ManageIndex() {
       <Navigation />
       <Grid container direction="column" sx={{ marginBottom: 3 }}>
         {/* Header */}
-        <Stack>
-          <h2>모임관리</h2>
+        <Stack marginTop="1rem" spacing="0.5rem">
+          <Typography variant="h4">모임관리</Typography>
           <Stack
             direction="row"
             spacing={2}
@@ -156,7 +157,7 @@ export default function ManageIndex() {
         </Stack>
 
         {/* Tab */}
-        <Stack direction="column" alignItems="center" sx={{ marginY: '1rem' }}>
+        <Stack direction="column" alignItems="center">
           <Box
             sx={{
               width: '100%',
