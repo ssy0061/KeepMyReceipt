@@ -90,7 +90,7 @@ public class TransactionDetail {
                 .largeTag(largeTag)
                 .smallTag(smallTag)
                 .name(name)
-                .price(Math.abs(price))
+                .price(price)
                 .build();
     }
 
@@ -98,7 +98,7 @@ public class TransactionDetail {
         return TransactionDetailResDTO.builder()
                 .transactionDetailId(id)
                 .name(name)
-                .price(Math.abs(price))
+                .price(price)
                 .type(type)
                 .largeCategory(largeCategory)
                 .smallCategory(smallCategory)

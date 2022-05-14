@@ -35,6 +35,10 @@ public class Asset {
     private YearMonth date;
 
     // 대분류 이름
+    @Column
+    private String type;
+
+    // 대분류 이름
     @Column(name = "lcName")
     private String lcName;
 
