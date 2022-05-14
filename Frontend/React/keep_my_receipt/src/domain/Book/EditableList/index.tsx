@@ -1,74 +1,80 @@
 import { useState } from 'react';
-import { List } from '@mui/material';
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
+import { AddCircleOutline } from '@mui/icons-material';
 
-import Item from './Item';
-import ItemOnEdit from './ItemOnEdit';
-import ItemAdder from './ItemAdder';
-import { toEditableArray } from './services';
+import EditableItem from '../EditableItem';
 
 interface EditableListType {
-  /** 원래 리스트 (상위 컴포넌트에서 만들어야 함) */
   originalList: string[];
-  // /** 원래 리스트 바꾸는 함수 */
-  // setOriginalList: React.Dispatch<React.SetStateAction<string[]>>;
-  /** 현재 리스트에서 선택된 아이템 (상위 컴포넌트에서 만들어야 함) */
-  setSelected: (value: string) => void;
-  /** 접이식 컴포넌트 연동 여부 (옵션) */
-  collapsible?: boolean;
+  onSelect?: (value: string | number) => void;
 }
 
-/** Todo List 처럼 태그를 CRUD 할 수 있는 리스트 */
-export default function useEditableList() {
-  // 열림/닫힘 상태를 나타냄
-  // 다른 접이식 컴포넌트와 연동해서 쓸 수 있음
-  const [open, setOpen] = useState(false);
+export default function EditableList(props: EditableListType) {
+  const [isAdding, setIsAdding] = useState(false);
 
-  // 수정 가능한 리스트 컴포넌트
-  const EditableList = (props: EditableListType) => {
-    // 원래 문자열 리스트를 기반으로, 수정 가능 여부 표시한 임시 리스트 생성
-    const [editableList, setEditableList] = useState(
-      toEditableArray(props.originalList),
-    );
+  // 리스트의 첫 번째 요소가 null이 아닌 경우, 리스트 존재
+  const hasList = () => props.originalList[0];
 
-    return (
-      <>
-        <List disablePadding>
-          {/* 리스트 아이템들 출력 */}
-          {editableList.map((item, index) =>
-            // 수정 버튼을 누른 아이템인 경우
-            item.editable ? (
-              // 수정 가능한 텍스트 필드 표시
-              <ItemOnEdit
-                item={item}
-                setEditableList={setEditableList}
-                // setOriginalList={props.setOriginalList}
-                key={item.name + index}
-              />
-            ) : (
-              // 아닌 경우 그냥 아이템 표시
-              <Item
-                item={item}
-                setEditableList={setEditableList}
-                // setOriginalList={props.setOriginalList}
-                setSelectedItem={props.setSelected}
-                collapsible={props.collapsible ? true : false}
-                setOpen={setOpen}
-                key={item.name + index}
-              />
-            ),
-          )}
-
-          {/* 맨 아래에 태그 추가 버튼 추가 */}
-          <ItemAdder
-            editableList={editableList}
-            setEditableList={setEditableList}
-            // setOriginalList={props.setOriginalList}
+  return (
+    <>
+      <List disablePadding>
+        {/* 리스트 아이템들 출력 */}
+        {props.originalList.map((item: string, index: number) => (
+          <EditableItem
+            originalValue={item}
+            prefixElement={<div style={{ marginRight: '1.5rem' }}></div>}
+            onEdit={(prevVal, newVal) => {
+              console.log('수정 요청 API: ', prevVal, '->', newVal);
+              console.log('목록 요청 API');
+            }}
+            onErase={(value) => {
+              console.log('삭제 요청 API: ', value);
+              console.log('목록 요청 API');
+            }}
+            onSelect={props.onSelect}
+            key={index}
           />
-        </List>
-      </>
-    );
-  };
+        ))}
 
-  // 리스트 컴포넌트와 열림/닫힘 상태 반환
-  return { EditableList, isOpen: open, setOpen };
+        {/* 리스트 마지막에 태그 추가 버튼 */}
+        {/* 목록이 있을 때만 추가 버튼 표시 */}
+        {hasList() &&
+          // 첫 상태는 그냥 추가 버튼만 표시
+          (!isAdding ? (
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => setIsAdding(true)}>
+                {/* 내용 앞 공백 */}
+                <div style={{ marginRight: '1.5rem' }}></div>
+                {/* 내용 */}
+                <ListItemText>추가</ListItemText>
+                {/* 더하기 아이콘 */}
+                <ListItemIcon>
+                  <AddCircleOutline />
+                </ListItemIcon>
+              </ListItemButton>
+            </ListItem>
+          ) : (
+            // 추가 버튼 클릭 시 입력란 띄움
+            <EditableItem
+              originalValue={''}
+              editOnMount
+              onEdit={(prevVal, newVal) => {
+                // 수정 시 수정 API 대신 추가 API 호출
+                console.log('추가 요청 API: ', newVal);
+                console.log('목록 요청 API');
+              }}
+              onCancel={() => {
+                setIsAdding(false);
+              }}
+            />
+          ))}
+      </List>
+    </>
+  );
 }

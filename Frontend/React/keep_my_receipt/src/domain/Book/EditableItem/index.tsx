@@ -3,7 +3,6 @@ import {
   IconButton,
   ListItem,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
   Stack,
   TextField,
@@ -13,14 +12,15 @@ import { Cancel, CheckCircle, Delete, Edit } from '@mui/icons-material';
 
 import useEditableItem from './hook';
 import toCurrency from '../../../services/toCurrency';
-import { EditableItemType } from './hook';
-type EditableItemContainerType = Parameters<typeof EditableItemContainer>[0];
+import { EditableItemControllerType } from './hook';
+type EditableItemViewType = Parameters<typeof EditableItemContainer>[0];
 
 export default function EditableItemContainer(props: {
   originalValue: string | number;
-  onEdit: (prevValue: string | number, newValue: string | number) => void;
+  onEdit?: (prevValue: string | number, newValue: string | number) => void;
   editOnMount?: boolean;
 
+  onCancel?: () => void;
   onErase?: (value: string | number) => void;
   onSelect?: (value: string | number) => void;
 
@@ -36,7 +36,7 @@ export default function EditableItemContainer(props: {
 
   return (
     <>
-      <ListItem>
+      <ListItem disablePadding>
         <Grid flexGrow={1}>
           {/* 아이템 내용 */}
           {props.onSelect ? (
@@ -66,15 +66,13 @@ function EditableItemContent({
   props,
   editableItem,
 }: {
-  props: EditableItemContainerType;
-  editableItem: EditableItemType;
+  props: EditableItemViewType;
+  editableItem: EditableItemControllerType;
 }) {
   return (
     <Stack direction="row" alignItems="center">
       {/* 텍스트 앞쪽에 놓을 아이콘 or 글 */}
-      {props.prefixElement && (
-        <ListItemIcon>{props.prefixElement}</ListItemIcon>
-      )}
+      {props.prefixElement && props.prefixElement}
 
       {/* 수정 중이 아닌 경우엔 글씨 보임 */}
       {!editableItem.isEditing && (
@@ -95,7 +93,7 @@ function EditableItemContent({
       )}
 
       {/* 수정 중이면 텍스트 필드 보임 */}
-      {editableItem.isEditing && (
+      {props.onEdit && editableItem.isEditing && (
         <TextField
           value={editableItem.changedValue}
           onChange={editableItem.onItemChange}
@@ -117,20 +115,20 @@ function EditableItemActions({
   props,
   editableItem,
 }: {
-  props: EditableItemContainerType;
-  editableItem: EditableItemType;
+  props: EditableItemViewType;
+  editableItem: EditableItemControllerType;
 }) {
   return (
     <>
       {/* 아이템 수정 버튼 */}
-      {!editableItem.isEditing && (
+      {props.onEdit && !editableItem.isEditing && (
         <IconButton onClick={() => editableItem.onItemEdit(true)}>
           <Edit />
         </IconButton>
       )}
 
       {/* 아이템 수정 확인 버튼 */}
-      {editableItem.isEditing && (
+      {props.onEdit && editableItem.isEditing && (
         <IconButton
           onClick={() => {
             editableItem.onItemEditConfirm();
@@ -141,8 +139,13 @@ function EditableItemActions({
       )}
 
       {/* 아이템 수정 취소 버튼 */}
-      {editableItem.isEditing && (
-        <IconButton onClick={() => editableItem.onItemEdit(false)}>
+      {props.onEdit && editableItem.isEditing && (
+        <IconButton
+          onClick={() => {
+            editableItem.onItemEdit(false);
+            props.onCancel && props.onCancel();
+          }}
+        >
           <Cancel />
         </IconButton>
       )}

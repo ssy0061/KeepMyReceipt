@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-export type EditableItemType = ReturnType<typeof useEditableItem>;
+export type EditableItemControllerType = ReturnType<typeof useEditableItem>;
 
 export default function useEditableItem(
   itemValue: string | number,
-  changeItemValue: (
+  changeItemValue?: (
     prevValue: string | number,
     newValue: string | number,
   ) => void,
@@ -35,7 +35,7 @@ export default function useEditableItem(
       alert('0이나 빈 값은 입력할 수 없습니다!');
       return;
     }
-    changeItemValue(itemValue, changedValue);
+    changeItemValue && changeItemValue(itemValue, changedValue);
     setIsEditing(false);
   };
 
