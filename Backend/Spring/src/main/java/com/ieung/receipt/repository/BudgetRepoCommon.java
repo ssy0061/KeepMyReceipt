@@ -6,5 +6,5 @@ import java.time.YearMonth;
 
 @Repository
 public interface BudgetRepoCommon {
-    void updateChangesByClubIdAndSmallCategoryAndDate(Long clubId, String smallCategory, YearMonth date, int changes);
+    void updateChangesByClubIdAndLcNameAndBscNameAndDate(Long clubId,String lcName, String bscName, YearMonth date, int changes);
 }

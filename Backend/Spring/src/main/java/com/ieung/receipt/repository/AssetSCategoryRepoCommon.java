@@ -4,5 +4,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AssetSCategoryRepoCommon {
-    void updateBalanceByClubIdAndAscName(Long clubId, String ascName, int changes);
+    void updateBalanceByClubIdAndLcNameAndAscName(Long clubId, String lcName, String ascName, int changes);
 }

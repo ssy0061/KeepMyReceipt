@@ -20,11 +20,12 @@ public class AssetRepoCommonImpl implements AssetRepoCommon {
     }
 
     @Override
-    public void updateBalanceByClubIdAndSmallCategoryAndDate(Long clubId, String smallCategory, YearMonth date, int changes) {
+    public void updateBalanceByClubIdAndLcNameAndAscNameAndDate(Long clubId, String lcName, String ascName, YearMonth date, int changes) {
         queryFactory.update(QAsset.asset)
                 .set(QAsset.asset.balance, QAsset.asset.balance.add(changes))
                 .where(QAsset.asset.club.id.eq(clubId),
-                        QAsset.asset.smallCategory.eq(smallCategory),
+                        QAsset.asset.lcName.eq(lcName),
+                        QAsset.asset.ascName.eq(ascName),
                         QAsset.asset.date.goe(date))
                 .execute();
     }

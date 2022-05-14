@@ -6,5 +6,5 @@ import java.time.YearMonth;
 
 @Repository
 public interface AssetRepoCommon {
-    void updateBalanceByClubIdAndSmallCategoryAndDate(Long clubId, String smallCategory, YearMonth date, int changes);
+    void updateBalanceByClubIdAndLcNameAndAscNameAndDate(Long clubId,  String lcName, String ascName, YearMonth date, int changes);
 }

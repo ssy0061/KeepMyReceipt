@@ -14,12 +14,12 @@ public class AssetSCategoryRepoCommonImpl implements AssetSCategoryRepoCommon {
         this.em = em;
     }
 
-
     @Override
-    public void updateBalanceByClubIdAndAscName(Long clubId, String ascName, int changes) {
+    public void updateBalanceByClubIdAndLcNameAndAscName(Long clubId, String lcName, String ascName, int changes) {
         queryFactory.update(QAssetSCategory.assetSCategory)
                 .set(QAssetSCategory.assetSCategory.balance, QAssetSCategory.assetSCategory.balance.add(changes))
                 .where(QAssetSCategory.assetSCategory.club.id.eq(clubId),
+                        QAssetSCategory.assetSCategory.lcName.eq(lcName),
                         QAssetSCategory.assetSCategory.ascName.eq(ascName))
                 .execute();
     }

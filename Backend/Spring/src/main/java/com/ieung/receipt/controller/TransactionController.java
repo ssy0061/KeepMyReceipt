@@ -103,21 +103,21 @@ public class TransactionController {
         return responseService.getSingleResult(pagingListResDTO);
     }
 
-//    // 거래내역 삭제
-//    @Operation(summary = "거래내역 삭제", description = "거래내역 삭제")
-//    @DeleteMapping(value = "transaction/{transactionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public @ResponseBody CommonResult deleteTransaction(@PathVariable @NotNull Long transactionId) throws Exception {
-//        Transaction transaction = transactionService.deleteTransaction(getCurrentCrewId(), transactionId);
-//
-//        // 영수증 청구한 회원에게 알림 전송
-//        if (transaction.getRequest() != null) {
-//            Request request = transaction.getRequest();
-//            List<CrewToken> crewTokens = crewTokenService.getNormalCrewToken(request.getCrewId());
-//            notificationService.createManyNotifications(NotiCode.CHARGE,request.getId(), "청구 승인 취소 알림",
-//                    request.getPrice() + "원 승인이 취소되었습니다.",
-//                    request.getClub(), crewTokens);
-//        }
-//
-//        return responseService.getSuccessResult();
-//    }
+    // 거래내역 삭제
+    @Operation(summary = "거래내역 삭제", description = "거래내역 삭제")
+    @DeleteMapping(value = "transaction/{transactionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody CommonResult deleteTransaction(@PathVariable @NotNull Long transactionId) throws Exception {
+        Transaction transaction = transactionService.deleteTransaction(getCurrentCrewId(), transactionId);
+
+        // 영수증 청구한 회원에게 알림 전송
+        if (transaction.getRequest() != null) {
+            Request request = transaction.getRequest();
+            List<CrewToken> crewTokens = crewTokenService.getNormalCrewToken(request.getCrewId());
+            notificationService.createManyNotifications(NotiCode.CHARGE,request.getId(), "청구 승인 취소 알림",
+                    request.getPrice() + "원 승인이 취소되었습니다.",
+                    request.getClub(), crewTokens);
+        }
+
+        return responseService.getSuccessResult();
+    }
 }

@@ -34,9 +34,13 @@ public class Asset {
     @Column(nullable = false)
     private YearMonth date;
 
-    // 소분류명
-    @Column(nullable = false)
-    private String smallCategory;
+    // 대분류 이름
+    @Column(name = "lcName")
+    private String lcName;
+
+    // 자산 소분류 이름
+    @Column(name = "ascName")
+    private String ascName;
 
     // 잔액
     @Column(nullable = false)

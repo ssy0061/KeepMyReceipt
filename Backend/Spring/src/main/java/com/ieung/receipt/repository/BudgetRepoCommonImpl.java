@@ -21,11 +21,12 @@ public class BudgetRepoCommonImpl implements BudgetRepoCommon {
     }
 
     @Override
-    public void updateChangesByClubIdAndSmallCategoryAndDate(Long clubId, String smallCategory, YearMonth date, int changes) {
+    public void updateChangesByClubIdAndLcNameAndBscNameAndDate(Long clubId, String lcName, String bscName, YearMonth date, int changes) {
         queryFactory.update(QBudget.budget)
                 .set(QBudget.budget.changes, QBudget.budget.changes.add(changes))
                 .where(QBudget.budget.club.id.eq(clubId),
-                        QBudget.budget.smallCategory.eq(smallCategory),
+                        QBudget.budget.lcName.eq(lcName),
+                        QBudget.budget.bscName.eq(bscName),
                         QBudget.budget.date.goe(date))
                 .execute();
     }

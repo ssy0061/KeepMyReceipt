@@ -34,9 +34,13 @@ public class Budget {
     @Column(nullable = false)
     private YearMonth date;
 
-    // 소분류명
-    @Column(nullable = false)
-    private String smallCategory;
+    // 대분류 이름
+    @Column(name = "lcName")
+    private String lcName;
+
+    // 예산 소분류 이름
+    @Column(name = "bscName")
+    private String bscName;
 
     // 현금 변동
     @Column(nullable = false)
