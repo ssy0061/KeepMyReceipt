@@ -9,8 +9,10 @@ import {
   Typography,
   Grid,
   IconButton,
+  Menu,
+  MenuItem,
 } from '@mui/material';
-import { Done, AccessTime, Delete } from '@mui/icons-material';
+import { Done, AccessTime, Delete, MoreVert } from '@mui/icons-material';
 
 interface ClubInfoType {
   id: number;
@@ -55,6 +57,16 @@ export default function ClubListItem({
         console.log(e);
       });
   };
+  // menu
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   // checkJoin ? checkJoined() : null;
   useEffect(() => {
     if (checkJoin) {
@@ -84,7 +96,7 @@ export default function ClubListItem({
           <CardContent sx={{ padding: '0.8rem' }}>
             <Stack
               direction="row"
-              spacing={3}
+              spacing={2}
               alignItems="center"
               justifyContent="flex-start"
             >
@@ -108,23 +120,50 @@ export default function ClubListItem({
         </CardActionArea>
       </Card>
       {leave ? (
-        <IconButton
-          onClick={onClickToLeave}
-          sx={{
-            position: 'absolute',
-            right: '0.1rem',
-            bottom: '0.1rem',
-            fontSize: '1.5rem',
-            color: '#c5c7d4',
-            opacity: 0.5,
-            padding: 0.5,
-            '&:hover': {
-              color: 'black',
-            },
-          }}
-        >
-          <Delete sx={{ fontSize: '2rem' }} />
-        </IconButton>
+        <>
+          <IconButton
+            onClick={handleClick}
+            sx={{
+              position: 'absolute',
+              right: '0.1rem',
+              top: '0.1rem',
+              fontSize: '1.5rem',
+              color: '#c5c7d4',
+              opacity: 0.5,
+              padding: 0.5,
+              '&:hover': {
+                color: 'black',
+              },
+            }}
+          >
+            <MoreVert sx={{ fontSize: '2rem' }} />
+          </IconButton>
+          <Menu
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+          >
+            <MenuItem
+              onClick={() => {
+                onClickToLeave();
+                handleClose();
+              }}
+              disableRipple
+              sx={{ padding: '0.5rem' }}
+            >
+              <Delete />
+              모임 탈퇴
+            </MenuItem>
+          </Menu>
+        </>
       ) : null}
       {joined ? (
         <Done
