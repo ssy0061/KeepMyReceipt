@@ -1,21 +1,27 @@
 package com.ieung.receipt.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.vladmihalcea.hibernate.type.basic.YearMonthDateType;
+import com.vladmihalcea.hibernate.type.basic.YearMonthIntegerType;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.YearMonth;
 
 @Builder
 @Getter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "asset")
+@TypeDef(
+        typeClass = YearMonthIntegerType.class,
+        defaultForType = YearMonth.class
+)
 // 자산현황표 테이블
 public class Asset {
     // 자산현황표 고유 키 값
@@ -52,5 +58,17 @@ public class Asset {
 
     public void updateBalance(int balance) {
         this.balance = balance;
+    }
+
+    public Asset copyAsset(LocalDate localDate) {
+        YearMonth date = YearMonth.of(localDate.getYear(), localDate.getMonth());
+        return Asset.builder()
+                .club(club)
+                .date(date)
+                .type(type)
+                .lcName(lcName)
+                .ascName(ascName)
+                .balance(balance)
+                .build();
     }
 }

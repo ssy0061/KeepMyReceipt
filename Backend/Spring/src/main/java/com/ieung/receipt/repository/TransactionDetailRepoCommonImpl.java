@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +58,17 @@ public class TransactionDetailRepoCommonImpl implements TransactionDetailRepoCom
                 .fetch().size();
 
         return new PageImpl<>(result, pageable, total);
+    }
+
+    @Override
+    public List<TransactionDetail> findByPayDate(YearMonth yearMonth) {
+        List<TransactionDetail> result = queryFactory
+                .selectFrom(QTransactionDetail.transactionDetail)
+                .where(QTransactionDetail.transactionDetail.payDate.between(
+                        yearMonth.atDay(1),
+                        yearMonth.atEndOfMonth()))
+                .fetch();
+        return result;
     }
 
     // Pageable 객체의 sort를 list로 변환

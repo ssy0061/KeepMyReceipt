@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -60,8 +61,8 @@ public class TransactionService {
 
         Transaction resTransaction = transactionRepository.save(transaction);
 
-        Map<String, Map<String, Integer>> assetMap = new HashMap<>(); // 자산별 변동 저장하는 map
-        Map<String, Map<String, Integer>> budgetMap = new HashMap<>(); // 예산, 지출, 수입별 변동 저장하는 map
+        Map<Category, Integer> assetMap = new HashMap<>(); // 자산별 변동 저장하는 map
+        Map<Category, Integer> budgetMap = new HashMap<>(); // 예산, 지출, 수입별 변동 저장하는 map
 
         List<TransactionDetail> transactionDetailList = new ArrayList<>();
 
@@ -93,26 +94,26 @@ public class TransactionService {
 
                 transactionDetail.updateCategory(assetSCategory.getLcName(), assetSCategory.getAscName());
 
-                Map<String, Integer> map = getMap(assetMap, assetSCategory.getLcName());
-                map.put(assetSCategory.getAscName(), map.getOrDefault(assetSCategory.getAscName(), 0) + detailReqDTO.getPrice());
+                Category category = new Category("자산", assetSCategory.getLcName(), assetSCategory.getAscName());
+                assetMap.put(category, assetMap.getOrDefault(category, 0) + detailReqDTO.getPrice());
 
                 // 소분류가 현금이 아닌 경우 현금 삭감
                 if (!assetSCategory.getAscName().equals("현금")) {
-                    map = getMap(assetMap, "현금 및 현금성자산");
-                    map.put("현금", map.getOrDefault("현금", 0) + transactionDetail.getPrice());
+                    category = new Category("자산", "현금 및 현금성자산", "현금");
+                    assetMap.put(category, assetMap.getOrDefault(category, 0) + transactionDetail.getPrice());
                 }
             } else {
                 BudgetSCategory budgetSCategory = budgetSCategoryRepository.findBudgetSCategoryByBscIdAndClub(detailReqDTO.getCategoryId(), clubCrew.getClub())
                         .orElseThrow(() -> new ApiMessageException("존재하는 소분류가 아닙니다."));
                 transactionDetail.updateCategory(budgetSCategory.getLcName(), budgetSCategory.getLcName());
 
-                Map<String, Integer> map = getMap(budgetMap, budgetSCategory.getLcName());
-                map.put(budgetSCategory.getBscName(), map.getOrDefault(budgetSCategory.getBscName(), 0) + detailReqDTO.getPrice());
+                Category category = new Category(transactionDetail.getType(), budgetSCategory.getLcName(), budgetSCategory.getBscName());
+                budgetMap.put(category, budgetMap.getOrDefault(category, 0) + detailReqDTO.getPrice());
 
                 // 유형이 지출인 경우 현금 삭감
                 if (transactionDetail.getType().equals("지출")) {
-                    map = getMap(assetMap, "현금 및 현금성자산");
-                    map.put("현금", map.getOrDefault("현금", 0) + transactionDetail.getPrice());
+                    category = new Category("자산", "현금 및 현금성자산", "현금");
+                    assetMap.put(category, assetMap.getOrDefault(category, 0) + transactionDetail.getPrice());
                 }
             }
 
@@ -125,8 +126,24 @@ public class TransactionService {
             throw new ApiMessageException("항목 금액의 총계가 총금액과 일치하지 않습니다.");
         }
 
+        // 현재 연월 자산 현황표 존재하지 않는다면 새로 생성
+        if (!assetRepository.findExistByClubIdAndDate(transaction.getClub().getId(),
+                                                        YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()))) {
+            List<Asset> latestAssets = assetRepository.findLatestAssetsByClubIdAndDate(transaction.getClub().getId(),
+                    YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()));
+
+            if (latestAssets != null) {
+                List<Asset> newAssets = new ArrayList<>();
+                for (Asset asset : latestAssets) {
+                    Asset newAsset = asset.copyAsset(transaction.getPayDate());
+                    newAssets.add(newAsset);
+                }
+                assetRepository.saveAllAndFlush(newAssets);
+            }
+        }
+
         // 이후 자산 현황표 수정, 자산 수정
-        updateAsset(assetMap, transaction);
+        updateAsset(assetMap, transaction, true);
 
         // 이후 예산 운영표 수정
         updateBudget(budgetMap, transaction);
@@ -225,8 +242,8 @@ public class TransactionService {
 
         checkAuth(transaction.getClub().getId(), crewId);
 
-        Map<String, Map<String, Integer>> assetMap = new HashMap<>(); // 자산별 변동 저장하는 map
-        Map<String, Map<String, Integer>> budgetMap = new HashMap<>(); // 예산, 지출, 수입별 변동 저장하는 map
+        Map<Category, Integer> assetMap = new HashMap<>(); // 자산별 변동 저장하는 map
+        Map<Category, Integer> budgetMap = new HashMap<>(); // 예산, 지출, 수입별 변동 저장하는 map
 
         // 각 세부 항목별로 수정 내용 확인
         for (TransactionDetail transactionDetail : transaction.getTransactionDetails()) {
@@ -235,32 +252,32 @@ public class TransactionService {
                         .findAssetSCategoryByClubAndLcNameAndAscName(transaction.getClub(), transactionDetail.getLargeCategory(), transactionDetail.getSmallCategory())
                         .orElseThrow(() -> new ApiMessageException("존재하는 소분류가 아닙니다."));
 
-                Map<String, Integer> map = getMap(assetMap, assetSCategory.getLcName());
-                map.put(assetSCategory.getAscName(), map.getOrDefault(assetSCategory.getAscName(), 0) + transactionDetail.getPrice());
+                Category category = new Category("자산", assetSCategory.getLcName(), assetSCategory.getAscName());
+                assetMap.put(category, assetMap.getOrDefault(category, 0) + transactionDetail.getPrice());
 
                 // 소분류가 현금이 아닌 경우 현금 추가
                 if (!assetSCategory.getAscName().equals("현금")) {
-                    map = getMap(assetMap, "현금 및 현금성자산");
-                    map.put("현금", map.getOrDefault("현금", 0) + (0 - transactionDetail.getPrice()));
+                    category = new Category("자산", "현금 및 현금성자산", "현금");
+                    assetMap.put(category, assetMap.getOrDefault(category, 0) + (0 - transactionDetail.getPrice()));
                 }
             } else {
                 BudgetSCategory budgetSCategory = budgetSCategoryRepository
                         .findBudgetSCategoryByClubAndLcNameAndBscName(transaction.getClub(), transactionDetail.getLargeCategory(), transactionDetail.getSmallCategory())
                         .orElseThrow(() -> new ApiMessageException("존재하는 소분류가 아닙니다."));
 
-                Map<String, Integer> map = getMap(budgetMap, budgetSCategory.getLcName());
-                map.put(budgetSCategory.getBscName(), map.getOrDefault(budgetSCategory.getBscName(), 0) + transactionDetail.getPrice());
+                Category category = new Category(transactionDetail.getType(), budgetSCategory.getLcName(), budgetSCategory.getBscName());
+                budgetMap.put(category, budgetMap.getOrDefault(category, 0) + transactionDetail.getPrice());
 
                 // 유형이 지출인 경우 현금 추가
                 if (transactionDetail.getType().equals("지출")) {
-                    map = getMap(assetMap, "현금 및 현금성자산");
-                    map.put("현금", map.getOrDefault("현금", 0) + (0 - transactionDetail.getPrice()));
+                    category = new Category("자산", "현금 및 현금성자산", "현금");
+                    assetMap.put(category, assetMap.getOrDefault(category, 0) + (0 - transactionDetail.getPrice()));
                 }
             }
         }
 
         // 이후 자산 현황표 수정, 자산 수정
-        updateAsset(assetMap, transaction);
+        updateAsset(assetMap, transaction, false);
 
         // 이후 예산 운영표 수정
         updateBudget(budgetMap, transaction);
@@ -271,45 +288,99 @@ public class TransactionService {
         return transaction;
     }
 
-    // 대분류, 소분류로 해당 map 반환
-    public Map<String, Integer> getMap(Map<String, Map<String, Integer>> map, String lcName) {
-        Map<String, Integer> res;
-        if (map.containsKey(lcName)) {
-            res = map.get(lcName);
-        } else {
-            res = new HashMap<>();
-            map.put(lcName, res);
-        }
+    @Transactional(readOnly = false)
+    public void updateAsset(Map<Category, Integer> assetMap, Transaction transaction, boolean isInsert) {
+        for (Category category : assetMap.keySet()) {
+            String type = category.type;
+            String lcName = category.lcName;
+            String scName = category.scName;
 
-        return res;
+            int changes = assetMap.get(category);
+
+            if (isInsert) {
+                // 해당 소분류가 현재 자산현황표에 없으면 새로 만들기
+                if (!assetRepository.findExistByClubIdAndLcNameAndAscNameAndDate(transaction.getClub().getId(), lcName, scName,
+                        YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()))) {
+                    List<YearMonth> yearMonths  = assetRepository.findDateByClubIdAndLcNameAndAscNameAndDate(transaction.getClub().getId(), lcName, scName,
+                            YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()));
+
+                    List<Asset> assets = new ArrayList<>();
+
+                    Asset asset = Asset.builder()
+                            .club(transaction.getClub())
+                            .date(YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()))
+                            .type(type)
+                            .lcName(lcName)
+                            .ascName(scName)
+                            .balance(0)
+                            .build();
+                    assets.add(asset);
+
+                    for (YearMonth yearMonth : yearMonths) {
+                        asset = Asset.builder()
+                                .club(transaction.getClub())
+                                .date(yearMonth)
+                                .type(type)
+                                .lcName(lcName)
+                                .ascName(scName)
+                                .balance(0)
+                                .build();
+                        assets.add(asset);
+                    }
+
+                    assetRepository.saveAllAndFlush(assets);
+                }
+            }
+
+            // 이후 내역 update
+            assetRepository.updateBalanceByClubIdAndLcNameAndAscNameAndDate(transaction.getClub().getId(), lcName, scName,
+                    YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()),
+                                    changes);
+            assetSCategoryRepository.updateBalanceByClubIdAndLcNameAndAscName(transaction.getClub().getId(), lcName, scName, changes);
+        }
     }
     @Transactional(readOnly = false)
-    public void updateAsset(Map<String, Map<String, Integer>> assetMap, Transaction transaction) {
-        for (String lcName : assetMap.keySet()) {
-            Map<String, Integer> map = assetMap.get(lcName);
+    public void updateBudget(Map<Category, Integer> budgetMap, Transaction transaction) {
+        for (Category category : budgetMap.keySet()) {
+            String type = category.type;
+            String lcName = category.lcName;
+            String scName = category.scName;
 
-            for (String ascName : map.keySet()) {
-                int changes = map.get(ascName);
+            int changes = budgetMap.get(category);
 
-                assetRepository.updateBalanceByClubIdAndLcNameAndAscNameAndDate(transaction.getClub().getId(), lcName, ascName,
+            // 대분류가 전기예산이면 따로 처리 (연별 누적)
+            if (lcName.equals("전기예산")) {
+
+            } else {
+                budgetRepository.updateChangesByClubIdAndLcNameAndBscNameAndDate(transaction.getClub().getId(), lcName, scName,
                         YearMonth.of(transaction.getPayDate().getYear(),
                                 transaction.getPayDate().getMonth()), changes);
-                assetSCategoryRepository.updateBalanceByClubIdAndLcNameAndAscName(transaction.getClub().getId(), lcName, ascName, changes);
             }
         }
     }
-    @Transactional(readOnly = false)
-    public void updateBudget(Map<String, Map<String, Integer>> budgetMap, Transaction transaction) {
-        for (String lcName : budgetMap.keySet()) {
-            Map<String, Integer> map = budgetMap.get(lcName);
 
-            for (String bscName : map.keySet()) {
-                int changes = map.get(bscName);
+    class Category {
+        String type;
+        String lcName;
+        String scName;
 
-                budgetRepository.updateChangesByClubIdAndLcNameAndBscNameAndDate(transaction.getClub().getId(), lcName, bscName,
-                        YearMonth.of(transaction.getPayDate().getYear(),
-                                transaction.getPayDate().getMonth()), changes);
-            }
+        Category(String type, String lcName, String scName) {
+            this.type = type;
+            this.lcName = lcName;
+            this.scName = scName;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Category category = (Category) o;
+            return Objects.equals(type, category.type) && Objects.equals(lcName, category.lcName) && Objects.equals(scName, category.scName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(type, lcName, scName);
         }
     }
 }

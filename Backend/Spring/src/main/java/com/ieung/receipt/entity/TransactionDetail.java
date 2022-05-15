@@ -98,7 +98,7 @@ public class TransactionDetail {
         return TransactionDetailResDTO.builder()
                 .transactionDetailId(id)
                 .name(name)
-                .price(price)
+                .price(Math.abs(price))
                 .type(type)
                 .largeCategory(largeCategory)
                 .smallCategory(smallCategory)
