@@ -79,7 +79,7 @@ export default function SearchBar({
             value={value}
             placeholder={placeholder}
             variant="standard"
-            sx={{ outlineColor: 'black' }}
+            sx={{ outlineColor: 'black', width: '14rem' }}
           />
           <IconButton onClick={searchWord}>
             <Search sx={{ color: 'black', fontSize: '2rem' }} />

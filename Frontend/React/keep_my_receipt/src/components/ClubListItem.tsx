@@ -79,7 +79,7 @@ export default function ClubListItem({
       xs={12}
       container
       justifyContent="center"
-      sx={{ margin: '0.5rem', position: 'relative' }}
+      sx={{ margin: '0.3rem', position: 'relative' }}
     >
       <Card
         variant="outlined"
