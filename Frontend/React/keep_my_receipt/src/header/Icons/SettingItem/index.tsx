@@ -15,9 +15,9 @@ export default function SettingItem() {
     <Box>
       <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, marginLeft: 2 }}>
         <SettingsIcon
-          sx={{
-            color: yellow[50],
-          }}
+        // sx={{
+        //   color: '#ffa500',
+        // }}
         />
       </IconButton>
     </Box>

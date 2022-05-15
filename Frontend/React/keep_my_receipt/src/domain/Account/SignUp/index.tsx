@@ -68,13 +68,13 @@ export default function SignUpForm() {
       });
 
     // 2. 이메일 형식
-    // const regEmail =
-    //   /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
-    // if (regEmail.test(email) === false) {
-    //   setEmailHelpText('이메일 형식이 맞지 않습니다.');
-    // } else {
-    //   setEmailHelpText('');
-    // }
+    const regEmail =
+      /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+    if (regEmail.test(email) === false) {
+      setEmailHelpText('이메일 형식이 맞지 않습니다.');
+    } else {
+      setEmailHelpText('');
+    }
   };
 
   const onCheckPasswordRight = (e: any) => {
@@ -113,10 +113,6 @@ export default function SignUpForm() {
         name: nickName,
       })
       .then(function (response) {
-        console.log(response.data);
-        console.log(email);
-        console.log(password);
-        console.log(nickName);
         setIsLoading(false);
         const errorMessage = response.data.msg;
         if (response.data.output == 0) {

@@ -6,16 +6,20 @@ export default function LogoItem() {
       variant="h6"
       component="a"
       href="/"
-      fontFamily="EastSeaDokdoRegular"
+      fontFamily="GowunDodumRegular"
       sx={{
         mr: 2,
         p: 'auto',
         flexGrow: 1,
         display: { xs: 'none', md: 'flex' },
-        fontWeight: 500,
+        width: '20px',
+        fontWeight: 300,
         float: 'right',
-        color: 'inherit',
-        fontSize: 40,
+        // color: 'inherit',
+        // color: '#ffa500',
+        color: 'black',
+        // background: '#ffa500',
+        fontSize: 20,
         textDecoration: 'none',
       }}
     >

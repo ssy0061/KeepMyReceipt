@@ -154,9 +154,9 @@ export default function AlarmItem() {
     <Box>
       <IconButton onClick={handleOpenUserMenu2} sx={{ p: 0, marginLeft: 10 }}>
         <NotificationsIcon
-          sx={{
-            color: yellow[50],
-          }}
+        // sx={{
+        //   color: yellow[50],
+        // }}
         />
       </IconButton>
 

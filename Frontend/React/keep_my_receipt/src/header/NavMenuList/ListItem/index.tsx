@@ -127,7 +127,7 @@ export default function ListItem() {
         sx={{
           my: 2,
           mr: 1,
-          color: 'white',
+          color: 'black',
           display: 'block',
           float: 'right',
         }}
@@ -144,7 +144,7 @@ export default function ListItem() {
           sx={{
             my: 2,
             mr: 1,
-            color: 'white',
+            color: 'black',
             display: 'block',
             float: 'right',
           }}
@@ -163,8 +163,8 @@ export default function ListItem() {
         sx={{
           my: 2,
           mr: 1,
-          color: 'white',
-          display: 'block',
+          color: 'black',
+          display: 'black',
           float: 'right',
         }}
       >
@@ -177,7 +177,7 @@ export default function ListItem() {
         sx={{
           my: 2,
           mr: 1,
-          color: 'white',
+          color: 'black',
           display: 'block',
           float: 'right',
         }}
@@ -226,7 +226,7 @@ export default function ListItem() {
         sx={{
           my: 2,
           mr: 1,
-          color: 'white',
+          color: 'black',
           display: 'block',
           float: 'right',
         }}

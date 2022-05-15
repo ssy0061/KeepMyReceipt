@@ -136,7 +136,7 @@ export default function LoginForm() {
           console.log(response.data);
         } else {
           onLoginSuccess(response.data);
-          navigate('/');
+          navigate('/club');
         }
       })
       .catch(function (error) {

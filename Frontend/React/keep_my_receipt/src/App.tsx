@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import './App.css';
-
 import Navigation from './header';
 import SimpleBottomNavigation from './footer';
 import Landing from './domain/Landing';
@@ -29,7 +28,6 @@ import AssetReport from './domain/Report/Asset';
 function App() {
   return (
     <BrowserRouter>
-      {/* <Navigation /> */}
       <Routes>
         {/* 밑에 Route들 추가하시면 됩니다! */}
         <Route path="/" element={<Outlet />}>
@@ -86,7 +84,7 @@ function App() {
         <Route path="/login/index" element={<LoginIndex />} />
         <Route path="/setting/index" element={<SettingIndex />} />
       </Routes>
-      <SimpleBottomNavigation />
+      {/* <SimpleBottomNavigation /> */}
     </BrowserRouter>
   );
 }

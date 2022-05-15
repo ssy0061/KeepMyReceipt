@@ -1,23 +1,37 @@
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+
 import Navigation from '../../header';
-export default function Landing() {
-  const navigate = useNavigate();
-  const onClick = () => {
-    navigate('/login');
-  };
+import Banner from './Landing/Banner';
+import GuideFirst from './Landing/Guide-1';
+import GuideSecond from './Landing/Guide-2';
+import GuideThird from './Landing/Guide-3';
+import GuideFourthFirst from './Landing/Guide-4-1';
+import GuideFourthSecond from './Landing/Guide-4-2';
+function Landing() {
+  //로그인한 상태라면 navbar 보여주기
+  const [isLogin, setIsLogin] = useState(false);
+  const accessToken = sessionStorage.getItem('accessToken');
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (accessToken) {
+      setIsLogin(true);
+    } else {
+      setIsLogin(false);
+    }
+  }, []);
+
   return (
-    <>
-      <Navigation />
-      <h1>안녕하세요</h1>
-      <p>
-        랜딩페이지랜딩페이지랜딩페이지랜딩페이지랜딩페이지랜딩페이지랜딩페이지
-        랜딩페이지랜딩페이지 랜딩페이지 랜딩페이지 랜딩페이지 랜딩페이지
-        랜딩페이지 랜딩페이지랜딩페이지 랜딩페이지 랜딩페이지
-        랜딩페이지랜딩페이지 랜딩페이지랜딩페이지 랜딩페이지 랜딩페이지
-        랜딩페이지 랜딩페이지 랜딩페이지 랜딩페이지랜딩페이지
-        랜딩페이지랜딩페이지
-      </p>
-      <button onClick={onClick}>로그인하러 가기</button>
-    </>
+    <div>
+      {isLogin ? <Navigation /> : ''}
+      <Banner />
+      <GuideFirst />
+      <GuideSecond />
+      <GuideThird />
+      <GuideFourthFirst />
+      <GuideFourthSecond />
+    </div>
   );
 }
+
+export default Landing;

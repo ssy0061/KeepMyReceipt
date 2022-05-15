@@ -34,8 +34,12 @@ export default function NavBar() {
   return (
     <>
       <header>
-        <Box height="68.5px">
+        <Box
+          height="68.5px"
+          // height="100.5px"
+        >
           <AppBar
+            elevation={0}
             sx={{
               top: 0,
               left: 0,
@@ -43,7 +47,7 @@ export default function NavBar() {
               width: '100%',
               margin: '80',
             }}
-            style={{ background: '#ffa500' }}
+            style={{ background: '#ffffff' }}
           >
             <Toolbar
               sx={{
@@ -51,6 +55,11 @@ export default function NavBar() {
                 float: 'right',
               }}
             >
+              <Box
+                sx={{
+                  marginRight: '200px',
+                }}
+              ></Box>
               {/* 모바일용 세줄 메뉴 */}
               {isLogin && id ? <ResponsiveDrawer /> : ''}
 
@@ -65,12 +74,11 @@ export default function NavBar() {
                   sx={{
                     my: 2,
                     mr: 1,
-                    color: 'white',
+                    color: 'black',
                     display: 'block',
                     float: 'right',
                   }}
                 >
-                  {' '}
                   내 모임
                 </Button>
               ) : (
@@ -97,6 +105,11 @@ export default function NavBar() {
               ) : (
                 ''
               )}
+              <Box
+                sx={{
+                  marginLeft: '200px',
+                }}
+              ></Box>
             </Toolbar>
           </AppBar>
         </Box>
