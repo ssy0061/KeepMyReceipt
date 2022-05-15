@@ -1,13 +1,16 @@
 package com.ieung.receipt.entity;
 
+import com.vladmihalcea.hibernate.type.basic.YearMonthIntegerType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.YearMonth;
 
 @Builder
@@ -16,6 +19,10 @@ import java.time.YearMonth;
 @AllArgsConstructor
 @Entity
 @Table(name = "budget")
+@TypeDef(
+        typeClass = YearMonthIntegerType.class,
+        defaultForType = YearMonth.class
+)
 // 예산운영표 테이블
 public class Budget {
     // 예산운영표 고유 키 값
@@ -34,6 +41,10 @@ public class Budget {
     @Column(nullable = false)
     private YearMonth date;
 
+    // 유형
+    @Column
+    private String type;
+
     // 대분류 이름
     @Column(name = "lcName")
     private String lcName;
@@ -48,5 +59,19 @@ public class Budget {
 
     public void updateChange(int change) {
         this.changes = changes;
+    }
+
+    public Budget copyBudget(LocalDate localDate) {
+        YearMonth date = YearMonth.of(localDate.getYear(), localDate.getMonth());
+
+        return Budget.builder()
+                .club(club)
+                .date(date)
+                .type(type)
+                .lcName(lcName)
+                .bscName(bscName)
+                .changes(changes)
+                .build();
+
     }
 }

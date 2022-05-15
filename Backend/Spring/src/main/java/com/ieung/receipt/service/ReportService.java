@@ -2,6 +2,7 @@ package com.ieung.receipt.service;
 
 import com.ieung.receipt.code.AuthCode;
 import com.ieung.receipt.entity.Asset;
+import com.ieung.receipt.entity.Budget;
 import com.ieung.receipt.exception.ApiMessageException;
 import com.ieung.receipt.repository.AssetRepository;
 import com.ieung.receipt.repository.BudgetRepository;
@@ -28,7 +29,7 @@ public class ReportService {
     public List<Asset> getAsset(Long clubId, Long crewId, YearMonth date) {
         checkAuth(clubId, crewId);
 
-        return assetRepository.findAssetWithBalanceByClubAndDate(clubId, date);
+        return assetRepository.findAssetWithBalanceByClubIdAndDate(clubId, date);
     }
 
 
@@ -42,5 +43,11 @@ public class ReportService {
         if (authCode == null || authCode == AuthCode.NONE) {
             throw new ApiMessageException("모임에 가입된 회원이 아닙니다.");
         }
+    }
+
+    public List<Budget> getBudget(Long clubId, Long crewId, YearMonth date) {
+        checkAuth(clubId, crewId);
+
+        return budgetRepository.findBudgetWithChangesByClubIdAndDate(clubId, date);
     }
 }

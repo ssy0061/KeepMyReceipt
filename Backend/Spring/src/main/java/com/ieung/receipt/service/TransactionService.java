@@ -105,16 +105,14 @@ public class TransactionService {
             } else {
                 BudgetSCategory budgetSCategory = budgetSCategoryRepository.findBudgetSCategoryByBscIdAndClub(detailReqDTO.getCategoryId(), clubCrew.getClub())
                         .orElseThrow(() -> new ApiMessageException("존재하는 소분류가 아닙니다."));
-                transactionDetail.updateCategory(budgetSCategory.getLcName(), budgetSCategory.getLcName());
+                transactionDetail.updateCategory(budgetSCategory.getLcName(), budgetSCategory.getBscName());
 
                 Category category = new Category(transactionDetail.getType(), budgetSCategory.getLcName(), budgetSCategory.getBscName());
                 budgetMap.put(category, budgetMap.getOrDefault(category, 0) + detailReqDTO.getPrice());
 
-                // 유형이 지출인 경우 현금 삭감
-                if (transactionDetail.getType().equals("지출")) {
-                    category = new Category("자산", "현금 및 현금성자산", "현금");
-                    assetMap.put(category, assetMap.getOrDefault(category, 0) + transactionDetail.getPrice());
-                }
+                // 현금 변동도 기록
+                category = new Category("자산", "현금 및 현금성자산", "현금");
+                assetMap.put(category, assetMap.getOrDefault(category, 0) + transactionDetail.getPrice());
             }
 
             totalPrice += detailReqDTO.getPrice();
@@ -126,7 +124,7 @@ public class TransactionService {
             throw new ApiMessageException("항목 금액의 총계가 총금액과 일치하지 않습니다.");
         }
 
-        // 현재 연월 자산 현황표 존재하지 않는다면 새로 생성
+        // 현재 연월 자산현황표가 존재하지 않는다면 새로 생성
         if (!assetRepository.findExistByClubIdAndDate(transaction.getClub().getId(),
                                                         YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()))) {
             List<Asset> latestAssets = assetRepository.findLatestAssetsByClubIdAndDate(transaction.getClub().getId(),
@@ -142,11 +140,27 @@ public class TransactionService {
             }
         }
 
+        // 현재 연월 예산운영표가 존재하지 않는다면 전기예산만 새로 생성
+        if (!budgetRepository.findExistByClubIdAndDate(transaction.getClub().getId(),
+                                                        YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()))) {
+            List<Budget> latestBudgets = budgetRepository.findPostingBudgetsByClubIdAndDate(transaction.getClub().getId(),
+                    YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()));
+
+            if (latestBudgets != null) {
+                List<Budget> newBudgets = new ArrayList<>();
+                for (Budget budget : latestBudgets) {
+                    Budget newBudget = budget.copyBudget(transaction.getPayDate());
+                    newBudgets.add(newBudget);
+                }
+                budgetRepository.saveAllAndFlush(newBudgets);
+            }
+        }
+
         // 이후 자산 현황표 수정, 자산 수정
         updateAsset(assetMap, transaction, true);
 
         // 이후 예산 운영표 수정
-        updateBudget(budgetMap, transaction);
+        updateBudget(budgetMap, transaction, true);
 
         transactionDetailRepository.saveAll(transactionDetailList);
 
@@ -266,13 +280,16 @@ public class TransactionService {
                         .orElseThrow(() -> new ApiMessageException("존재하는 소분류가 아닙니다."));
 
                 Category category = new Category(transactionDetail.getType(), budgetSCategory.getLcName(), budgetSCategory.getBscName());
-                budgetMap.put(category, budgetMap.getOrDefault(category, 0) + transactionDetail.getPrice());
 
-                // 유형이 지출인 경우 현금 추가
                 if (transactionDetail.getType().equals("지출")) {
-                    category = new Category("자산", "현금 및 현금성자산", "현금");
-                    assetMap.put(category, assetMap.getOrDefault(category, 0) + (0 - transactionDetail.getPrice()));
+                    budgetMap.put(category, budgetMap.getOrDefault(category, 0) + transactionDetail.getPrice());
+                } else {
+                    budgetMap.put(category, budgetMap.getOrDefault(category, 0) + (0 - transactionDetail.getPrice()));
                 }
+
+                // 현금 변동
+                category = new Category("자산", "현금 및 현금성자산", "현금");
+                assetMap.put(category, assetMap.getOrDefault(category, 0) + (0 - transactionDetail.getPrice()));
             }
         }
 
@@ -280,7 +297,7 @@ public class TransactionService {
         updateAsset(assetMap, transaction, false);
 
         // 이후 예산 운영표 수정
-        updateBudget(budgetMap, transaction);
+        updateBudget(budgetMap, transaction, false);
 
         transactionDetailRepository.deleteAll(transaction.getTransactionDetails());
         transactionRepository.delete(transaction);
@@ -304,20 +321,11 @@ public class TransactionService {
                     List<YearMonth> yearMonths  = assetRepository.findDateByClubIdAndLcNameAndAscNameAndDate(transaction.getClub().getId(), lcName, scName,
                             YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()));
 
+                    yearMonths.add(YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()));
                     List<Asset> assets = new ArrayList<>();
 
-                    Asset asset = Asset.builder()
-                            .club(transaction.getClub())
-                            .date(YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()))
-                            .type(type)
-                            .lcName(lcName)
-                            .ascName(scName)
-                            .balance(0)
-                            .build();
-                    assets.add(asset);
-
                     for (YearMonth yearMonth : yearMonths) {
-                        asset = Asset.builder()
+                        Asset asset = Asset.builder()
                                 .club(transaction.getClub())
                                 .date(yearMonth)
                                 .type(type)
@@ -334,13 +342,12 @@ public class TransactionService {
 
             // 이후 내역 update
             assetRepository.updateBalanceByClubIdAndLcNameAndAscNameAndDate(transaction.getClub().getId(), lcName, scName,
-                    YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()),
-                                    changes);
+                    YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()), changes);
             assetSCategoryRepository.updateBalanceByClubIdAndLcNameAndAscName(transaction.getClub().getId(), lcName, scName, changes);
         }
     }
     @Transactional(readOnly = false)
-    public void updateBudget(Map<Category, Integer> budgetMap, Transaction transaction) {
+    public void updateBudget(Map<Category, Integer> budgetMap, Transaction transaction, boolean isInsert) {
         for (Category category : budgetMap.keySet()) {
             String type = category.type;
             String lcName = category.lcName;
@@ -348,13 +355,55 @@ public class TransactionService {
 
             int changes = budgetMap.get(category);
 
-            // 대분류가 전기예산이면 따로 처리 (연별 누적)
-            if (lcName.equals("전기예산")) {
+            if (isInsert) {
+                // 해당 소분류가 현재 예산운영표에 없으면 새로 만들기
+                if (!budgetRepository.findExistByClubIdAndLcNameAndBscNameAndDate(transaction.getClub().getId(), lcName, scName,
+                        YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()))) {
 
+                    // 대분류가 전기예산이면 연별 누적
+                    if (lcName.equals("전기예산")) {
+                        List<YearMonth> yearMonths  = budgetRepository.findDateInSameYearByClubIdAndLcNameAndAscNameAndDate(transaction.getClub().getId(), lcName, scName,
+                                YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()));
+
+                        List<Budget> budgets = new ArrayList<>();
+
+                        yearMonths.add(YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()));
+
+                        for (YearMonth yearMonth : yearMonths) {
+                            Budget budget = Budget.builder()
+                                    .club(transaction.getClub())
+                                    .date(yearMonth)
+                                    .type(type)
+                                    .lcName(lcName)
+                                    .bscName(scName)
+                                    .changes(0)
+                                    .build();
+                            budgets.add(budget);
+                        }
+
+                        budgetRepository.saveAllAndFlush(budgets);
+                    } else {
+                        Budget budget = Budget.builder()
+                                .club(transaction.getClub())
+                                .date(YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()))
+                                .type(type)
+                                .lcName(lcName)
+                                .bscName(scName)
+                                .changes(0)
+                                .build();
+
+                        budgetRepository.save(budget);
+                    }
+                }
+            }
+
+            // 대분류가 전기예산이면 연별 누적
+            if (lcName.equals("전기예산")) {
+                budgetRepository.updateChangesInSameYearByClubIdAndLcNameAndBscNameAndDate(transaction.getClub().getId(), lcName, scName,
+                        YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()), changes);
             } else {
                 budgetRepository.updateChangesByClubIdAndLcNameAndBscNameAndDate(transaction.getClub().getId(), lcName, scName,
-                        YearMonth.of(transaction.getPayDate().getYear(),
-                                transaction.getPayDate().getMonth()), changes);
+                        YearMonth.of(transaction.getPayDate().getYear(), transaction.getPayDate().getMonth()), changes);
             }
         }
     }

@@ -4,6 +4,7 @@ import com.ieung.receipt.dto.res.LargeCategoryResDTO;
 import com.ieung.receipt.dto.res.ReportResDTO;
 import com.ieung.receipt.dto.res.SmallCategoryResDTO;
 import com.ieung.receipt.entity.Asset;
+import com.ieung.receipt.entity.Budget;
 import com.ieung.receipt.service.ReportService;
 import com.ieung.receipt.service.common.ListResult;
 import com.ieung.receipt.service.common.ResponseService;
@@ -63,6 +64,55 @@ public class ReportController {
                     Map<String, List<SmallCategoryResDTO>> newMap = new HashMap<>();
                     List<SmallCategoryResDTO> smallList = new ArrayList<>();
                     smallList.add(SmallCategoryResDTO.builder().scName(scName).balance(asset.getBalance()).build());
+                    newMap.put(lcName, smallList);
+                    map.put(type, newMap);
+                }
+            }
+
+            for (String type : map.keySet()) {
+                List<LargeCategoryResDTO> largeList = new ArrayList<>();
+
+                for (String lcName : map.get(type).keySet()) {
+                    largeList.add(LargeCategoryResDTO.builder().lcName(lcName).list(map.get(type).get(lcName)).build());
+                }
+
+                result.add(ReportResDTO.builder().type(type).list(largeList).build());
+            }
+
+            return responseService.getListResult(result);
+        }
+    }
+
+    // 예산운영표 조회
+    @Operation(summary = "예산운영표 조회", description = "예산운영표 조회")
+    @GetMapping(value = "/{clubId}/report/budget", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody ListResult<ReportResDTO> getBudget(@PathVariable @NotNull Long clubId, @RequestParam(value = "date",
+            defaultValue = "#{T(java.time.YearMonth).now()}") @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {
+        List<Budget> list = reportService.getBudget(clubId, getCurrentCrewId(), date);
+
+        if (list == null || list.size() == 0) {
+            return responseService.getListResult(null);
+        } else {
+            Map<String, Map<String, List<SmallCategoryResDTO>>> map = new HashMap<>();
+            List<ReportResDTO> result = new ArrayList<>();
+
+            for (Budget budget : list) {
+                String type = budget.getType();
+                String lcName = budget.getLcName();
+                String scName = budget.getBscName();
+
+                if (map.containsKey(type)) {
+                    if (map.get(type).containsKey(lcName)) {
+                        map.get(type).get(lcName).add(SmallCategoryResDTO.builder().scName(scName).balance(budget.getChanges()).build());
+                    } else {
+                        List<SmallCategoryResDTO> smallList = new ArrayList<>();
+                        smallList.add(SmallCategoryResDTO.builder().scName(scName).balance(budget.getChanges()).build());
+                        map.get(type).put(lcName, smallList);
+                    }
+                } else {
+                    Map<String, List<SmallCategoryResDTO>> newMap = new HashMap<>();
+                    List<SmallCategoryResDTO> smallList = new ArrayList<>();
+                    smallList.add(SmallCategoryResDTO.builder().scName(scName).balance(budget.getChanges()).build());
                     newMap.put(lcName, smallList);
                     map.put(type, newMap);
                 }

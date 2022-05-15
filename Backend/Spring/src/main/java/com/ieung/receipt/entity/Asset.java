@@ -40,7 +40,7 @@ public class Asset {
     @Column(nullable = false)
     private YearMonth date;
 
-    // 대분류 이름
+    // 유형
     @Column
     private String type;
 

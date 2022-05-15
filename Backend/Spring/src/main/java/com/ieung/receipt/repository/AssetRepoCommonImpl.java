@@ -38,7 +38,7 @@ public class AssetRepoCommonImpl implements AssetRepoCommon {
         if (yearMonth == null) {
             yearMonth = YearMonth.now();
         } else {
-            yearMonth = YearMonth.now().minusMonths(1);
+            yearMonth = yearMonth.minusMonths(1);
         }
 
         List<YearMonth> result = queryFactory.select(QAsset.asset.date).distinct()
@@ -103,7 +103,7 @@ public class AssetRepoCommonImpl implements AssetRepoCommon {
     }
 
     @Override
-    public List<Asset> findAssetWithBalanceByClubAndDate(Long clubId, YearMonth date) {
+    public List<Asset> findAssetWithBalanceByClubIdAndDate(Long clubId, YearMonth date) {
         List<Asset> result = queryFactory
                 .select(QAsset.asset)
                 .from(QAsset.asset)
