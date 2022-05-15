@@ -2,19 +2,57 @@
 
 /* 상태 타입 선언 */
 export type BookItemType = {
-  mainCategory: string;
+  id?: number;
+  name: string;
+  price: number;
+  type: string;
   largeCategory: string;
-  mediumCategory: string;
-  tag1: string;
-  tag2: string;
-  itemName: string;
-  itemValue: number;
+  smallCategory: string;
+  categoryId: number;
+  largeTag: string;
+  smallTag: string;
+  tagId: number;
+  memo: string;
 };
 
+export type BookItemKeys =
+  | 'name'
+  | 'price'
+  | 'type'
+  | 'largeCategory'
+  | 'smallCategory'
+  | 'categoryId'
+  | 'largeTag'
+  | 'smallTag'
+  | 'tagId'
+  | 'memo';
+
 type BookState = {
+  transactionId?: number;
+  clubId: number;
   date: string;
-  totalValue: number;
+  totalPrice: number;
   items: BookItemType[];
+};
+
+export const blankBookItem: BookItemType = {
+  name: '',
+  price: 0,
+  type: '',
+  largeCategory: '',
+  smallCategory: '',
+  categoryId: 0,
+  largeTag: '',
+  smallTag: '',
+  tagId: 0,
+  memo: '',
+};
+
+export const blankBook: BookState = {
+  clubId: 0,
+  date: new Date().toString(),
+  totalPrice: 0,
+  items: [blankBookItem],
 };
 
 /** 액션 */
@@ -46,7 +84,7 @@ export const createItem = (
 
 export const updateItem = (
   itemIndex: number,
-  keyName: string,
+  keyName: BookItemKeys,
   keyValue: string | number,
 ) => ({
   type: UPDATE_ITEM,
@@ -83,15 +121,11 @@ export default function bookReducer(
     case CREATE_ITEM:
       /** 아이템 추가 */
       // 새로 넣을 아이템 정의
-      const newItem = {
-        mainCategory: '',
-        largeCategory: '',
-        mediumCategory: '',
-        tag1: '',
-        tag2: '',
+      const newItem: BookItemType = {
+        ...blankBookItem,
         // 이름과 가격이 주어진 경우에는 넣고, 없으면 빈 값으로 초기화
-        itemName: action.itemName ? action.itemName : '',
-        itemValue: action.itemValue ? action.itemValue : 0,
+        name: action.itemName ? action.itemName : '',
+        price: action.itemValue ? action.itemValue : 0,
       };
 
       return {
