@@ -131,7 +131,7 @@ export default function ManageIndex() {
     getClubInfo();
   }, []);
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{ paddingY: 0, paddingX: '1rem' }}>
       <Grid container direction="column" sx={{ marginBottom: 3 }}>
         {/* Header */}
         <Stack marginTop="1rem" spacing="0.5rem">

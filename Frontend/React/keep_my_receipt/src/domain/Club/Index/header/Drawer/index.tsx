@@ -85,9 +85,9 @@ export default function IndexHeaderDrawer({
       <Container maxWidth="md" sx={{ padding: 0 }}>
         <Box
           sx={{
-            height: '42rem',
+            height: '85vh',
             paddingX: '2rem',
-            paddingTop: '1rem',
+            paddingY: '1rem',
           }}
         >
           {/* 상단 */}
@@ -105,7 +105,7 @@ export default function IndexHeaderDrawer({
               <p>신청한 모임이 없습니다.</p>
             )}
             {/* 페이지네이션 */}
-            <Stack marginTop="0.5rem">
+            <Stack marginY="0.5rem">
               <Pagination
                 pageInfo={res}
                 paginationSize={5}

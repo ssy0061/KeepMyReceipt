@@ -75,7 +75,7 @@ export default function GroupSearch() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ padding: 0 }}>
+    <Container maxWidth="md" sx={{ paddingY: 0, paddingX: '1rem' }}>
       <Grid container direction="column" sx={{ marginBottom: 3 }}>
         {/* 상단 */}
         <Stack
