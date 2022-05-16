@@ -5,6 +5,7 @@ import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import InsertChartIcon from '@mui/icons-material/InsertChart';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -46,7 +47,7 @@ export default function SimpleBottomNavigation() {
   useEffect(() => {
     onClick();
   }, []);
-  const Box = styled('div')(({ theme }) => ({
+  const FooterBox = styled('div')(({ theme }) => ({
     padding: theme.spacing(1),
     [theme.breakpoints.up(420)]: {
       display: 'none',
@@ -56,10 +57,10 @@ export default function SimpleBottomNavigation() {
   }));
 
   return (
-    <>
+    <Box height="56px">
       {/* {isLogin && id ? ( */}
       <footer>
-        <Box
+        <FooterBox
           sx={{
             position: 'fixed',
             bottom: 0,
@@ -140,8 +141,8 @@ export default function SimpleBottomNavigation() {
               icon={<InsertChartIcon />}
             ></BottomNavigationAction>
           </BottomNavigation>
-        </Box>
+        </FooterBox>
       </footer>
-    </>
+    </Box>
   );
 }

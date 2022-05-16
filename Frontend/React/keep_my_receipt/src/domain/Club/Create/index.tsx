@@ -79,7 +79,7 @@ export default function GroupCreate() {
   };
   return (
     <Container maxWidth="md" sx={{ paddingY: 0, paddingX: '1rem' }}>
-      <Grid container direction="column" sx={{ marginBottom: 3 }}>
+      <Grid container direction="column" sx={{ marginBottom: 1 }}>
         {/* 상단 */}
         <Stack
           direction="row"

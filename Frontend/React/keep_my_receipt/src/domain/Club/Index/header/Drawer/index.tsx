@@ -85,7 +85,7 @@ export default function IndexHeaderDrawer({
       <Container maxWidth="md" sx={{ padding: 0 }}>
         <Box
           sx={{
-            height: '85vh',
+            height: '90vh',
             paddingX: '2rem',
             paddingY: '1rem',
           }}
@@ -94,9 +94,8 @@ export default function IndexHeaderDrawer({
           <Stack direction="row" justifyContent="center" alignItems="center">
             <h3>가입 신청 목록</h3>
           </Stack>
-          <Stack alignItems="center">
-            {/* 목록 */}
-
+          {/* 목록 */}
+          <Stack direction="column" alignItems="center">
             {list.length ? (
               list.map((info: any) => (
                 <ClubListItem key={info.id} clubInfo={info} checkJoin={true} />
@@ -105,7 +104,7 @@ export default function IndexHeaderDrawer({
               <p>신청한 모임이 없습니다.</p>
             )}
             {/* 페이지네이션 */}
-            <Stack marginY="0.5rem">
+            <Stack marginY="1rem">
               <Pagination
                 pageInfo={res}
                 paginationSize={5}

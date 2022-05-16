@@ -34,9 +34,9 @@ export default function NavBar() {
       <NavBarContainer>
         <Grid
           container
-          sx={{
-            float: 'right',
-          }}
+          // sx={{
+          //   float: 'right',
+          // }}
         >
           {!matches ? (
             <>
