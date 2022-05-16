@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Container, Stack } from '@mui/material';
+import { Grid, Container, Stack, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import IndexList from './List';
 import IndexHeader from './header';
@@ -22,6 +22,7 @@ interface resopnseType {
   list: listItemTypes[];
 }
 export default function ClubIndex() {
+  const [loading, setLoading] = useState(true);
   // 모임 목록 조회
   const [res, setRes] = useState<resopnseType>({
     pageNumber: 0,
@@ -45,6 +46,7 @@ export default function ClubIndex() {
         // console.log(response);
         // console.log(response.data.data);
         setRes(response.data.data);
+        setLoading(false);
         window.scrollTo(0, 0);
       })
       .catch((e) => {
@@ -62,25 +64,33 @@ export default function ClubIndex() {
         <IndexHeader />
         {/* 리스트 */}
         <Stack direction="column" justifyContent="space-between" spacing={2}>
-          <Stack
-            direction="column"
-            spacing={2}
-            alignItems="center"
-            sx={{ marginTop: '1rem' }}
-          >
-            {list.length ? (
-              <IndexList clubList={list} getClubList={getClubList} />
-            ) : (
-              <p>가입한 모임이 없습니다.</p>
-            )}
-          </Stack>
-          {/* 페이지네이션 */}
-          <Pagination
-            pageInfo={res}
-            paginationSize={5}
-            onClickPage={getClubList}
-            bgColor="#ffaa00"
-          />
+          {loading ? (
+            <Stack alignItems="center" marginTop="5rem">
+              <CircularProgress sx={{ color: '#ffa500' }} />
+            </Stack>
+          ) : (
+            <>
+              <Stack
+                direction="column"
+                spacing={2}
+                alignItems="center"
+                sx={{ marginTop: '1rem' }}
+              >
+                {list.length ? (
+                  <IndexList clubList={list} getClubList={getClubList} />
+                ) : (
+                  <p>가입한 모임이 없습니다.</p>
+                )}
+              </Stack>
+              {/* 페이지네이션 */}
+              <Pagination
+                pageInfo={res}
+                paginationSize={5}
+                onClickPage={getClubList}
+                bgColor="#ffaa00"
+              />
+            </>
+          )}
         </Stack>
       </Grid>
     </Container>

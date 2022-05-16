@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import {
   Button,
@@ -10,6 +10,8 @@ import {
   Stack,
   IconButton,
   Typography,
+  CircularProgress,
+  Box,
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
 
@@ -26,11 +28,14 @@ export default function JoinApproveDialog({
   clubCrewInfo,
   updateInfo,
 }: DialogType) {
+  const [loading, setLoading] = useState(false);
+  const [loading2, setLoading2] = useState(false);
   const { clubCrewId, name, email } = clubCrewInfo;
   const handleClose = () => {
     setOpen(false);
   };
   const approveCrew = async () => {
+    setLoading2(true);
     console.log('멤버 승인');
     await axios
       .put(
@@ -38,6 +43,7 @@ export default function JoinApproveDialog({
       )
       .then((res) => {
         console.log(res);
+        setLoading2(false);
       })
       .catch((e) => {
         console.log(e);
@@ -46,6 +52,7 @@ export default function JoinApproveDialog({
     updateInfo();
   };
   const denyCrew = async () => {
+    setLoading(true);
     console.log('멤버 거부');
     await axios
       .delete(
@@ -53,6 +60,7 @@ export default function JoinApproveDialog({
       )
       .then((res) => {
         console.log(res);
+        setLoading(false);
       })
       .catch((e) => {
         console.log(e);
@@ -91,10 +99,42 @@ export default function JoinApproveDialog({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={denyCrew}>거부</Button>
-        <Button onClick={approveCrew} autoFocus>
-          승인
-        </Button>
+        <Box sx={{ m: 0, position: 'relative' }}>
+          <Button onClick={denyCrew} disabled={loading}>
+            거부
+          </Button>
+          {loading && (
+            <CircularProgress
+              size={24}
+              sx={{
+                color: '#ffa500',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                marginTop: '-12px',
+                marginLeft: '-12px',
+              }}
+            />
+          )}
+        </Box>
+        <Box sx={{ m: 0, position: 'relative' }}>
+          <Button onClick={approveCrew} disabled={loading2}>
+            승인
+          </Button>
+          {loading2 && (
+            <CircularProgress
+              size={24}
+              sx={{
+                color: '#ffa500',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                marginTop: '-12px',
+                marginLeft: '-12px',
+              }}
+            />
+          )}
+        </Box>
       </DialogActions>
     </Dialog>
   );

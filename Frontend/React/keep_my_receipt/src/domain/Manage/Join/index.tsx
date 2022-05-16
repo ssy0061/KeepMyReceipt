@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Stack } from '@mui/material';
+import { Stack, CircularProgress } from '@mui/material';
 import Pagination from '../../../components/Pagination';
 import JoinApproveDialog from './ApproveDialog';
 import CrewListItem from '../../../components/CrewListItem';
@@ -21,6 +21,7 @@ interface resopnseType {
 }
 
 export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const { id, name, description, image } = clubInfo;
   const [res, setRes] = useState<resopnseType>({
@@ -52,6 +53,7 @@ export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
         if (output === 200) {
           // console.log(response.data.data);
           setRes(response.data.data);
+          setLoading(false);
         } else if (output === 0) {
           console.log(response.data.msg);
         }
@@ -79,34 +81,40 @@ export default function ManageJoin({ clubInfo }: { clubInfo: any }) {
         updateInfo={getRequestList}
       />
       {/* Table */}
-      <Stack
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-        spacing={2}
-        marginTop={1}
-      >
-        {/* 리스트 */}
-        {list.length ? (
-          list.map((crewInfo: any) => (
-            <CrewListItem
-              crewInfo={crewInfo}
-              key={crewInfo.clubCrewId}
-              onClickToApprove={onClick}
-            />
-          ))
-        ) : (
-          <p>신청자가 없습니다.</p>
-        )}
+      {loading ? (
+        <Stack alignItems="center" marginTop="5rem">
+          <CircularProgress sx={{ color: '#ffa500' }} />
+        </Stack>
+      ) : (
+        <Stack
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
+          spacing={2}
+          marginTop={1}
+        >
+          {/* 리스트 */}
+          {list.length ? (
+            list.map((crewInfo: any) => (
+              <CrewListItem
+                crewInfo={crewInfo}
+                key={crewInfo.clubCrewId}
+                onClickToApprove={onClick}
+              />
+            ))
+          ) : (
+            <p>신청자가 없습니다.</p>
+          )}
 
-        {/* Pagination */}
-        <Pagination
-          pageInfo={res}
-          paginationSize={5}
-          onClickPage={getRequestList}
-          bgColor="#ffaa00"
-        />
-      </Stack>
+          {/* Pagination */}
+          <Pagination
+            pageInfo={res}
+            paginationSize={5}
+            onClickPage={getRequestList}
+            bgColor="#ffaa00"
+          />
+        </Stack>
+      )}
     </Stack>
   );
 }

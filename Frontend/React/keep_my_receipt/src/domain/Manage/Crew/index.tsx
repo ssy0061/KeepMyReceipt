@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Button, Checkbox, FormControlLabel } from '@mui/material';
+import {
+  Stack,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  CircularProgress,
+} from '@mui/material';
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import * as qs from 'qs';
@@ -24,6 +30,7 @@ interface resopnseType {
 }
 
 export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
   const { id, name, description, image } = clubInfo;
   const [res, setRes] = useState<resopnseType>({
@@ -57,6 +64,7 @@ export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
         if (output === 200) {
           // console.log(res.data.data);
           setRes(res.data.data);
+          setLoading(false);
         } else if (output === 0) {
           console.log(res.data.msg);
         }
@@ -70,40 +78,48 @@ export default function ManageCrew({ clubInfo }: { clubInfo: any }) {
     getCrewList();
   }, []);
   return (
-    <Stack>
-      {/* 필터(관리자/회원) */}
-      <CrewCheckBoxFilter getCrewList={getCrewList} setFilter={setFilter} />
-      {/* 내용 */}
-      <Stack
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-        spacing={2}
-        marginTop={1}
-      >
-        {/* 리스트 */}
-        {list.length ? (
-          list.map((crewInfo: any) => (
-            <CrewListItem
-              crewInfo={crewInfo}
-              key={crewInfo.clubCrewId}
-              getCrewList={getCrewList}
+    <>
+      {loading ? (
+        <Stack alignItems="center" marginTop="5rem">
+          <CircularProgress sx={{ color: '#ffa500' }} />
+        </Stack>
+      ) : (
+        <Stack>
+          {/* 필터(관리자/회원) */}
+          <CrewCheckBoxFilter getCrewList={getCrewList} setFilter={setFilter} />
+          {/* 내용 */}
+          <Stack
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            spacing={2}
+            marginTop={1}
+          >
+            {/* 리스트 */}
+            {list.length ? (
+              list.map((crewInfo: any) => (
+                <CrewListItem
+                  crewInfo={crewInfo}
+                  key={crewInfo.clubCrewId}
+                  getCrewList={getCrewList}
+                  filter={filter}
+                />
+              ))
+            ) : (
+              <p>회원이 없습니다.</p>
+            )}
+
+            {/* Pagination */}
+            <Pagination
+              pageInfo={res}
+              paginationSize={5}
+              onClickPage={getCrewList}
+              bgColor="#ffaa00"
               filter={filter}
             />
-          ))
-        ) : (
-          <p>회원이 없습니다.</p>
-        )}
-
-        {/* Pagination */}
-        <Pagination
-          pageInfo={res}
-          paginationSize={5}
-          onClickPage={getCrewList}
-          bgColor="#ffaa00"
-          filter={filter}
-        />
-      </Stack>
-    </Stack>
+          </Stack>
+        </Stack>
+      )}
+    </>
   );
 }

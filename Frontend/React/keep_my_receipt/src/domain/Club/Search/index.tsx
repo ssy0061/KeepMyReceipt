@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Container, IconButton, Grid, Stack } from '@mui/material';
+import {
+  Container,
+  IconButton,
+  Grid,
+  Stack,
+  CircularProgress,
+} from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import SearchBar from '../../../components/SearchBar';
@@ -24,6 +30,7 @@ interface resopnseType {
 }
 
 export default function GroupSearch() {
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const keyWord = searchParams.get('query');
@@ -59,6 +66,7 @@ export default function GroupSearch() {
       })
       .then((response) => {
         setRes(response.data.data);
+        setLoading(false);
         window.scrollTo(0, 0);
       })
       .catch((e) => {
@@ -95,30 +103,37 @@ export default function GroupSearch() {
             navi={'.'}
           />
         </Stack>
-
-        {/* 검색 결과 */}
-        <Stack
-          direction="column"
-          spacing={2}
-          alignItems="center"
-          sx={{ marginTop: '1rem' }}
-        >
-          {/* 상단 */}
-          {keyWord ? null : '전체 모임 목록'}
-          {/* 리스트 */}
-          {list.length ? (
-            <SearchList clubList={list} />
-          ) : (
-            <p>검색된 모임이 없습니다.</p>
-          )}
-          {/* 페이지네이션 */}
-          <Pagination
-            pageInfo={res}
-            paginationSize={5}
-            onClickPage={getClubList}
-            bgColor="#ffaa00"
-          />
-        </Stack>
+        {loading ? (
+          <Stack alignItems="center" marginTop="5rem">
+            <CircularProgress sx={{ color: '#ffa500' }} />
+          </Stack>
+        ) : (
+          <>
+            {/* 검색 결과 */}
+            <Stack
+              direction="column"
+              spacing={2}
+              alignItems="center"
+              sx={{ marginTop: '1rem' }}
+            >
+              {/* 상단 */}
+              {keyWord ? null : '전체 모임 목록'}
+              {/* 리스트 */}
+              {list.length ? (
+                <SearchList clubList={list} />
+              ) : (
+                <p>검색된 모임이 없습니다.</p>
+              )}
+              {/* 페이지네이션 */}
+              <Pagination
+                pageInfo={res}
+                paginationSize={5}
+                onClickPage={getClubList}
+                bgColor="#ffaa00"
+              />
+            </Stack>
+          </>
+        )}
       </Grid>
     </Container>
   );

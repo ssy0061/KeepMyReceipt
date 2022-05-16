@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import {
   Button,
@@ -7,6 +7,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  CircularProgress,
+  Box,
 } from '@mui/material';
 
 interface ClubInfoType {
@@ -27,16 +29,19 @@ export default function SearchJoinDialog({
   setOpen,
   clubInfo,
 }: DialogType) {
+  const [loading, setLoading] = useState(false);
   const { id, name, description, image } = clubInfo;
   const handleClose = () => {
     setOpen(false);
   };
   const JoinClub = async () => {
+    setLoading(true);
     // 가입 신청
     await axios
       .post(`https://k6d104.p.ssafy.io/api/spring/club/${id}/crew`)
       .then((res) => {
         console.log(res);
+        setLoading(false);
       })
       .catch((e) => {
         console.log(e);
@@ -58,9 +63,24 @@ export default function SearchJoinDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>취소</Button>
-        <Button onClick={JoinClub} autoFocus>
-          가입하기
-        </Button>
+        <Box sx={{ m: 0, position: 'relative' }}>
+          <Button onClick={JoinClub} autoFocus disabled={loading}>
+            가입하기
+          </Button>
+          {loading && (
+            <CircularProgress
+              size={24}
+              sx={{
+                color: '#ffa500',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                marginTop: '-12px',
+                marginLeft: '-12px',
+              }}
+            />
+          )}
+        </Box>
       </DialogActions>
     </Dialog>
   );
