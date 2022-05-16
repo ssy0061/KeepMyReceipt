@@ -73,11 +73,14 @@ public class TransactionDetailRepoCommonImpl implements TransactionDetailRepoCom
     }
 
     @Override
-    public Integer findIncomeByClubIdAndDate(Long clubId, LocalDate start, LocalDate end) {
+    public Integer findIncomeByClubIdAndDateAndContentOrTag(Long clubId, String query, LocalDate start, LocalDate end) {
         Integer result = queryFactory
                 .select(QTransactionDetail.transactionDetail.price.sum())
                 .from(QTransactionDetail.transactionDetail)
                 .where(QTransactionDetail.transactionDetail.transaction.club.id.eq(clubId),
+                        QTransactionDetail.transactionDetail.name.contains(query)
+                                .or(QTransactionDetail.transactionDetail.largeTag.contains(query))
+                                .or(QTransactionDetail.transactionDetail.smallTag.contains(query)),
                         QTransactionDetail.transactionDetail.price.gt(0),
                         QTransactionDetail.transactionDetail.payDate.between(start, end))
                 .fetchOne();
@@ -85,11 +88,14 @@ public class TransactionDetailRepoCommonImpl implements TransactionDetailRepoCom
     }
 
     @Override
-    public Integer findExpenditureByClubIdAndDate(Long clubId, LocalDate start, LocalDate end) {
+    public Integer findExpenditureByClubIdAndDateAndContentOrTag(Long clubId, String query, LocalDate start, LocalDate end) {
         Integer result = queryFactory
                 .select(QTransactionDetail.transactionDetail.price.sum())
                 .from(QTransactionDetail.transactionDetail)
                 .where(QTransactionDetail.transactionDetail.transaction.club.id.eq(clubId),
+                        QTransactionDetail.transactionDetail.name.contains(query)
+                                .or(QTransactionDetail.transactionDetail.largeTag.contains(query))
+                                .or(QTransactionDetail.transactionDetail.smallTag.contains(query)),
                         QTransactionDetail.transactionDetail.price.lt(0),
                         QTransactionDetail.transactionDetail.payDate.between(start, end))
                 .fetchOne();

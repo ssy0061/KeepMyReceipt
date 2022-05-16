@@ -101,8 +101,8 @@ public class TransactionController {
         PagingListResDTO pagingListResDTO = new PagingListResDTO(page,list);
 
         BookResDTO book = BookResDTO.builder()
-                .income(transactionService.getIncome(clubId, start, end))
-                .expenditure(Math.abs(transactionService.getExpenditure(clubId, start, end)))
+                .income(transactionService.getIncome(clubId, query, start, end))
+                .expenditure(Math.abs(transactionService.getExpenditure(clubId, query, start, end)))
                 .result(pagingListResDTO)
                 .build();
 
