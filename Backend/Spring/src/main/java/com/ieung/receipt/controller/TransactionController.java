@@ -86,7 +86,7 @@ public class TransactionController {
     // 거래내역 검색
     @Operation(summary = "거래내역 검색", description = "거래내역 검색")
     @GetMapping(value = "/{clubId}/transactions", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody SingleResult<PagingListResDTO<TransactionDetailSimpleResDTO>> createTransaction(@PathVariable @NotNull Long clubId,
+    public @ResponseBody SingleResult<BookResDTO> createTransaction(@PathVariable @NotNull Long clubId,
                                                                                     @RequestParam(value = "query", defaultValue = "") String query,
                                                                                     @RequestParam(value = "start", defaultValue = "#{T(java.time.YearMonth).now().atDay(1)}") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
                                                                                     @RequestParam(value = "end", defaultValue = "#{T(java.time.LocalDate).now()}") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end,
@@ -100,7 +100,13 @@ public class TransactionController {
 
         PagingListResDTO pagingListResDTO = new PagingListResDTO(page,list);
 
-        return responseService.getSingleResult(pagingListResDTO);
+        BookResDTO book = BookResDTO.builder()
+                .income(transactionService.getIncome(clubId, start, end))
+                .expenditure(Math.abs(transactionService.getExpenditure(clubId, start, end)))
+                .result(pagingListResDTO)
+                .build();
+
+        return responseService.getSingleResult(book);
     }
 
     // 거래내역 삭제

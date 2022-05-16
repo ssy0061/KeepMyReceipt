@@ -172,6 +172,22 @@ public class TransactionService {
     }
 
     /**
+     * 총 수입 조회
+     * @param clubId,start, end
+     */
+    public Integer getIncome(Long clubId, LocalDate start, LocalDate end) {
+        return transactionDetailRepository.findIncomeByClubIdAndDate(clubId, start, end);
+    }
+
+    /**
+     * 총 지출 조회
+     * @param clubId, crewId, query, start, end, pageable
+     */
+    public Integer getExpenditure(Long clubId, LocalDate start, LocalDate end) {
+        return transactionDetailRepository.findExpenditureByClubIdAndDate(clubId, start, end);
+    }
+
+    /**
      * 특정 거래내역 조회
      * @param crewId, transactionId
      */

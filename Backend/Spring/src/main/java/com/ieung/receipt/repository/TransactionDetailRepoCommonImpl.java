@@ -72,6 +72,30 @@ public class TransactionDetailRepoCommonImpl implements TransactionDetailRepoCom
         return result;
     }
 
+    @Override
+    public Integer findIncomeByClubIdAndDate(Long clubId, LocalDate start, LocalDate end) {
+        Integer result = queryFactory
+                .select(QTransactionDetail.transactionDetail.price.sum())
+                .from(QTransactionDetail.transactionDetail)
+                .where(QTransactionDetail.transactionDetail.transaction.club.id.eq(clubId),
+                        QTransactionDetail.transactionDetail.price.gt(0),
+                        QTransactionDetail.transactionDetail.payDate.between(start, end))
+                .fetchOne();
+        return result;
+    }
+
+    @Override
+    public Integer findExpenditureByClubIdAndDate(Long clubId, LocalDate start, LocalDate end) {
+        Integer result = queryFactory
+                .select(QTransactionDetail.transactionDetail.price.sum())
+                .from(QTransactionDetail.transactionDetail)
+                .where(QTransactionDetail.transactionDetail.transaction.club.id.eq(clubId),
+                        QTransactionDetail.transactionDetail.price.lt(0),
+                        QTransactionDetail.transactionDetail.payDate.between(start, end))
+                .fetchOne();
+        return result;
+    }
+
     // Pageable 객체의 sort를 list로 변환
     private List<OrderSpecifier> getAllOrderSpecifiers(Pageable pageable) {
 
