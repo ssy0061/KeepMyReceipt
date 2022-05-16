@@ -119,8 +119,12 @@ export default function LoginForm() {
   const submitHandler = (event: any) => {
     event.preventDefault();
     setIsLoading(true);
-    //모바일에서 로그인 > native app에게 달라고 요청하기
-    // const mobileToken = window['Android']['requestToken']();
+    // 모바일에서 로그인 > native app에게 달라고 요청하기
+    const mobileToken = window['Android']['requestToken']();
+
+    if (mobileToken) {
+      token = mobileToken;
+    }
 
     axios
       .post('/api/spring/crew/login', {

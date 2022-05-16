@@ -13,7 +13,6 @@ import {
   Grid,
 } from '@mui/material';
 import { yellow } from '@mui/material/colors';
-import Navigation from '../../../header';
 
 export default function SignUpForm() {
   // 스타일
@@ -105,29 +104,26 @@ export default function SignUpForm() {
   }, []);
 
   // 📍비밀번호
-  const onChangePassword = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const passwordRegex =
-        /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
-      const passwordCurrent = e.target.value;
-      setPassword(passwordCurrent);
+  const onChangePassword = useCallback((e: any) => {
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+    const passwordCurrent = e.target.value;
+    setPassword(passwordCurrent);
 
-      if (!passwordRegex.test(passwordCurrent)) {
-        setPasswordMessage(
-          '숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요',
-        );
-        setIsPassword(false);
-      } else {
-        setPasswordMessage('안전한 비밀번호입니다');
-        setIsPassword(true);
-      }
-    },
-    [],
-  );
+    if (!passwordRegex.test(passwordCurrent)) {
+      setPasswordMessage(
+        '숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요',
+      );
+      setIsPassword(false);
+    } else {
+      setPasswordMessage('안전한 비밀번호입니다');
+      setIsPassword(true);
+    }
+  }, []);
 
   // 📍비밀번호 확인
   const onChangePasswordConfirm = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: any) => {
       const passwordConfirmCurrent = e.target.value;
       setPasswordConfirm(passwordConfirmCurrent);
 
@@ -171,7 +167,6 @@ export default function SignUpForm() {
 
   return (
     <Container maxWidth="sm">
-      <Navigation />
       <h1 className="h1">회원가입</h1>
       <form onSubmit={onSubmit}>
         <TextField
