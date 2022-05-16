@@ -1,14 +1,28 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
+import { useEffect } from 'react';
 import toCurrency from '../../../../services/toCurrency';
 import ListItem from '../ListItem';
 import sample from './sample.json';
 
-export default function BookList() {
+export default function BookList({ list }: { list: any }) {
   // 샘플 파일 불러오기
   const sampleList = sample;
 
   return (
     <>
+      {list.map((item: any) => (
+        <Stack
+          key={item.transactionDetailId}
+          direction="row"
+          justifyContent="space-between"
+        >
+          <Typography>{item.date}</Typography>
+          <Typography>{item.name}</Typography>
+          <Typography>{item.price}</Typography>
+        </Stack>
+      ))}
+
+      <p>sample</p>
       {sampleList.map((sample) => (
         <Box key={sample.date}>
           <Stack

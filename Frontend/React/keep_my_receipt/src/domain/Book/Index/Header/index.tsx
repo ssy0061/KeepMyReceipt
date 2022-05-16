@@ -24,7 +24,7 @@ export default function IndexHeader({
 }: IndexHeaderProps) {
   return (
     <>
-      <Stack direction="row" alignItems="center">
+      <Stack direction="row" alignItems="center" width="20rem">
         <IconButton onClick={() => setMonth(month - 1)}>
           <ArrowLeft sx={{ color: '#000000', fontSize: '2rem' }} />
         </IconButton>

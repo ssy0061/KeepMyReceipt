@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-interface listTypes {
+interface ListTypes {
   date: any;
   largeTag: string;
   name: string;
@@ -15,8 +15,8 @@ interface listTypes {
   transactionId: number;
 }
 
-interface resultTypes {
-  list: listTypes[];
+interface ResultTypes {
+  list: ListTypes[];
   numberOfElements: number;
   pageNumber: number;
   size: number;
@@ -27,7 +27,7 @@ interface resultTypes {
 interface ResponseTypes {
   expenditure: number;
   income: number;
-  result: resultTypes;
+  result: ResultTypes;
 }
 
 export default function BookIndex() {
@@ -45,8 +45,11 @@ export default function BookIndex() {
   const [res, setRes] = useState({
     expenditure: 0,
     income: 0,
+    result: {
+      list: [],
+    },
   });
-  const { expenditure, income } = res;
+  const { expenditure, income, result } = res;
 
   // 수입, 지출, 거래내역 가져오기
   const getHistory = async (page?: number) => {
@@ -66,7 +69,7 @@ export default function BookIndex() {
           }-${targetEnd.getDate()}`,
           page: page ? page : 0,
           size: 5,
-          sort: 'id,DESC',
+          sort: 'pay_date,DESC',
         },
       })
       .then((res) => {
@@ -114,7 +117,7 @@ export default function BookIndex() {
         checked={checked}
       />
       {/* 거래내역 */}
-      <IndexList />
+      <IndexList list={result ? result.list : ''} />
     </Container>
   );
 }
