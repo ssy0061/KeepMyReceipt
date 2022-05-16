@@ -54,4 +54,12 @@ public class Transaction extends BaseEntity {
     // 연관된 상세 거래 내역 리스트
     @OneToMany(mappedBy = "transaction", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<TransactionDetail> transactionDetails;
+
+    public void updatePrice(int price) {
+        this.price = price;
+    }
+
+    public void updatePayDate(LocalDate payDate) {
+        this.payDate = payDate;
+    }
 }

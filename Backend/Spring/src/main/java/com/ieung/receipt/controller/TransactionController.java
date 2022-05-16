@@ -120,4 +120,13 @@ public class TransactionController {
 
         return responseService.getSuccessResult();
     }
+
+    // 거래내역 수정
+    @Operation(summary = "거래내역 수정", description = "거래내역 수정")
+    @PutMapping(value = "transaction/{transactionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody CommonResult updateTransaction(@PathVariable @NotNull Long transactionId, @Valid @RequestBody TransactionReqDTO transactionReqDTO) throws Exception {
+        transactionService.updateTransaction(getCurrentCrewId(), transactionId, transactionReqDTO);
+
+        return responseService.getSuccessResult();
+    }
 }
