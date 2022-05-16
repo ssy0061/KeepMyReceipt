@@ -7,6 +7,7 @@ import com.google.firebase.messaging.*;
 import com.ieung.receipt.code.YNCode;
 import com.ieung.receipt.dto.notification.NotificationData;
 import com.ieung.receipt.dto.notification.NotificationRequestDTO;
+import com.ieung.receipt.repository.CrewTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import java.io.IOException;
 @Transactional(readOnly = true)
 public class PushService {
     private FirebaseApp firebaseApp;
+    private final CrewTokenRepository crewTokenRepository;
 
     // application yml 설정파일에 설정한 값 사용
     @Value("${app.firebase-config}")
@@ -61,8 +63,7 @@ public class PushService {
                         .setNotification(Notification.builder()
                                 .setTitle(notificationData.getTitle())
                                 .setBody(notificationData.getBody()).build())
-                        .putData("content", notificationData.getTitle())
-                        .putData("body", notificationData.getBody())
+
                         .setAndroidConfig(AndroidConfig.builder()
                                 .setNotification(AndroidNotification.builder()
                                         .setClickAction(".src.main.MainActivity")
@@ -70,7 +71,7 @@ public class PushService {
                                 .build())
                         .setWebpushConfig(WebpushConfig.builder()
                                 .setFcmOptions(WebpushFcmOptions.builder()
-                                        .setLink("/alert")
+                                        .setLink("https://k6d104.p.ssafy.io/alert")
                                         .build())
                                 .build())
                         .build();
@@ -78,7 +79,8 @@ public class PushService {
                 response = FirebaseMessaging.getInstance().send(message);
             }
         } catch (Exception e) {
-            log.error("Sending FCM Error", e);
+            // 만료된 토큰 삭제
+            crewTokenRepository.deleteCrewTokensByFcmToken(msgDTO.getRegistration_ids());
         }
 
         return response;

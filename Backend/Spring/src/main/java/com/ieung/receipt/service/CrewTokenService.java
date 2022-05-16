@@ -83,12 +83,10 @@ public class CrewTokenService {
     public void logout(Long crewId, String fcmToken) {
         CrewToken crewToken = crewTokenRepository.findByCrewIdAndFcmToken(crewId, fcmToken);
 
-        if (crewToken == null) {
-            throw new ApiMessageException("fcm token을 확인해주세요.");
+        if (crewToken != null) {
+            crewToken.updateRefreshToken(null);
+            crewTokenRepository.save(crewToken);
         }
-
-        crewToken.updateRefreshToken(null);
-        crewTokenRepository.save(crewToken);
     }
 
     /**
