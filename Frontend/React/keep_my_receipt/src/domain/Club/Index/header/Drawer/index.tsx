@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { SwipeableDrawer, Box, Stack, IconButton, Grid } from '@mui/material';
+import {
+  SwipeableDrawer,
+  Box,
+  Stack,
+  IconButton,
+  Container,
+} from '@mui/material';
 import { Close } from '@mui/icons-material';
 import ClubListItem from '../../../../../components/ClubListItem';
 import Pagination from '../../../../../components/Pagination';
@@ -66,44 +72,50 @@ export default function IndexHeaderDrawer({
       open={state}
       onClose={() => setState(false)}
       onOpen={() => setState(true)}
+      sx={{ position: 'relative' }}
     >
-      <Box
-        sx={{
-          height: '42rem',
-          paddingX: '2rem',
-          paddingTop: '1rem',
-          position: 'relative',
+      <IconButton
+        onClick={() => {
+          setState(false);
         }}
+        sx={{ position: 'absolute', right: '0.5rem', top: '0.5rem' }}
       >
-        {/* 상단 */}
-        <Stack direction="row" justifyContent="center" alignItems="center">
-          <h3>가입 신청 목록</h3>
-        </Stack>
-        <IconButton
-          onClick={() => {
-            setState(false);
+        <Close sx={{ color: 'black', fontSize: '2rem' }} />
+      </IconButton>
+      <Container maxWidth="md" sx={{ padding: 0 }}>
+        <Box
+          sx={{
+            height: '42rem',
+            paddingX: '2rem',
+            paddingTop: '1rem',
           }}
-          sx={{ position: 'absolute', right: '0.5rem', top: '0.5rem' }}
         >
-          <Close sx={{ color: 'black', fontSize: '2rem' }} />
-        </IconButton>
-        <Stack alignItems="center">
-          {/* 목록 */}
-
-          {list.map((info: any) => (
-            <ClubListItem key={info.id} clubInfo={info} checkJoin={true} />
-          ))}
-          {/* 페이지네이션 */}
-          <Stack marginTop="0.5rem">
-            <Pagination
-              pageInfo={res}
-              paginationSize={5}
-              onClickPage={getClubList}
-              bgColor="#ffaa00"
-            />
+          {/* 상단 */}
+          <Stack direction="row" justifyContent="center" alignItems="center">
+            <h3>가입 신청 목록</h3>
           </Stack>
-        </Stack>
-      </Box>
+          <Stack alignItems="center">
+            {/* 목록 */}
+
+            {list.length ? (
+              list.map((info: any) => (
+                <ClubListItem key={info.id} clubInfo={info} checkJoin={true} />
+              ))
+            ) : (
+              <p>신청한 모임이 없습니다.</p>
+            )}
+            {/* 페이지네이션 */}
+            <Stack marginTop="0.5rem">
+              <Pagination
+                pageInfo={res}
+                paginationSize={5}
+                onClickPage={getClubList}
+                bgColor="#ffaa00"
+              />
+            </Stack>
+          </Stack>
+        </Box>
+      </Container>
     </SwipeableDrawer>
   );
 }

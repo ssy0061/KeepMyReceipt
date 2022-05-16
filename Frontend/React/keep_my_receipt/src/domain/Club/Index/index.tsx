@@ -72,7 +72,7 @@ export default function ClubIndex() {
             {list.length ? (
               <IndexList clubList={list} getClubList={getClubList} />
             ) : (
-              <p>모임 없음</p>
+              <p>가입한 모임이 없습니다.</p>
             )}
           </Stack>
           {/* 페이지네이션 */}
