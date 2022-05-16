@@ -26,7 +26,6 @@ export default function IndexHeader() {
       >
         <IconButton
           onClick={() => {
-            console.log('가입 신청한 모임 목록 조회');
             setState(true);
           }}
         >
