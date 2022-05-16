@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CreateImage from './image';
 import CreateForm from './form';
-import Navigation from '../../../header';
 
 interface formProps {
   name: any;
@@ -80,7 +79,6 @@ export default function GroupCreate() {
   };
   return (
     <Container maxWidth="md" sx={{ padding: 0 }}>
-      <Navigation />
       <Stack direction="column" spacing={3}>
         {/* 상단 */}
         <Stack

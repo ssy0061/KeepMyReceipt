@@ -4,7 +4,6 @@ import axios from 'axios';
 import IndexList from './List';
 import IndexHeader from './header';
 import Pagination from '../../../components/Pagination';
-import Navigation from '../../../header';
 
 interface listItemTypes {
   id: number;

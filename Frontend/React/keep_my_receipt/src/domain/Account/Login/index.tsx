@@ -11,7 +11,6 @@ import {
   Container,
 } from '@mui/material';
 import { yellow } from '@mui/material/colors';
-import Navigation from '../../../header';
 
 //FCM SDK 추가 및 초기화
 import firebase from 'firebase/compat/app';
@@ -120,9 +119,8 @@ export default function LoginForm() {
     event.preventDefault();
     setIsLoading(true);
     // 모바일에서 로그인 > native app에게 달라고 요청하기
-    const mobileToken = window['Android']['requestToken']();
-
-    if (mobileToken) {
+    if (window['Android']) {
+      const mobileToken = window['Android']['requestToken']();
       token = mobileToken;
     }
 
@@ -150,7 +148,6 @@ export default function LoginForm() {
 
   return (
     <Container maxWidth="sm">
-      <Navigation />
       <h1 className="h1">로그인</h1>
       <form onSubmit={submitHandler}>
         <Stack spacing={1.5}>

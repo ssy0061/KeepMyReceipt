@@ -1,5 +1,12 @@
 import styled from 'styled-components';
 
+export const LogoImage = styled.image`
+  width: 200vm;
+`;
+export const LogoButton = styled.button`
+  marginleft: 20vm;
+`;
+
 export const NavBarContainer = styled.div`
   top: 0;
   left: 0;

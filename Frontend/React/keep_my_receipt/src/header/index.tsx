@@ -41,7 +41,6 @@ export default function NavBar() {
             }}
           >
             {/* [모바일][로그인][클럽선택] 세줄 메뉴 */}
-
             {isLogin && id ? (
               <Grid item>
                 <ResponsiveDrawer />
@@ -51,75 +50,70 @@ export default function NavBar() {
             )}
 
             {/* [웹][모바일]로고 */}
-            <Button
-              sx={{ marginLeft: '20vm' }}
-              onClick={() => {
-                onClickButton(`/`);
-              }}
-            >
-              <img width="200vm" src="/images/randing/logo8.png"></img>
-            </Button>
+            <Grid item xs={3} sm={3} pl={3}>
+              <Button
+                sx={{ marginLeft: '20vm' }}
+                onClick={() => {
+                  onClickButton(`/`);
+                }}
+              >
+                <img width="200vm" src="/images/randing/logo8.png"></img>
+              </Button>
+            </Grid>
 
-            {isLogin && id ? (
+            <Grid item>
+              {/* [웹][모바일][로그인] 내모임 */}
+              {isLogin && !id ? (
+                <Button
+                  onClick={() => {
+                    onClickButton(`/club`);
+                  }}
+                  sx={{
+                    my: 2,
+                    mr: 1,
+                    color: 'black',
+                    display: 'block',
+                    float: 'right',
+                  }}
+                >
+                  <Content1>내 모임</Content1>
+
+                  {/* <img width="50vm" src="/images/randing/moim.png"></img> */}
+                </Button>
+              ) : (
+                ''
+              )}
+            </Grid>
+
+            <Grid item>
+              {/* [로그인][웹] nav 메뉴*/}
+              {isLogin && id ? <NavMenuItem /> : ''}
+            </Grid>
+
+            <Grid item>
+              {/* [로그인][웹][모바일] 알림, 설정 아이콘 */}
+              {isLogin ? (
+                <Stack
+                  direction="row"
+                  // alignItems="start"
+                  sx={{
+                    direction: 'row',
+                    // marginLeft: 'auto',
+                    // marginRight: 0,
+                  }}
+                >
+                  <AlarmItem />
+                  <SettingItem />
+                </Stack>
+              ) : (
+                ''
+              )}
               <Box
                 sx={{
-                  display: { xs: 'hidden', md: 'none' },
+                  marginLeft: '200px',
                 }}
-                style={{ width: '100px' }}
-              >
-                asdfaeasdfsasdfasdfef
-              </Box>
-            ) : (
-              ''
-            )}
-
-            {/* 0. 내모임 */}
-            {isLogin && !id ? (
-              <Button
-                onClick={() => {
-                  onClickButton(`/club`);
-                }}
-                sx={{
-                  my: 2,
-                  mr: 1,
-                  color: 'black',
-                  display: 'block',
-                  float: 'right',
-                }}
-              >
-                <Content1>내 모임</Content1>
-
-                {/* <img width="50vm" src="/images/randing/moim.png"></img> */}
-              </Button>
-            ) : (
-              ''
-            )}
-
-            {/* 로그인 한 경우, 메뉴 */}
-            {isLogin && id ? <NavMenuItem /> : ''}
-
-            {/* 로그인 한 경우, 알림, 설정 아이콘 */}
-            {isLogin ? (
-              <Stack
-                direction="row"
-                // alignItems="start"
-                sx={{
-                  direction: 'row',
-                  // marginLeft: 'auto',
-                  // marginRight: 0,
-                }}
-              >
-                <AlarmItem />
-                <SettingItem />
-              </Stack>
-            ) : (
-              ''
-            )}
-            <Box
-              sx={{
-                marginLeft: '200px',
-              }}
-            ></Box>
+              ></Box>
+            </Grid>
           </Grid>
         </NavBarContainer>
       </Box>

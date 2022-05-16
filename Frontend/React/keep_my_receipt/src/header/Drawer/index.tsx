@@ -42,7 +42,12 @@ export default function ResponsiveDrawer(props: Props) {
         aria-label="open drawer"
         edge="start"
         onClick={handleDrawerToggle}
-        sx={{ mr: 2, display: { sm: 'none' }, color: 'black' }}
+        sx={{
+          mr: 2,
+          display: { sm: 'none' },
+
+          color: 'black',
+        }}
       >
         <MenuIcon />
       </IconButton>
@@ -67,7 +72,7 @@ export default function ResponsiveDrawer(props: Props) {
       <Drawer
         variant="permanent"
         sx={{
-          display: { xs: 'none', sm: 'none' },
+          display: { xs: 'block', sm: 'none' },
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: drawerWidth,

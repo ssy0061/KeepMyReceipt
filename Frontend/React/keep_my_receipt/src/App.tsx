@@ -34,9 +34,15 @@ function App() {
         {/* 밑에 Route들 추가하시면 됩니다! */}
         <Route path="/" element={<RootPage />}>
           <Route index element={<Landing />} />
+          <Route path="login" element={<Outlet />}>
+            <Route index element={<LoginIndex />} />
+          </Route>
+          <Route path="signup" element={<Outlet />}>
+            <Route index element={<SignUpIndex />} />
+          </Route>
+
           <Route path="alert" element={<Outlet />}>
             <Route index element={<AlertIndex />} />
-            {/* 추가 */}
           </Route>
           <Route path="club" element={<Outlet />}>
             <Route index element={<ClubIndex />} />
@@ -72,14 +78,6 @@ function App() {
               </Route>
             </Route>
           </Route>
-        </Route>
-        <Route path="login" element={<Outlet />}>
-          <Route index element={<LoginIndex />} />
-          {/* 추가 */}
-        </Route>
-        <Route path="signup" element={<Outlet />}>
-          <Route index element={<SignUpIndex />} />
-          {/* 추가 */}
         </Route>
 
         {/* baseUrl/book이면 book index로 접속 */}
