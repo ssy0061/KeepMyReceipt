@@ -4,42 +4,41 @@ import { ExpandLess, ExpandMore, Info } from '@mui/icons-material';
 
 import DialogWithIconButton from '../../../components/DialogWithIconButton';
 import EditableItem from '../EditableItem';
-import EditableListForTag from '../EditableListForTag';
-import { apiGetLargeTags, apiGetSmallTags } from '../api/tagApi';
-import { TagType } from '../types';
+import EditableListForCategory from '../EditableListForCategory';
+import { apiReadAllCategory } from '../api/categoryApi';
+import { BSType, ASType } from '../types';
+import { TypeNameKeys } from '../bookReducer';
 
-interface EditableListWrappedForTagType {
-  clubId: string;
-  dialogContent: JSX.Element;
+interface EditableListWrappedForCategoryType {
   categoryName: string;
-  parentTag: string | null;
-  onSelect: (name: string, tagId: number) => void;
+  dialogContent: JSX.Element;
+  clubId: string;
+  typeName: TypeNameKeys;
+  lcName: string;
+  onSelect: (name: string, id: number) => void;
   selected: string;
 }
 
-function EditableListWrappedForTag(props: EditableListWrappedForTagType) {
-  const [tags, setTags] = useState<TagType[]>([]);
+function EditableListWrappedForCategory(
+  props: EditableListWrappedForCategoryType,
+) {
+  const [categories, setCategories] = useState<(BSType & ASType)[]>([]);
 
-  const getSmallTags = async () => {
-    if (props.parentTag) {
-      await apiGetSmallTags(props.clubId, props.parentTag).then((res) => {
-        console.log(props.parentTag);
-        console.log('getSmallTags', res.data.data);
-        setTags(res.data.data);
-      });
+  const getAllCategory = async () => {
+    if (props.lcName) {
+      await apiReadAllCategory(props.clubId, props.typeName, props.lcName).then(
+        (res) => {
+          console.log('getAllCategory', res);
+          setCategories(res.data.data);
+        },
+      );
     }
   };
 
-  const getLargeTags = async () => {
-    await apiGetLargeTags(props.clubId).then((res) => {
-      setTags(res.data.data);
-    });
-  };
-
   useEffect(() => {
-    props.parentTag ? getSmallTags() : getLargeTags();
-    console.log('tagCategories', tags);
-  }, [props.parentTag]);
+    getAllCategory();
+    console.log('categories', categories);
+  }, [props.lcName]);
 
   // 세부 목록 열림 / 닫힘 상태
   const [open, setOpen] = useState(false);
@@ -71,15 +70,16 @@ function EditableListWrappedForTag(props: EditableListWrappedForTagType) {
 
         {/* 화살표 눌렀을 때 나오는 리스트들 */}
         <Collapse in={open} timeout="auto" unmountOnExit>
-          <EditableListForTag
-            originalList={tags}
-            onSelect={(name: string, tagId: number) => {
+          <EditableListForCategory
+            originalList={categories}
+            onSelect={(name: string, id: number) => {
+              props.onSelect(name, id);
               setOpen(false);
-              props.onSelect(name, tagId);
             }}
             clubId={props.clubId}
-            parentTag={props.parentTag}
-            fetchData={props.parentTag ? getSmallTags : getLargeTags}
+            typeName={props.typeName}
+            lcName={props.lcName}
+            fetchData={getAllCategory}
           />
         </Collapse>
       </List>
@@ -87,4 +87,4 @@ function EditableListWrappedForTag(props: EditableListWrappedForTagType) {
   );
 }
 
-export default memo(EditableListWrappedForTag);
+export default memo(EditableListWrappedForCategory);

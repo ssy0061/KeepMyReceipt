@@ -8,50 +8,58 @@ import {
 } from '@mui/material';
 import { AddCircleOutline } from '@mui/icons-material';
 
-import EditableItemForTag from '../EditableItemForTag';
-import { TagType } from '../types';
-import { apiCreateTag, apiDeleteTag, apiUpdateTag } from '../api/tagApi';
+import EditableItemForCategory from '../EditableItemForCategory';
+import {
+  apiCreateCategory,
+  apiDeleteCategory,
+  apiUpdateCategory,
+} from '../api/categoryApi';
+import { BSType, ASType } from '../types';
+import { TypeNameKeys } from '../bookReducer';
 
-interface EditableListForTagType {
-  originalList: TagType[];
-  onSelect?: (name: string, tagId: number) => void;
+interface EditableListForCategoryType {
+  originalList: (BSType & ASType)[];
+  onSelect?: (name: string, id: number) => void;
   clubId: string;
-  parentTag: string | null;
+  typeName: TypeNameKeys;
+  lcName: string;
   fetchData: () => Promise<void>;
 }
 
-export default function EditableListForTag(props: EditableListForTagType) {
+export default function EditableListForCategory(
+  props: EditableListForCategoryType,
+) {
   const [isAdding, setIsAdding] = useState(false);
 
   return (
     <>
       <List disablePadding>
         {/* 리스트 아이템들 출력 */}
-        {props.originalList.map((tag: TagType, index: number) => (
-          <EditableItemForTag
-            originalValue={tag}
+        {props.originalList.map((ctg, index: number) => (
+          <EditableItemForCategory
+            originalValue={ctg}
             prefixElement={<div style={{ marginRight: '1.5rem' }}></div>}
             onEdit={async (prevVal, newVal) => {
-              await apiUpdateTag(
-                props.clubId,
-                tag.tagId,
+              await apiUpdateCategory(
+                Number(props.clubId),
+                props.typeName,
+                props.lcName,
                 newVal as string,
-                props.parentTag,
-              )
-                .then(() => {
-                  props.fetchData();
-                })
-                .catch((e) => {
-                  console.log(e);
-                });
+                props.typeName === '자산' ? ctg.ascId : ctg.bscId,
+              ).then(() => {
+                props.fetchData();
+              });
             }}
             onErase={async () => {
-              await apiDeleteTag(tag.tagId).then(() => {
+              await apiDeleteCategory(
+                props.typeName,
+                props.typeName === '자산' ? ctg.ascId : ctg.bscId,
+              ).then(() => {
                 props.fetchData();
               });
             }}
             onSelect={props.onSelect}
-            key={index + tag.tagName}
+            key={index}
           />
         ))}
 
@@ -71,20 +79,18 @@ export default function EditableListForTag(props: EditableListForTagType) {
           </ListItem>
         ) : (
           // 추가 버튼 클릭 시 입력란 띄움
-          <EditableItemForTag
-            originalValue={{
-              tagId: 0,
-              tagName: '',
-              parentTag: props.parentTag,
-            }}
+          <EditableItemForCategory
+            originalValue={{ ascId: 0, ascName: '', bscId: 0, bscName: '' }}
             editOnMount
             onEdit={async (prevVal, newVal) => {
               // 수정 시 수정 API 대신 추가 API 호출
-              await apiCreateTag(
-                props.clubId,
+              await apiCreateCategory(
+                Number(props.clubId),
+                props.typeName,
+                props.lcName,
                 newVal as string,
-                props.parentTag,
               ).then(() => {
+                // console.log(res);
                 props.fetchData();
               });
             }}

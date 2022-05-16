@@ -7,19 +7,11 @@ import useToggle from '../../../../hooks/useToggle';
 import DialogWithIconButton from '../../../../components/DialogWithIconButton';
 import EditableItem from '../../EditableItem';
 import EditableListWrapped from '../../EditableListWrapped';
+import EditableListWrappedForCategory from '../../EditableListWrappedForCategory';
 import EditableListWrappedForTag from '../../EditableListWrappedForTag';
 import { MainCategoryDialog } from '../../tagDialogContents';
-import {
-  BookAction,
-  BookItemKeys,
-  BookItemType,
-  updateItem,
-} from '../../bookReducer';
-import {
-  mainCategories,
-  largeCategories,
-  mediumCategories,
-} from '../../tagListSample';
+import { BookAction, BookItemType, updateItem } from '../../bookReducer';
+import { mainCategories, largeCategories } from '../../tagListSample';
 
 type ItemType = {
   clubId: string;
@@ -29,13 +21,6 @@ type ItemType = {
 };
 
 export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
-  // dispatch와 다른 함수들을 이어주기 위한 어댑터 선언
-  // key값을 주면, 이 key값을 기반으로 함수 생성해 돌려줌.
-  // 이 함수는 아이템 객체에서 해당 key값을 찾아 value를 업데이트함.
-  const selector = (key: BookItemKeys) => (value: string | number) => {
-    dispatch(updateItem(itemIndex, key, value));
-  };
-
   // 토글 값 바꾸는 함수
   const setMainCategory = (value: string) => {
     dispatch(updateItem(itemIndex, 'type', value));
@@ -59,6 +44,12 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
     dispatch(updateItem(itemIndex, 'smallCategory', ''));
   };
 
+  // 소분류 바꾸는 함수
+  const setSmallCategory = (name: string, id: number) => {
+    dispatch(updateItem(itemIndex, 'smallCategory', name));
+    dispatch(updateItem(itemIndex, 'categoryId', id));
+  };
+
   const setLargeTag = (name: string, tagId: number) => {
     dispatch(updateItem(itemIndex, 'largeTag', name));
     dispatch(updateItem(itemIndex, 'smallTag', ''));
@@ -77,6 +68,7 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
   return (
     <>
       <List disablePadding>
+        {/* 거래내역 세부항목 이름 */}
         <EditableItem
           originalValue={item.name}
           onEdit={(prevVal, newVal) => {
@@ -89,6 +81,7 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
         />
         <Divider />
 
+        {/* 세부항목 금액 */}
         <EditableItem
           originalValue={item.price}
           onEdit={(prevVal, newVal) => {
@@ -98,6 +91,19 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
             <ListItemIcon sx={{ marginLeft: '2.5rem' }}>금액</ListItemIcon>
           }
           isCurrency
+          rootHighlight
+        />
+        <Divider />
+
+        {/* 세부항목 메모 */}
+        <EditableItem
+          originalValue={item.memo}
+          onEdit={(prevVal, newVal) => {
+            dispatch(updateItem(itemIndex, 'memo', newVal));
+          }}
+          prefixElement={
+            <ListItemIcon sx={{ marginLeft: '2.5rem' }}>메모</ListItemIcon>
+          }
           rootHighlight
         />
         <Divider />
@@ -134,11 +140,13 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
       />
       <Divider />
 
-      <EditableListWrapped
-        categoryName="중분류"
+      <EditableListWrappedForCategory
+        categoryName="소분류"
         dialogContent={<p>설명</p>}
-        originalList={mediumCategories[item.largeCategory]}
-        onSelect={selector('smallCategory')}
+        clubId={clubId}
+        typeName={item.type}
+        lcName={item.largeCategory}
+        onSelect={setSmallCategory}
         selected={item.smallCategory}
       />
       <Divider />

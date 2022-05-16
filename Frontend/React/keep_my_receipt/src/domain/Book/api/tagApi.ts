@@ -10,26 +10,7 @@ const setToken = () => {
   return config;
 };
 
-export const apiGetLargeTags = async (clubId: string) => {
-  return await axios({
-    method: 'get',
-    url: `${BASE_URL}/tag/${clubId}`,
-    headers: setToken(),
-  }).catch((e) => {
-    throw e;
-  });
-};
-
-export const apiGetSmallTags = async (clubId: string, largeTagName: string) => {
-  return await axios({
-    method: 'get',
-    url: `${BASE_URL}/tag/${clubId}/${largeTagName}`,
-    headers: setToken(),
-  }).catch((e) => {
-    throw e;
-  });
-};
-
+// 태그
 export const apiCreateTag = async (
   clubId: string,
   tagName: string,
@@ -69,6 +50,26 @@ export const apiUpdateTag = async (
   });
 };
 
+export const apiGetLargeTags = async (clubId: string) => {
+  return await axios({
+    method: 'get',
+    url: `${BASE_URL}/tag/${clubId}`,
+    headers: setToken(),
+  }).catch((e) => {
+    throw e;
+  });
+};
+
+export const apiGetSmallTags = async (clubId: string, largeTagName: string) => {
+  return await axios({
+    method: 'get',
+    url: `${BASE_URL}/tag/${clubId}/${largeTagName}`,
+    headers: setToken(),
+  }).catch((e) => {
+    throw e;
+  });
+};
+
 export const apiDeleteTag = async (tagId: number) => {
   return await axios({
     method: 'delete',
@@ -78,26 +79,3 @@ export const apiDeleteTag = async (tagId: number) => {
     throw e;
   });
 };
-
-// export const apiCommentList = async (reviewId, page) => {
-//   return await axios({
-//     method: 'get',
-//     url: `${BASE_URL}/reviews/${reviewId}/comments/`,
-//     params: {
-//       page,
-//     },
-//   }).catch((e) => {
-//     throw e;
-//   });
-// };
-
-// export const apiCreateComment = async (reviewId, data) => {
-//   return await axios({
-//     method: 'post',
-//     url: `${BASE_URL}/reviews/${reviewId}/comments/create/`,
-//     data: data,
-//     headers: setToken(),
-//   }).catch((e) => {
-//     throw e;
-//   });
-// };

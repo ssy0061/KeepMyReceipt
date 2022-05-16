@@ -4,13 +4,12 @@ export type TagType = {
   parentTag: string | null;
 };
 
-export type AssetType = {
-  ascId: number;
-  ascName: string;
-  balance: number;
+export type BSType = {
+  bscName: string;
+  bscId: number;
 };
 
-export type BudgetType = {
-  bscId: number;
-  bscName: string;
+export type ASType = {
+  ascName: string;
+  ascId: number;
 };

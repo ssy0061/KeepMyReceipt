@@ -11,9 +11,9 @@ export const mainCategories = ['자산', '지출', '수입', '예산'];
 // 자세한 건 TypeScript의 리터럴 타입과 타입 단언 참고
 export const largeCategories = {
   자산: ['현금 및 현금성자산', '유형자산', '선급금', '기타자산'],
-  예산: ['전기예산', '활동지원금', '회비'],
+  예산: ['전기예산', '활동지원금', '회비', '후원비'],
   지출: ['복리후생비', '여가교통비', '소모품비', '기타비용'],
-  수입: ['상금수익', '부스수익', '이자수익'],
+  수입: ['수입', '기타수입'],
 } as StringArrayObjectType;
 
 export const mediumCategories = {
