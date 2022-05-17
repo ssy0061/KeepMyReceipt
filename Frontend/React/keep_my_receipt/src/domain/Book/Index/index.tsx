@@ -104,7 +104,7 @@ export default function BookIndex() {
           expenditure={expenditure}
           income={income}
           checked={checked}
-          balance={balance}
+          balance={balance ? balance : 0}
         />
         {/* 거래내역 */}
         <Box>

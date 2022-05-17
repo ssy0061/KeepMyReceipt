@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Stack, Grid, TextField, Container } from '@mui/material';
 import UpdateFormImage from './Image';
+import ClubDeleteDialog from '../DeleteDialog';
+
 interface ClubUpdateFormProps {
   clubInfo: any;
   formName: string;
@@ -22,8 +24,11 @@ export default function ClubUpdateForm({
   onClick,
   onImgChange,
 }: ClubUpdateFormProps) {
+  const [open, setOpen] = useState(false);
   return (
     <Stack spacing={3}>
+      {/* Dialog */}
+      <ClubDeleteDialog open={open} setOpen={setOpen} clubInfo={clubInfo} />
       {/* 이미지 */}
       <UpdateFormImage onImgChange={onImgChange} formImage={formImage} />
       {/* 텍스트 */}
@@ -66,6 +71,17 @@ export default function ClubUpdateForm({
                 저장
               </Button>
             </Grid>
+            <Button
+              onClick={() => {
+                setOpen(true);
+              }}
+              color="warning"
+              variant="outlined"
+              fullWidth
+              sx={{ marginY: 3 }}
+            >
+              모임 폐쇄
+            </Button>
           </Grid>
         </Container>
       </Stack>

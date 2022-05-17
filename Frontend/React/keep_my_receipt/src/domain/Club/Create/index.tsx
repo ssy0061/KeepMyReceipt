@@ -100,18 +100,18 @@ export default function GroupCreate() {
         </Stack>
 
         {/* 본문 */}
-        {/* <Stack spacing={3}> */}
-        {/* 이미지 */}
-        <CreateImage onImgChange={onImgChange} />
-
-        {/* Form */}
-        <CreateForm
-          name={name}
-          intro={intro}
-          check={check}
-          onChange={onFormChange}
-          onClick={onClick}
-        />
+        <Stack spacing={3}>
+          {/* 이미지 */}
+          <CreateImage onImgChange={onImgChange} />
+          {/* Form */}
+          <CreateForm
+            name={name}
+            intro={intro}
+            check={check}
+            onChange={onFormChange}
+            onClick={onClick}
+          />
+        </Stack>
       </Grid>
     </Container>
   );

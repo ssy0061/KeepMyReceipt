@@ -25,7 +25,7 @@ export default function IndexHeader({
   balance,
 }: IndexHeaderProps) {
   return (
-    <Stack>
+    <Stack width="100%">
       <Stack paddingLeft="1rem">
         <h2>거래 내역</h2>
         {/* <Typography>예산: {toCurrency(balance)}</Typography> */}
@@ -35,9 +35,7 @@ export default function IndexHeader({
           <IconButton onClick={() => setMonth(month - 1)}>
             <ArrowLeft sx={{ color: '#000000', fontSize: '2rem' }} />
           </IconButton>
-          <Typography variant="h5">
-            {target.getFullYear()} 년 {target.getMonth() + 1} 월{' '}
-          </Typography>
+          <Typography variant="h5">{target.getMonth() + 1} 월 </Typography>
           <IconButton onClick={() => setMonth(month + 1)} disabled={checked}>
             <ArrowRight
               sx={{ color: checked ? '#5c5c5c' : '#000000', fontSize: '2rem' }}
