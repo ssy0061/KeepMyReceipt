@@ -65,6 +65,10 @@ dependencies {
 
 	// YearMonth Type 지원
 	implementation('com.vladmihalcea:hibernate-types-55:2.16.2')
+
+	// excel file 변환을 위한 poi library
+	implementation group: 'org.apache.poi', name: 'poi', version: '5.2.2' // xls
+	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.2' // xlsx
 }
 
 //querydsl 추가 시작
