@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { BookState } from '../bookReducer';
+import { TypeNameKeys } from '../bookReducer';
 
 const BASE_URL = 'https://k6d104.p.ssafy.io/api/spring';
 
@@ -12,45 +12,79 @@ const setToken = () => {
   return config;
 };
 
-// 거래내역
-export const apiCreateTransaction = async (
-  data: BookState,
-  requestId?: number,
-) => {
-  return await axios({
-    method: 'post',
-    url: `${BASE_URL}/club/${data.clubId}/transaction`,
-    data: {
-      ...(requestId && { requestId: requestId }),
-      date: data.date,
-      totalPrice: data.totalPrice,
-      list: data.items.map((item) => ({
-        name: item.name,
-        price: item.price,
-        type: item.type,
-        categoryId: item.categoryId,
-        ...(item.tagId && { tagId: item.tagId }),
-        ...(item.memo && { memo: item.memo }),
-      })),
-    },
-    headers: setToken(),
-  }).catch((e) => {
-    throw e;
-  });
+export type TransactionType = {
+  date: string;
+  totalPrice: number;
+  requestId?: number;
+  list: {
+    name: string;
+    price: number;
+    type: TypeNameKeys;
+    categoryId: number;
+    tagId?: number;
+    memo?: string;
+  }[];
 };
 
-// export const apiUpdateTransaction = async (clubId: string) => {
-//   return await axios({
-//     method: 'get',
-//     url: `${BASE_URL}/tag/${clubId}`,
-//     headers: setToken(),
-//   }).catch((e) => {
-//     throw e;
-//   });
-// };
+// 거래내역
+export const apiCreateTransaction = async (
+  clubId: number,
+  data: TransactionType,
+) => {
+  // 데이터 검사
+  data.list.forEach((item) => {
+    if (item.categoryId === 0) {
+      alert('분류 항목을 선택해주세요');
+      return null;
+    }
+  });
+
+  return await axios({
+    method: 'post',
+    url: `${BASE_URL}/club/${clubId}/transaction`,
+    data: data,
+    headers: setToken(),
+  })
+    .then((res) => {
+      if (res.data.output == 200) {
+        console.log(res.data.msg);
+      } else {
+        alert(res.data.msg);
+      }
+      return res;
+    })
+    .catch((e) => {
+      console.log(e);
+      throw e;
+    });
+};
+
+export const apiUpdateTransaction = async (
+  transactionId: number,
+  data: TransactionType,
+) => {
+  return await axios({
+    method: 'put',
+    url: `${BASE_URL}/club/transaction/${transactionId}`,
+    data: data,
+    headers: setToken(),
+  })
+    .then((res) => {
+      if (res.data.output == 200) {
+        console.log(res.data.msg);
+      } else {
+        alert(res.data.msg);
+      }
+      return res;
+    })
+    .catch((e) => {
+      console.log(e);
+      throw e;
+    });
+};
 
 export const apiGetAllTransaction = async (
-  clubId: string,
+  clubId: number,
   searchKeyword?: string,
   start?: string,
   end?: string,
@@ -86,7 +120,17 @@ export const apiDeleteTransaction = async (transactionId: number) => {
     method: 'delete',
     url: `${BASE_URL}/club/transaction/${transactionId}`,
     headers: setToken(),
-  }).catch((e) => {
-    throw e;
-  });
+  })
+    .then((res) => {
+      if (res.data.output == 200) {
+        console.log(res.data.msg);
+      } else {
+        alert(res.data.msg);
+      }
+      return res;
+    })
+    .catch((e) => {
+      console.log(e);
+      throw e;
+    });
 };

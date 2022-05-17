@@ -1,6 +1,11 @@
 import { memo, useEffect, useState } from 'react';
-import { Collapse, List, ListItemButton } from '@mui/material';
-import { ExpandLess, ExpandMore, Info } from '@mui/icons-material';
+import { Collapse, IconButton, List, ListItemButton } from '@mui/material';
+import {
+  ExpandLess,
+  ExpandMore,
+  Info,
+  CancelOutlined,
+} from '@mui/icons-material';
 
 import DialogWithIconButton from '../../../components/DialogWithIconButton';
 import EditableItem from '../EditableItem';
@@ -64,6 +69,18 @@ function EditableListWrappedForTag(props: EditableListWrappedForTagType) {
             originalValue={props.selected}
             rootHighlight
           />
+
+          {/* 선택 취소 */}
+          {props.selected && (
+            <IconButton
+              onClick={(event) => {
+                event.stopPropagation();
+                props.onSelect('', 0);
+              }}
+            >
+              <CancelOutlined />
+            </IconButton>
+          )}
 
           {/* 열기 / 닫기 화살표 */}
           {open ? <ExpandLess /> : <ExpandMore />}

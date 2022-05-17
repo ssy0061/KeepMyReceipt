@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Divider, List, ListItemIcon, Stack } from '@mui/material';
 import { Info } from '@mui/icons-material';
 
@@ -21,14 +21,6 @@ type ItemType = {
 };
 
 export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
-  // 토글 값 바꾸는 함수
-  const setMainCategory = (value: string) => {
-    dispatch(updateItem(itemIndex, 'type', value));
-    // 토글 값이 바뀔 때 대분류와 중분류 초기화
-    dispatch(updateItem(itemIndex, 'largeCategory', ''));
-    dispatch(updateItem(itemIndex, 'smallCategory', ''));
-  };
-
   // 토글 값과, 토글 버튼 생성
   // 추가적으로 setter 함수도 추가해줌.
   const { toggleValue, ToggleButtons } = useToggle(
@@ -36,12 +28,24 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
     setMainCategory,
   );
 
+  const [tempTagId, setTempTagId] = useState(0);
+
+  // 토글 값 바꾸는 함수
+  function setMainCategory(value: string) {
+    dispatch(updateItem(itemIndex, 'type', value));
+    // 토글 값이 바뀔 때 대분류와 중분류 초기화
+    dispatch(updateItem(itemIndex, 'largeCategory', ''));
+    dispatch(updateItem(itemIndex, 'smallCategory', ''));
+    dispatch(updateItem(itemIndex, 'categoryId', 0));
+  }
+
   // 대분류 바꾸는 함수
   const setLargeCategory = (value: string | number) => {
     dispatch(updateItem(itemIndex, 'type', toggleValue));
     dispatch(updateItem(itemIndex, 'largeCategory', value));
     // 대분류가 바뀔 때, 중분류 초기화
     dispatch(updateItem(itemIndex, 'smallCategory', ''));
+    dispatch(updateItem(itemIndex, 'categoryId', 0));
   };
 
   // 소분류 바꾸는 함수
@@ -54,11 +58,15 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
     dispatch(updateItem(itemIndex, 'largeTag', name));
     dispatch(updateItem(itemIndex, 'smallTag', ''));
     dispatch(updateItem(itemIndex, 'tagId', tagId));
+    if (tagId) {
+      setTempTagId(tagId);
+    }
   };
 
   const setSmallTag = (name: string, tagId: number) => {
     dispatch(updateItem(itemIndex, 'smallTag', name));
-    dispatch(updateItem(itemIndex, 'tagId', tagId));
+    // 태그2 선택을 취소할 경우, 기존 태그 id로 복구
+    dispatch(updateItem(itemIndex, 'tagId', tagId === 0 ? tempTagId : tagId));
   };
 
   useEffect(() => {
@@ -153,7 +161,7 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
 
       <EditableListWrappedForTag
         clubId={clubId}
-        categoryName="태그 1"
+        categoryName={!item.largeTag ? '태그' : '태그 1'}
         dialogContent={<p>설명</p>}
         onSelect={setLargeTag}
         selected={item.largeTag}

@@ -1,16 +1,28 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Container } from '@mui/material';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Button, Container } from '@mui/material';
 
 import Header from './Header';
 import PageButtons from './PageButtons';
 import Item from './Item';
-import bookReducer, { updateBook, blankBook } from '../bookReducer';
+import bookReducer, {
+  updateBook,
+  initBookState,
+  toTransactionType,
+} from '../bookReducer';
+import { apiCreateTransaction } from '../api/bookApi';
+import { ParamType } from '../types';
 
 export default function BookCreate() {
   const { id: clubId } = useParams();
+  const location = useLocation();
+  const params = location.state as ParamType;
+  const navigate = useNavigate();
 
-  const [state, dispatch] = useReducer(bookReducer, blankBook);
+  const [state, dispatch] = useReducer(
+    bookReducer,
+    initBookState(params, Number(clubId)),
+  );
   const [page, setPage] = useState(1);
 
   // 금액 총합을 누적해서 계산
@@ -24,6 +36,14 @@ export default function BookCreate() {
     }
   }, [state.items]);
 
+  const createTransaction = async () => {
+    const requestId = params && params.requestId;
+    const payload = toTransactionType(state, requestId);
+    await apiCreateTransaction(Number(clubId), payload).then((res) => {
+      res.data.msg === '성공' ? navigate(`/club/${clubId}/book`) : null;
+    });
+  };
+
   useEffect(() => {
     sumTotalValue();
   }, [state.items]);
@@ -31,11 +51,11 @@ export default function BookCreate() {
   useEffect(() => {
     console.log('state', state);
     console.log('page', page);
-    // console.log('params', params);
+    console.log('params', params);
   }, [state, page]);
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{ display: 'grid', marginBottom: 8 }}>
       {/* 거래 정보 */}
       <Header
         date={state.date}
@@ -63,6 +83,8 @@ export default function BookCreate() {
           dispatch={dispatch}
         />
       )}
+
+      <Button onClick={createTransaction}>등록!</Button>
     </Container>
   );
 }
