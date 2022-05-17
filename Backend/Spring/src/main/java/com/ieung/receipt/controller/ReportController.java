@@ -125,7 +125,7 @@ public class ReportController {
 
             // 컨텐츠 타입과 파일명 지정
             response.setContentType("ms-vnd/excel");
-            response.setHeader("Content-Disposition", "attachment;filename=example.xlsx");
+            response.setHeader("Content-Disposition", "attachment;filename=asset.xlsx");
 
             // Excel File Output
             wb.write(response.getOutputStream());
@@ -221,7 +221,7 @@ public class ReportController {
 
             // 컨텐츠 타입과 파일명 지정
             response.setContentType("ms-vnd/excel");
-            response.setHeader("Content-Disposition", "attachment;filename=example.xlsx");
+            response.setHeader("Content-Disposition", "attachment;filename=budget.xlsx");
 
             // Excel File Output
             wb.write(response.getOutputStream());
