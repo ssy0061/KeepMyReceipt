@@ -13,6 +13,6 @@ import java.util.List;
 public interface TransactionDetailRepoCommon {
     Page<TransactionDetail> findByContentOrTag(Long clubId, String query, LocalDate start, LocalDate end, Pageable pageable);
     List<TransactionDetail> findByPayDate(Long clubId, YearMonth yearMonth);
-    Integer findIncomeByClubIdAndDateAndContentOrTag(Long clubId, String query, LocalDate start, LocalDate end);
-    Integer findExpenditureByClubIdAndDateAndContentOrTag(Long clubId, String query, LocalDate start, LocalDate end);
+    int findIncomeByClubIdAndDateAndContentOrTag(Long clubId, String query, LocalDate start, LocalDate end);
+    int findExpenditureByClubIdAndDateAndContentOrTag(Long clubId, String query, LocalDate start, LocalDate end);
 }

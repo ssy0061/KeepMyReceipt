@@ -73,7 +73,7 @@ public class TransactionDetailRepoCommonImpl implements TransactionDetailRepoCom
     }
 
     @Override
-    public Integer findIncomeByClubIdAndDateAndContentOrTag(Long clubId, String query, LocalDate start, LocalDate end) {
+    public int findIncomeByClubIdAndDateAndContentOrTag(Long clubId, String query, LocalDate start, LocalDate end) {
         Integer result = queryFactory
                 .select(QTransactionDetail.transactionDetail.price.sum())
                 .from(QTransactionDetail.transactionDetail)
@@ -84,11 +84,16 @@ public class TransactionDetailRepoCommonImpl implements TransactionDetailRepoCom
                         QTransactionDetail.transactionDetail.price.gt(0),
                         QTransactionDetail.transactionDetail.payDate.between(start, end))
                 .fetchOne();
+
+        if (result == null) {
+            result = 0;
+        }
+
         return result;
     }
 
     @Override
-    public Integer findExpenditureByClubIdAndDateAndContentOrTag(Long clubId, String query, LocalDate start, LocalDate end) {
+    public int findExpenditureByClubIdAndDateAndContentOrTag(Long clubId, String query, LocalDate start, LocalDate end) {
         Integer result = queryFactory
                 .select(QTransactionDetail.transactionDetail.price.sum())
                 .from(QTransactionDetail.transactionDetail)
@@ -99,6 +104,11 @@ public class TransactionDetailRepoCommonImpl implements TransactionDetailRepoCom
                         QTransactionDetail.transactionDetail.price.lt(0),
                         QTransactionDetail.transactionDetail.payDate.between(start, end))
                 .fetchOne();
+
+        if (result == null) {
+            result = 0;
+        }
+
         return result;
     }
 

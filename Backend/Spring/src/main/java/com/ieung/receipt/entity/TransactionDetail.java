@@ -72,8 +72,8 @@ public class TransactionDetail {
                 smallTag = null;
                 largeTag = tag.getTagName();
         } else {
-            smallTag = tag.getParentTag();
-            largeTag = tag.getTagName();
+            smallTag = tag.getTagName();
+            largeTag = tag.getParentTag();
         }
     }
 
