@@ -1,4 +1,5 @@
-export type ParamType = {
+// 영수증 승인에서 거래 등록에 넘기는 데이터 타입
+export type CreateParamType = {
   requestId: number;
   imgUrl: string;
   date: string;
@@ -10,10 +11,9 @@ export type ParamType = {
   }[];
 };
 
-export type TagType = {
-  tagId: number;
-  tagName: string;
-  parentTag: string | null;
+export type DetailParamType = {
+  transactionId: number;
+  transactionDetailId: number;
 };
 
 export type BSType = {
@@ -24,4 +24,10 @@ export type BSType = {
 export type ASType = {
   ascName: string;
   ascId: number;
+};
+
+export type TagType = {
+  tagId: number;
+  tagName: string;
+  parentTag: string | null;
 };

@@ -1,58 +1,88 @@
 import React, { memo } from 'react';
-import { Button, Stack, TextField, Typography } from '@mui/material';
+import { Button, Stack, TextField } from '@mui/material';
 // import { Schedule, PointOfSale } from '@mui/icons-material';
 
+import DialogWithIconButton from '../../../../components/DialogWithIconButton';
 import { BookAction, updateBook } from '../../bookReducer';
 import toCurrency from '../../../../services/toCurrency';
+import {
+  ContentTypography,
+  TitleTypography,
+} from '../../../../styles/typography';
 
 interface HeaderType {
   date: string;
   totalValue: number;
   length: number;
-  dispatch: React.Dispatch<BookAction>;
+  imageUrl?: string;
+  dispatch?: React.Dispatch<BookAction>;
+  editable: boolean;
 }
 
-function Header({ date, totalValue, length, dispatch }: HeaderType) {
+function Header(props: HeaderType) {
   const changeDate = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
-    dispatch(updateBook('date', event.target.value));
+    props.dispatch && props.dispatch(updateBook('date', event.target.value));
   };
 
   return (
     <>
       <Stack>
-        <h1 style={{ textAlign: 'center' }}>거래등록</h1>
+        {/* 날짜 */}
         <Stack
           direction="row"
           justifyContent="space-between"
           alignItems="center"
           marginBottom={1}
         >
-          <Typography>날짜</Typography>
-          <TextField
-            type="date"
-            defaultValue={date}
-            onChange={changeDate}
-            variant="standard"
-            // label="시작일"
-            // InputLabelProps={{
-            //   shrink: true,
-            // }}
-            // style={{ width: '100%' }}
+          <TitleTypography>날짜</TitleTypography>
+          {props.editable ? (
+            // 날짜 수정 가능
+            <TextField
+              type="date"
+              defaultValue={props.date}
+              onChange={changeDate}
+              variant="standard"
+            />
+          ) : (
+            // 영수증 승인에서 넘어온거면 날짜 수정 불가
+            <ContentTypography>{props.date}</ContentTypography>
+          )}
+        </Stack>
+
+        {/* 총금액 */}
+        <Stack direction="row" justifyContent="space-between" marginBottom={1}>
+          <TitleTypography>총금액</TitleTypography>
+          <ContentTypography>{toCurrency(props.totalValue)}</ContentTypography>
+        </Stack>
+
+        {/* 거래 개수 */}
+        <Stack direction="row" justifyContent="space-between" marginBottom={1}>
+          <TitleTypography>거래 개수</TitleTypography>
+          <ContentTypography>{props.length}개</ContentTypography>
+        </Stack>
+
+        {/* 영수증 사진 확인 */}
+        {props.imageUrl ? (
+          <DialogWithIconButton
+            icon={
+              <Button
+                variant="outlined"
+                color="secondary"
+                sx={{ marginBottom: 1 }}
+                fullWidth
+              >
+                영수증 확인
+              </Button>
+            }
+            content={<img src={props.imageUrl} />}
           />
-        </Stack>
-        <Stack direction="row" justifyContent="space-between" marginBottom={1}>
-          <Typography>총금액</Typography>
-          <Typography>{toCurrency(totalValue)}</Typography>
-        </Stack>
-        <Stack direction="row" justifyContent="space-between" marginBottom={1}>
-          <Typography>거래 개수</Typography>
-          <Typography>{length}</Typography>
-        </Stack>
-        <Button variant="outlined" color="secondary" sx={{ marginTop: 1 }}>
-          영수증 확인
-        </Button>
+        ) : (
+          <Button disabled variant="outlined" sx={{ marginBottom: 1 }}>
+            영수증 없음
+          </Button>
+        )}
       </Stack>
     </>
   );

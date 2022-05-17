@@ -105,14 +105,60 @@ export const apiGetAllTransaction = async (
   });
 };
 
+export type ReadResponseType = {
+  transactionId: number;
+  date: string;
+  totalPrice: number;
+  items: {
+    transactionDetailId: number;
+    name: string;
+    price: number;
+    type: string;
+    largeCategory: string;
+    smallCategory: string;
+    largeTag: string;
+    smallTag: string;
+    memo: string;
+  }[];
+};
+
+export const initialReadResponse: ReadResponseType = {
+  transactionId: 0,
+  date: '',
+  totalPrice: 0,
+  items: [
+    {
+      transactionDetailId: 0,
+      name: '',
+      price: 0,
+      memo: '',
+      type: '',
+      largeCategory: '',
+      smallCategory: '',
+      largeTag: '',
+      smallTag: '',
+    },
+  ],
+};
+
 export const apiGetTransaction = async (transactionId: number) => {
   return await axios({
     method: 'get',
     url: `${BASE_URL}/club/transaction/${transactionId}`,
     headers: setToken(),
-  }).catch((e) => {
-    throw e;
-  });
+  })
+    .then((res) => {
+      if (res.data.output == 200) {
+        console.log(res.data.msg);
+      } else {
+        alert(res.data.msg);
+      }
+      return res;
+    })
+    .catch((e) => {
+      console.log(e);
+      throw e;
+    });
 };
 
 export const apiDeleteTransaction = async (transactionId: number) => {

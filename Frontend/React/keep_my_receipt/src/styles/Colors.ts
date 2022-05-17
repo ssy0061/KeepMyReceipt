@@ -20,3 +20,7 @@ export const grey = {
   800: '#2D3843',
   900: '#1A2027',
 };
+
+export const green = {
+  main: '#96e2b6',
+};

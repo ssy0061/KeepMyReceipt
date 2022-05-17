@@ -1,6 +1,6 @@
 /** 상태 */
 
-import { ParamType } from './types';
+import { CreateParamType } from './types';
 import { TransactionType } from './api/bookApi';
 
 /* 상태 타입 선언 */
@@ -61,7 +61,10 @@ export const blankBook: BookState = {
   items: [blankBookItem],
 };
 
-export const initBookState = (param: ParamType, clubId: number): BookState => {
+export const initBookState = (
+  param: CreateParamType,
+  clubId: number,
+): BookState => {
   if (param) {
     return {
       clubId: clubId,

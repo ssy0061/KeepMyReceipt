@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  IconButton,
   Fade,
   // Slide,
 } from '@mui/material';
@@ -14,6 +13,7 @@ import { TransitionProps } from '@mui/material/transitions';
 interface DialogWithIconButtonType {
   icon: JSX.Element;
   content: JSX.Element;
+  disabled?: boolean;
 }
 
 /** 트랜지션 효과를 위한 변수 (공식문서에서 그대로 가져옴) */
@@ -29,7 +29,7 @@ const Transition = React.forwardRef(function Transition(
 
 function DialogWithIconButton({ icon, content }: DialogWithIconButtonType) {
   const [open, setOpen] = React.useState(false);
-  const handleOpen = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleOpen = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     // 아이콘 클릭 시 겹치는 메뉴 열리는 이벤트 차단
     e.stopPropagation();
     setOpen(true);
@@ -41,7 +41,8 @@ function DialogWithIconButton({ icon, content }: DialogWithIconButtonType) {
 
   return (
     <>
-      <IconButton onClick={handleOpen}>{icon}</IconButton>
+      {/* <Button onClick={handleOpen}>{icon}</Button> */}
+      <div onClick={handleOpen}>{icon}</div>
       <Dialog
         open={open}
         onClose={handleClose}

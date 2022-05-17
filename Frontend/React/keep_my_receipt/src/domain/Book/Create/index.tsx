@@ -11,12 +11,14 @@ import bookReducer, {
   toTransactionType,
 } from '../bookReducer';
 import { apiCreateTransaction } from '../api/bookApi';
-import { ParamType } from '../types';
+import { CreateParamType } from '../types';
+import { GreenBox } from '../../../styles/box';
+import { PageTitleTypography } from '../../../styles/typography';
 
 export default function BookCreate() {
   const { id: clubId } = useParams();
   const location = useLocation();
-  const params = location.state as ParamType;
+  const params = location.state as CreateParamType;
   const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(
@@ -56,12 +58,18 @@ export default function BookCreate() {
 
   return (
     <Container maxWidth="md" sx={{ display: 'grid', marginBottom: 8 }}>
+      <GreenBox marginX={-2} marginBottom={1}>
+        <PageTitleTypography>거래등록</PageTitleTypography>
+      </GreenBox>
+
       {/* 거래 정보 */}
       <Header
         date={state.date}
         totalValue={state.totalPrice}
         length={state.items.length}
+        imageUrl={state.imageUrl}
         dispatch={dispatch}
+        editable={!params}
       />
 
       {/* 페이지네이션 버튼들 */}
@@ -70,6 +78,7 @@ export default function BookCreate() {
         page={page}
         setPage={setPage}
         dispatch={dispatch}
+        editable={!params}
       />
 
       {/* 각각의 항목 정보들 */}

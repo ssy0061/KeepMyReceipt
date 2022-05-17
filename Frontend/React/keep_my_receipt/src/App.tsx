@@ -1,24 +1,21 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Outlet,
-  useParams,
-} from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import axios from 'axios';
 import './App.css';
 import Navigation from './header';
 import SimpleBottomNavigation from './footer';
 import Landing from './domain/Landing';
 
-import BookIndex from './domain/Book/Index';
 import AlertIndex from './domain/Alert/Index';
 import LoginIndex from './domain/Account/Login';
 import SignUpIndex from './domain/Account/SignUp';
 import ClubIndex from './domain/Club/Index';
 import ClubCreate from './domain/Club/Create';
 import ClubSearch from './domain/Club/Search';
+import BookIndex from './domain/Book/Index';
 import BookCreate from './domain/Book/Create';
 import BookUpdate from './domain/Book/Update';
+import BookDetail from './domain/Book/Detail';
 
 import SettingIndex from './domain/Setting/Index';
 import CameraIndex from './domain/Receipt/Camera';
@@ -30,8 +27,6 @@ import MainChartIndex from './domain/Analytics';
 import SubChartIndex from './domain/Analytics/MediumTagChart';
 import BudgetReport from './domain/Report/Budget';
 import AssetReport from './domain/Report/Asset';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
 
 function App() {
   return (
@@ -62,6 +57,7 @@ function App() {
                 <Route index element={<BookIndex />} />
                 <Route path="create" element={<BookCreate />} />
                 <Route path="update" element={<BookUpdate />} />
+                <Route path="detail" element={<BookDetail />} />
               </Route>
               <Route path="receipt" element={<Outlet />}>
                 <Route path="camera" element={<CameraIndex />} />
