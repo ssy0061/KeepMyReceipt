@@ -1,25 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
 import {
-  Container,
-  useMediaQuery,
-  Grid,
-  Card,
-  Typography,
   Button,
+  Card,
+  Container,
   Dialog,
   DialogActions,
   DialogContent,
-  Select,
+  Grid,
   MenuItem,
+  Select,
+  SelectChangeEvent,
   Stack,
+  Typography,
+  useMediaQuery,
 } from '@mui/material';
+
 import LargeTagChart from './LargeTagChart';
 import FlowChart from './FlowChart';
-import axios from 'axios';
 import sample1 from './sample1.json';
 import sample3 from './sample3.json';
+import {
+  apiLoadFirstChartData,
+  FirstChartResponseType,
+  toTagItemType,
+} from './api';
 
 export default function MainChartIndex() {
   const { id } = useParams();
@@ -32,14 +37,7 @@ export default function MainChartIndex() {
   const [curMonth, setMonth] = useState(month);
   const yearList = ['2022', '2021', '2020', '2019', '2018'];
   const [monthList, setMonthList] = useState(getMonthList);
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    loadData();
-    setOpen(false);
-  };
+
   function getMonthList() {
     return [
       '1',
@@ -56,7 +54,7 @@ export default function MainChartIndex() {
       '12',
     ].filter((item) => parseInt(item) <= parseInt(month));
   }
-  function changeYear(e: any) {
+  function changeYear(e: SelectChangeEvent<string>) {
     const newYear = e.target.value;
     if (newYear > year) {
       alert(`${curYear}년 이후의 날짜로 설정할 수 없습니다.`);
@@ -90,10 +88,12 @@ export default function MainChartIndex() {
       setMonth(month);
     }
   }
-  function changeMonth(e: any) {
+  function changeMonth(e: SelectChangeEvent<string>) {
     setMonth(e.target.value);
   }
 
+  /** 밑으로 내려보낼 데이터들 */
+  // id는 태그 이름, value는 금액, rate는 퍼센트
   const [tagItems, setTagItems] = useState([
     { id: '0', value: '0', rate: '0' },
   ]);
@@ -101,39 +101,67 @@ export default function MainChartIndex() {
   const [flowItems, setFlowItems] = useState([{ date: '2022.5', value: '0' }]);
   const [sumFlowValue, setSumFlowValue] = useState(0);
 
-  function loadData() {
-    console.log('Analytics : load Data from DB');
+  /** 태그 데이터를 샘플로부터 가져옴 */
+  const loadTagDataFromSample = () => {
+    // 그래프용 태그 데이터 세팅
     setTagItems(sample1);
-    setFlowItems(sample3);
+
+    // 태그 금액 총합 구하기
     let tmpSumTagValue = 0;
     sample1.forEach((item) => {
       tmpSumTagValue += parseInt(item.value);
     });
     setSumTagValue(tmpSumTagValue);
+  };
+
+  /** 태그 데이터 API 요청 함수 */
+  const loadTagDataFromServer = async () => {
+    console.log('Analytics : load Data from DB');
+    // API 요청
+    await apiLoadFirstChartData(id, year, month).then((response) => {
+      // 결과값 받음
+      const responseData: FirstChartResponseType[] = response.data.data;
+      // 결과값을 현재 컴포넌트에서 쓰는 형태로 변환
+      const { tagItems, tagTotalCost } = toTagItemType(responseData);
+      // 값 세팅
+      setTagItems(tagItems);
+      setSumTagValue(tagTotalCost);
+    });
+  };
+
+  /** 플로우 차트 데이터를 샘플로부터 가져옴 */
+  const loadFlowDataFromSample = () => {
+    // 플로우 차트용 데이터 세팅
+    setFlowItems(sample3);
+
+    // 지출 총합 구하기
     let tmpSumFlowValue = 0;
     sample3.forEach((item) => {
       tmpSumFlowValue += parseInt(item.value);
     });
     setSumFlowValue(tmpSumFlowValue);
-    axios
-      .get(
-        `https://k6d104.p.ssafy.io/api/spring/chart/${id}/${year}/${
-          month[0] === '0' ? month[1] : month
-        }`,
-      )
-      .then((response) => {
-        console.log('analytics API test', response);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }
+  };
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    loadTagDataFromServer();
+    loadFlowDataFromSample();
+    setOpen(false);
+  };
+
   useEffect(() => {
-    loadData();
+    // loadTagDataFromSample();
+    loadTagDataFromServer();
+
+    loadFlowDataFromSample();
   }, []);
 
   return (
     <Container maxWidth="md">
+      {/* 기간 설정 클릭 시 뜨는 다이얼로그 창 */}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -182,6 +210,8 @@ export default function MainChartIndex() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* 페이지 내용 */}
       <Grid
         container
         direction="column"
@@ -195,6 +225,7 @@ export default function MainChartIndex() {
         }
       >
         <Stack spacing={2} style={{ width: '100%' }}>
+          {/* 기간 설정 창 */}
           <Card
             variant="outlined"
             style={{
@@ -234,6 +265,8 @@ export default function MainChartIndex() {
               </Grid>
             </Grid>
           </Card>
+
+          {/* 분석 차트들 */}
           <LargeTagChart sumValue={sumTagValue} items={tagItems} />
           <FlowChart sumValue={sumFlowValue} items={flowItems} />
         </Stack>

@@ -44,11 +44,14 @@ export default function ItemIndex({ item }: { item: ItemType }) {
           justifyContent="space-between"
           alignItems="center"
         >
+          {/* 태그 이름과 퍼센트 */}
           <Grid xs={7} sm={7} md={7} container direction="row">
             <Typography style={{ fontWeight: 'bold' }}>{item.id}</Typography>
             &nbsp;&nbsp;
-            <Typography style={{ color: 'gray' }}>{item.rate}</Typography>
+            <Typography style={{ color: 'gray' }}>{item.rate}%</Typography>
           </Grid>
+
+          {/* 금액 */}
           <Grid xs={4} sm={4} md={4} container justifyContent="end">
             <Typography>
               {item.value
@@ -56,6 +59,8 @@ export default function ItemIndex({ item }: { item: ItemType }) {
                 .concat('원')}
             </Typography>
           </Grid>
+
+          {/* > 모양 아이콘 */}
           <Grid xs={1} sm={1} md={1} container justifyContent="center">
             <Typography style={{ fontWeight: 'bold', color: 'blue' }}>
               &gt;
