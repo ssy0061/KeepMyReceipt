@@ -1,4 +1,11 @@
-import { Container, Box, Grid } from '@mui/material';
+import {
+  Container,
+  Box,
+  Grid,
+  Typography,
+  CircularProgress,
+  Stack,
+} from '@mui/material';
 import IndexHeader from './Header';
 import IndexList from './List';
 import { useEffect, useState } from 'react';
@@ -7,6 +14,7 @@ import axios from 'axios';
 import * as qs from 'qs';
 
 export default function BookIndex() {
+  const [loading, setLoading] = useState(true);
   // clubId
   const { id } = useParams();
   // 날짜
@@ -34,6 +42,8 @@ export default function BookIndex() {
       qs.stringify(params, { arrayFormat: 'repeat' }),
   });
   // 수입, 지출, 거래내역 가져오기
+  const [checkAdd, setCheckAdd] = useState(false);
+  const [historyList, setHistoryList] = useState([]);
   const getHistory = async (page?: number) => {
     await HistoryAxios.get(`/api/spring/club/${id}/transactions`, {
       params: {
@@ -53,13 +63,25 @@ export default function BookIndex() {
             : targetEnd.getDate()
         }`,
         page: page ? page : 0,
-        size: 5,
+        size: 10,
         sort: ['pay_date,DESC', 'id,DESC'],
       },
     })
       .then((res) => {
-        setRes(res.data.data);
         // console.log(res.data.data);
+        const response = res.data.data;
+        setRes(response);
+        if (historyList.length === 0) {
+          setHistoryList(response.result.list);
+        } else {
+          setHistoryList((prev) => [...prev, ...response.result.list]);
+        }
+        if (response.result.pageNumber < response.result.totalPages - 1) {
+          setCheckAdd(true);
+        } else {
+          setCheckAdd(false);
+        }
+        setLoading(false);
       })
       .catch((e) => {
         console.log(e);
@@ -92,6 +114,7 @@ export default function BookIndex() {
   useEffect(() => {
     getBalance();
     getHistory();
+    window.scrollTo(0, 0);
   }, [month]);
   return (
     <Container maxWidth="md" sx={{ paddingY: 0, paddingX: '1rem' }}>
@@ -105,11 +128,27 @@ export default function BookIndex() {
           income={income}
           checked={checked}
           balance={balance ? balance : 0}
+          setHistoryList={setHistoryList}
         />
         {/* 거래내역 */}
-        <Box>
-          <IndexList list={result ? result.list : ''} />
-        </Box>
+        {loading ? (
+          <Stack alignItems="center" marginTop="5rem">
+            <CircularProgress sx={{ color: '#ffa500' }} />
+          </Stack>
+        ) : result.list.length > 0 ? (
+          <Box>
+            <IndexList
+              result={result}
+              historyList={historyList}
+              getHistory={getHistory}
+              checkAdd={checkAdd}
+            />
+          </Box>
+        ) : (
+          <Typography sx={{ textAlign: 'center', marginTop: '2rem' }}>
+            이번 달 내역이 없습니다
+          </Typography>
+        )}
       </Grid>
     </Container>
   );

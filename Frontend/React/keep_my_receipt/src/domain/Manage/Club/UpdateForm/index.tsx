@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { Button, Stack, Grid, TextField, Container } from '@mui/material';
+import {
+  Button,
+  Stack,
+  Grid,
+  TextField,
+  Container,
+  CircularProgress,
+  Box,
+  Alert,
+} from '@mui/material';
 import UpdateFormImage from './Image';
 import ClubDeleteDialog from '../DeleteDialog';
 
@@ -12,6 +21,7 @@ interface ClubUpdateFormProps {
   onChange: any;
   onClick: any;
   onImgChange: any;
+  loading: boolean;
 }
 
 export default function ClubUpdateForm({
@@ -23,12 +33,17 @@ export default function ClubUpdateForm({
   onChange,
   onClick,
   onImgChange,
+  loading,
 }: ClubUpdateFormProps) {
-  const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   return (
     <Stack spacing={3}>
-      {/* Dialog */}
-      <ClubDeleteDialog open={open} setOpen={setOpen} clubInfo={clubInfo} />
+      {/* DeleteDialog */}
+      <ClubDeleteDialog
+        open={openDelete}
+        setOpen={setOpenDelete}
+        clubInfo={clubInfo}
+      />
       {/* 이미지 */}
       <UpdateFormImage onImgChange={onImgChange} formImage={formImage} />
       {/* 텍스트 */}
@@ -62,18 +77,33 @@ export default function ClubUpdateForm({
               />
             </Grid>
             <Grid item xs={12} sx={{ marginTop: 1 }}>
-              <Button
-                onClick={onClick}
-                variant="contained"
-                fullWidth
-                sx={{ marginBottom: 3 }}
-              >
-                저장
-              </Button>
+              <Box sx={{ m: 0, position: 'relative' }}>
+                <Button
+                  onClick={onClick}
+                  disabled={loading}
+                  variant="contained"
+                  fullWidth
+                  sx={{ marginBottom: 3 }}
+                >
+                  저장
+                </Button>
+                {loading && (
+                  <CircularProgress
+                    size={24}
+                    sx={{
+                      position: 'absolute',
+                      top: '30%',
+                      left: '50%',
+                      marginTop: '-12px',
+                      marginLeft: '-12px',
+                    }}
+                  />
+                )}
+              </Box>
             </Grid>
             <Button
               onClick={() => {
-                setOpen(true);
+                setOpenDelete(true);
               }}
               color="warning"
               variant="outlined"

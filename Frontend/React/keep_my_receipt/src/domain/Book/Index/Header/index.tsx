@@ -13,6 +13,7 @@ interface IndexHeaderProps {
   income: number;
   checked: boolean;
   balance: number;
+  setHistoryList: any;
 }
 
 export default function IndexHeader({
@@ -23,6 +24,7 @@ export default function IndexHeader({
   income,
   checked,
   balance,
+  setHistoryList,
 }: IndexHeaderProps) {
   return (
     <Stack width="100%">
@@ -32,13 +34,24 @@ export default function IndexHeader({
 
         {/* 현재 연월 표시 */}
         <Stack direction="row" alignItems="center" width="20rem">
-          <IconButton onClick={() => setMonth(month - 1)}>
+          <IconButton
+            onClick={() => {
+              setHistoryList([]);
+              setMonth(month - 1);
+            }}
+          >
             <ArrowLeft sx={{ color: '#000000', fontSize: '2rem' }} />
           </IconButton>
           <Typography variant="h5">{target.getMonth() + 1} 월 </Typography>
-          <IconButton onClick={() => setMonth(month + 1)} disabled={checked}>
+          <IconButton
+            onClick={() => {
+              setHistoryList([]);
+              setMonth(month + 1);
+            }}
+            disabled={checked}
+          >
             <ArrowRight
-              sx={{ color: checked ? '#5c5c5c' : '#000000', fontSize: '2rem' }}
+              sx={{ color: checked ? '#9e9e9e' : '#000000', fontSize: '2rem' }}
             />
           </IconButton>
         </Stack>

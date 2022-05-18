@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { IconButton, Stack, Container } from '@mui/material';
 import axios from 'axios';
 import ClubUpdateForm from './UpdateForm';
+import { useNavigate } from 'react-router-dom';
 
 interface FormType {
   formName: string;
@@ -20,6 +21,8 @@ interface ManageClubProps {
 }
 
 export default function ManageClub({ clubInfo, getClubInfo }: ManageClubProps) {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [check, setCheck] = useState(false);
   const [imgFile, setImgFile] = useState();
   const { id, name, description, image } = clubInfo;
@@ -48,6 +51,7 @@ export default function ManageClub({ clubInfo, getClubInfo }: ManageClubProps) {
       console.log('모임 이름은 필수');
       return;
     }
+    setLoading(true);
     // 이미지 파일 업로드하여 url 가져오기
     axios.defaults.withCredentials = false;
     const imgUrl = imgFile
@@ -78,6 +82,8 @@ export default function ManageClub({ clubInfo, getClubInfo }: ManageClubProps) {
         image: imgUrl ? imgUrl : image,
       })
       .then((response) => {
+        setLoading(false);
+        window.scrollTo(0, 0);
         // console.log(response);
       })
       .catch((e) => {
@@ -98,6 +104,7 @@ export default function ManageClub({ clubInfo, getClubInfo }: ManageClubProps) {
         onChange={onChange}
         onClick={onClick}
         onImgChange={onImgChange}
+        loading={loading}
       />
     </Container>
   );

@@ -12,7 +12,14 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
-import { Done, AccessTime, Delete, MoreVert } from '@mui/icons-material';
+import {
+  Done,
+  AccessTime,
+  Delete,
+  MoreVert,
+  ManageAccounts,
+} from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 interface ClubInfoType {
   id: number;
@@ -34,10 +41,29 @@ export default function ClubListItem({
   leave?: boolean;
   onClickToLeave?: any;
 }) {
+  const navigate = useNavigate();
   const { id, name, description, image } = clubInfo;
   // 가입 여부 확인하여 표시
   const [joined, setJoined] = useState<boolean>(false);
   const [wait, setWait] = useState<boolean>(false);
+  const [leader, setLeader] = useState<boolean>(false);
+  const checkCrewAuth = async () => {
+    // 모임 내 권한 조회를 통해 가입 여부& 권한 확인
+    await axios
+      .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}/crew/auth`)
+      .then((res) => {
+        if (res.data) {
+          const check = res.data;
+          if (check.data === '리더') {
+            setLeader(true);
+          }
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        return;
+      });
+  };
   const checkJoined = async () => {
     await axios
       .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}/crew/auth`)
@@ -72,6 +98,7 @@ export default function ClubListItem({
     if (checkJoin) {
       checkJoined();
     }
+    checkCrewAuth();
   });
   return (
     <Grid
@@ -151,17 +178,31 @@ export default function ClubListItem({
             open={open}
             onClose={handleClose}
           >
-            <MenuItem
-              onClick={() => {
-                onClickToLeave();
-                handleClose();
-              }}
-              disableRipple
-              sx={{ padding: '0.5rem' }}
-            >
-              <Delete />
-              모임 탈퇴
-            </MenuItem>
+            {leader ? (
+              <MenuItem
+                onClick={() => {
+                  handleClose();
+                  navigate(`./${id}/manage`);
+                }}
+                disableRipple
+                sx={{ padding: '0.5rem' }}
+              >
+                <ManageAccounts />
+                모임 관리
+              </MenuItem>
+            ) : (
+              <MenuItem
+                onClick={() => {
+                  onClickToLeave();
+                  handleClose();
+                }}
+                disableRipple
+                sx={{ padding: '0.5rem' }}
+              >
+                <Delete />
+                모임 탈퇴
+              </MenuItem>
+            )}
           </Menu>
         </>
       ) : null}

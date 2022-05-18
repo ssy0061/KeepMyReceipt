@@ -70,6 +70,7 @@ export default function SearchBar({
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <SearchTextField
+            autoFocus
             onChange={onChange}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
