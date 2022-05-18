@@ -14,7 +14,5 @@ public interface AssetSCategoryRepository extends JpaRepository<AssetSCategory, 
     // 소분류 조회
     List<AssetSCategoryResDTO> findAllByClubAndLcName(Club club, String lcName);
     // 특정 소분류 조회
-    Optional<AssetSCategory> findAssetSCategoryByAscIdAndClub(Long ascId, Club club);
-    // 특정 소분류 조회
     Optional<AssetSCategory> findAssetSCategoryByClubAndLcNameAndAscName(Club club, String lcName, String ascNAme);
 }

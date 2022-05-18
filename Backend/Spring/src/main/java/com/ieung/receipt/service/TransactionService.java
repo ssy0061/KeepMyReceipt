@@ -151,7 +151,7 @@ public class TransactionService {
      * 리더, 관리자인지 확인
      * @param clubId, crewId
      */
-    public void checkAuth(long clubId, long crewId) {
+    public void checkAuthLeaderOrManager(long clubId, long crewId) {
         AuthCode authCode = clubCrewRepository.findAuthCodeByClubIdAndCrewId(clubId, crewId);
 
         if (authCode == null || authCode == AuthCode.NONE) {
@@ -162,11 +162,23 @@ public class TransactionService {
     }
 
     /**
+     * 회원인지 확인
+     * @param clubId, crewId
+     */
+    public void checkAuthMember(long clubId, long crewId) {
+        AuthCode authCode = clubCrewRepository.findAuthCodeByClubIdAndCrewId(clubId, crewId);
+
+        if (authCode == null || authCode == AuthCode.NONE) {
+            throw new ApiMessageException("모임에 가입된 회원이 아닙니다.");
+        }
+    }
+
+    /**
      * 거래내역 리스트 조회
      * @param clubId, crewId, query, start, end, pageable
      */
     public Page<TransactionDetail> getTransactions(Long clubId, Long crewId, String query, LocalDate start, LocalDate end, Pageable pageable) {
-        //checkAuth(clubId, crewId);
+        checkAuthMember(clubId, crewId);
 
         return transactionDetailRepository.findByContentOrTag(clubId, query, start, end, pageable);
     }
@@ -195,7 +207,7 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findTransactionByIdWithTransactionDetails(transactionId)
                 .orElseThrow(() -> new ApiMessageException("해당하는 거래내역이 없습니다."));
 
-        //checkAuth(transaction.getClub().getId(), crewId);
+        checkAuthMember(transaction.getClub().getId(), crewId);
 
         return transaction;
     }
@@ -216,7 +228,7 @@ public class TransactionService {
             requestRepository.save(request);
         }
 
-        checkAuth(transaction.getClub().getId(), crewId);
+        checkAuthLeaderOrManager(transaction.getClub().getId(), crewId);
 
         Map<Category, Integer> assetMap = new HashMap<>(); // 자산별 변동 저장하는 map
         Map<Category, Integer> budgetMap = new HashMap<>(); // 예산, 지출, 수입별 변동 저장하는 map
@@ -355,9 +367,9 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findTransactionByIdWithTransactionDetails(transactionId)
                 .orElseThrow(() -> new ApiMessageException("해당하는 거래내역이 없습니다."));
 
-        checkAuth(transaction.getClub().getId(), crewId);
+        checkAuthLeaderOrManager(transaction.getClub().getId(), crewId);
 
-        if (transaction.getRequest() != null) {
+        if (transaction.getRequest() == null) {
             transaction.updatePrice(transactionReqDTO.getTotalPrice());
             transaction.updatePayDate(transactionReqDTO.getDate());
         } else {
@@ -404,21 +416,15 @@ public class TransactionService {
                     .payDate(transaction.getPayDate())
                     .type(detailReqDTO.getType())
                     .name(detailReqDTO.getName())
+                    .largeTag(detailReqDTO.getLargeTag())
+                    .smallTag(detailReqDTO.getSmallTag())
                     .price(detailReqDTO.getType().equals("자산") || detailReqDTO.getType().equals("지출") ?
                             0 - detailReqDTO.getPrice() : detailReqDTO.getPrice())
                     .memo(detailReqDTO.getMemo())
                     .build();
 
-            Tag tag = null;
-
-            if (detailReqDTO.getTagId() != null) {
-                tag = tagRepository.findTagByIdAndClub(detailReqDTO.getTagId(), transaction.getClub())
-                        .orElseThrow(() -> new ApiMessageException("존재하는 태그가 아닙니다."));
-            }
-            transactionDetail.updateTags(tag);
-
             if (detailReqDTO.getType().equals("자산")) {
-                AssetSCategory assetSCategory = assetSCategoryRepository.findAssetSCategoryByAscIdAndClub(detailReqDTO.getCategoryId(), transaction.getClub())
+                AssetSCategory assetSCategory = assetSCategoryRepository.findAssetSCategoryByClubAndLcNameAndAscName(transaction.getClub(), detailReqDTO.getLargeCategory(), detailReqDTO.getSmallCategory())
                         .orElseThrow(() -> new ApiMessageException("존재하는 소분류가 아닙니다."));
 
                 transactionDetail.updateCategory(assetSCategory.getLcName(), assetSCategory.getAscName());
@@ -432,7 +438,7 @@ public class TransactionService {
                     assetMap.put(category, assetMap.getOrDefault(category, 0) + transactionDetail.getPrice());
                 }
             } else {
-                BudgetSCategory budgetSCategory = budgetSCategoryRepository.findBudgetSCategoryByBscIdAndClub(detailReqDTO.getCategoryId(), transaction.getClub())
+                BudgetSCategory budgetSCategory = budgetSCategoryRepository.findBudgetSCategoryByClubAndLcNameAndBscName(transaction.getClub(), detailReqDTO.getLargeCategory(), detailReqDTO.getSmallCategory())
                         .orElseThrow(() -> new ApiMessageException("존재하는 소분류가 아닙니다."));
                 transactionDetail.updateCategory(budgetSCategory.getLcName(), budgetSCategory.getBscName());
 

@@ -17,7 +17,7 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 public class TransactionDetailReqDTO {
     @NotBlank
-    @Schema(description = "항목명", required = true, example = "축구공")
+    @Schema(description = "항목명", required = true, example = "왕맛있는그레놀라에너지바")
     private String name;
 
     @NotNull
@@ -29,11 +29,17 @@ public class TransactionDetailReqDTO {
     @Schema(description = "유형", required = true, example = "자산/지출/수입/예산")
     private String type;
 
-    @Schema(description = "태그 id (2차 태그가 있다면 2차 태그 id, 없다면 1차 태그 id)", example = "1")
-    private Long tagId;
+    @Schema(description = "1차 태그", example = "주전부리")
+    private String largeTag;
 
-    @Schema(description = "소분류 id", required = true, example = "1")
-    private Long categoryId;
+    @Schema(description = "2차 태그", example = "초코바")
+    private String smallTag;
+
+    @Schema(description = "대분류", required = true, example = "복리후생비")
+    private String largeCategory;
+
+    @Schema(description = "소분류", required = true, example = "식비")
+    private String smallCategory;
 
     @Schema(description = "메모", example = "부회장이 고름")
     private String memo;

@@ -64,17 +64,12 @@ public class TransactionDetail {
     @Column(length = 255)
     private String memo;
 
-    public void updateTags(Tag tag) {
-        if (tag == null) {
-            smallTag = null;
-            largeTag = null;
-        } else if (tag.getTagLevel() == 1) {
-                smallTag = null;
-                largeTag = tag.getTagName();
-        } else {
-            smallTag = tag.getTagName();
-            largeTag = tag.getParentTag();
-        }
+    public void updateSmallTag(String smallTag) {
+        this.smallTag = smallTag;
+    }
+
+    public void updateLargeTag(String largeTag) {
+        this.largeTag = largeTag;
     }
 
     public void updateCategory(String largeCategory, String smallCategory) {

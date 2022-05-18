@@ -14,7 +14,5 @@ public interface BudgetSCategoryRepository extends JpaRepository<BudgetSCategory
     // 소분류 조회
     List<BudgetSCategoryResDTO> findAllByClubAndLcName(Club club, String lcName);
     // 특정 소분류 조회
-    Optional<BudgetSCategory> findBudgetSCategoryByBscIdAndClub(Long bscId, Club club);
-    // 특정 소분류 조회
     Optional<BudgetSCategory> findBudgetSCategoryByClubAndLcNameAndBscName(Club club, String lcName, String bscName);
 }
