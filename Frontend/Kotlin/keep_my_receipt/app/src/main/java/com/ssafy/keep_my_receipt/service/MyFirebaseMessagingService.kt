@@ -23,14 +23,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        if(remoteMessage.data.isNotEmpty()){
-            Log.i("페이로드", remoteMessage.data.toString())
+        if(remoteMessage.notification != null){
+            Log.i("페이로드", remoteMessage.notification.toString())
             //Log.i("바디: ", remoteMessage.data["body"].toString())
             //Log.i("타이틀: ", remoteMessage.data["title"].toString())
             sendNotification(remoteMessage)
         } else {
             Log.i("수신에러: ", "data가 비어있습니다. 메시지를 수신하지 못했습니다.")
-            Log.i("data값: ", remoteMessage.data.toString())
+            Log.i("data값: ", remoteMessage.notification.toString())
         }
     }
 
@@ -40,14 +40,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-        val pendingIntent = PendingIntent.getActivity(this, uniId, intent, PendingIntent.FLAG_ONE_SHOT)
+        val pendingIntent = PendingIntent.getActivity(this, uniId, intent, PendingIntent.FLAG_IMMUTABLE)
         val channelId = getString(R.string.firebase_notification_channel_id)
         val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-//            .setSmallIcon(R.mipmap.ic_launcher_coffee)
-            .setContentTitle(remoteMessage.data["title"].toString())
-            .setContentText(remoteMessage.data["body"].toString())
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(remoteMessage.notification?.title.toString())
+            .setContentText(remoteMessage.notification?.body.toString())
             .setAutoCancel(true)
             .setSound(soundUri)
             .setContentIntent(pendingIntent)
