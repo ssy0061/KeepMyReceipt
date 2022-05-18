@@ -9,7 +9,6 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toCurrency from '../../../../services/toCurrency';
-import ListItem from '../ListItem';
 
 interface BookListProps {
   result: any;
@@ -18,7 +17,7 @@ interface BookListProps {
   checkAdd: boolean;
 }
 
-export default function BookList({
+export default function SearchList({
   result,
   historyList,
   getHistory,
@@ -28,7 +27,7 @@ export default function BookList({
 
   const navigate = useNavigate();
   const onClick = (item: any) => {
-    navigate(`./detail`, {
+    navigate(`../detail`, {
       state: {
         transactionId: item.transactionId,
         transactionDetailId: item.transactionDetailId,

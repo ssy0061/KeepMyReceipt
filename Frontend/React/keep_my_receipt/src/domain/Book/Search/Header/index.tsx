@@ -4,56 +4,39 @@ import toCurrency from '../../../../services/toCurrency';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import SearchBar from '../../../../components/SearchBar';
 
 interface IndexHeaderProps {
-  month: number;
-  setMonth: any;
-  target: any;
   expenditure: number;
   income: number;
-  checked: boolean;
-  balance: number;
-  setHistoryList: any;
+  value: string;
+  setValue: any;
+  onSearch: any;
+  targetStart: Date;
+  targetEnd: Date;
 }
 
-export default function IndexHeader({
-  month,
-  setMonth,
-  target,
+export default function SearchHeader({
   expenditure,
   income,
-  checked,
-  balance,
-  setHistoryList,
+  value,
+  setValue,
+  onSearch,
+  targetStart,
+  targetEnd,
 }: IndexHeaderProps) {
   return (
     <Stack width="100%">
       <Stack paddingLeft="1rem">
-        <h2>거래 내역</h2>
-        {/* <Typography>예산: {toCurrency(balance)}</Typography> */}
-
-        {/* 현재 연월 표시 */}
-        <Stack direction="row" alignItems="center" width="20rem">
-          <IconButton
-            onClick={() => {
-              setHistoryList([]);
-              setMonth(month - 1);
-            }}
-          >
-            <ArrowLeft sx={{ color: '#000000', fontSize: '2rem' }} />
-          </IconButton>
-          <Typography variant="h5">{target.getMonth() + 1}월 </Typography>
-          <IconButton
-            onClick={() => {
-              setHistoryList([]);
-              setMonth(month + 1);
-            }}
-            disabled={checked}
-          >
-            <ArrowRight
-              sx={{ color: checked ? '#9e9e9e' : '#000000', fontSize: '2rem' }}
-            />
-          </IconButton>
+        {/* 검색 창 */}
+        <Stack direction="row" justifyContent="center">
+          <SearchBar
+            value={value}
+            setValue={setValue}
+            onSearch={onSearch}
+            navi={'.'}
+            placeholder="내역 및 태그를 입력해주세요"
+          />
         </Stack>
 
         {/* 지출 & 수입 */}
@@ -70,6 +53,17 @@ export default function IndexHeader({
               <b>{toCurrency(income)}</b>
             </Typography>
           </Stack>
+        </Stack>
+        {/* 기간 */}
+        <Stack direction="row" alignItems="center">
+          <Typography>
+            <b>
+              {targetStart.toLocaleDateString() +
+                ' ~ ' +
+                targetEnd.toLocaleDateString()}
+            </b>
+          </Typography>
+          <p>기간설정</p>
         </Stack>
       </Stack>
       {/* 경계선 */}

@@ -4,7 +4,7 @@ import {
   Routes,
   Route,
   Outlet,
-  useParams,
+  useNavigate,
 } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
@@ -33,6 +33,7 @@ import MainChartIndex from './domain/Analytics';
 import SubChartIndex from './domain/Analytics/MediumTagChart';
 import BudgetReport from './domain/Report/Budget';
 import AssetReport from './domain/Report/Asset';
+import BookSearch from './domain/Book/Search';
 
 function App() {
   return (
@@ -44,22 +45,23 @@ function App() {
         <Route path="signup" element={<Outlet />}>
           <Route index element={<SignUpIndex />} />
         </Route>
-        <Route path="alert" element={<Outlet />}>
+        <Route path="alert" element={<CheckLoginPage />}>
           <Route index element={<AlertIndex />} />
         </Route>
-        <Route path="setting" element={<Outlet />}>
+        <Route path="setting" element={<CheckLoginPage />}>
           <Route index element={<SettingIndex />} />
         </Route>
         {/* 밑에 Route들 추가하시면 됩니다! */}
         <Route path="/" element={<RootPage />}>
           <Route index element={<Landing />} />
-          <Route path="club" element={<Outlet />}>
+          <Route path="club" element={<CheckLoginPage />}>
             <Route index element={<ClubIndex />} />
             <Route path="create" element={<ClubCreate />} />
             <Route path="search" element={<ClubSearch />} />
             <Route path=":id" element={<Outlet />}>
               <Route path="book" element={<Outlet />}>
                 <Route index element={<BookIndex />} />
+                <Route path="search" element={<BookSearch />} />
                 <Route path="create" element={<BookCreate />} />
                 <Route path="update" element={<BookUpdate />} />
                 <Route path="detail" element={<BookDetail />} />
@@ -109,6 +111,21 @@ function RootPage() {
       <Navigation />
       <Outlet />
       <SimpleBottomNavigation />
+    </>
+  );
+}
+function CheckLoginPage() {
+  const navigate = useNavigate();
+  const accessToken = sessionStorage.getItem('accessToken');
+
+  useEffect(() => {
+    if (!accessToken) {
+      navigate('/login');
+    }
+  }, [accessToken]);
+  return (
+    <>
+      <Outlet />
     </>
   );
 }
