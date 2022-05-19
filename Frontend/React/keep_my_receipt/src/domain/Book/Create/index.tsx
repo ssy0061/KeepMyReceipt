@@ -128,6 +128,7 @@ export default function BookCreate() {
             item={item}
             itemIndex={index}
             dispatch={dispatch}
+            currencyEditable={params && 'requestId' in params}
           />
         </div>
       ))}

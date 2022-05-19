@@ -24,6 +24,7 @@ type ItemType = {
   item: BookItemType;
   itemIndex: number;
   dispatch: React.Dispatch<BookAction>;
+  currencyEditable: boolean;
 };
 
 const mainTypes: { name: string; color: string }[] = [
@@ -33,7 +34,13 @@ const mainTypes: { name: string; color: string }[] = [
   { name: '예산', color: 'green' },
 ];
 
-export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
+export default function Item({
+  clubId,
+  item,
+  itemIndex,
+  dispatch,
+  currencyEditable,
+}: ItemType) {
   const [inputValue, setInputValue] = useState('');
 
   // 토글 값 바꾸는 함수
@@ -126,9 +133,13 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
                   }
                 : undefined
             }
+            disabled={!currencyEditable}
+            helperText={
+              !currencyEditable ? '영수증 등록 금액과 같아야 합니다' : ''
+            }
+            required
             variant="standard"
             fullWidth
-            required
           />
         </Box>
 
