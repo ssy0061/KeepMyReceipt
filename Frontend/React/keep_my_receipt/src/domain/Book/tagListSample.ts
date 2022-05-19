@@ -14,6 +14,7 @@ export const largeCategories = {
   예산: ['전기예산', '활동지원금', '회비', '후원비'],
   지출: ['복리후생비', '여가교통비', '소모품비', '기타비용'],
   수입: ['수입', '기타수입'],
+  '': [],
 } as StringArrayObjectType;
 
 export const mediumCategories = {

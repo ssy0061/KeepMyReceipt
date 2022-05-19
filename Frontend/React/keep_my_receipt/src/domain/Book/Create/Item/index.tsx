@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Divider, List, ListItemIcon, Stack } from '@mui/material';
-import { Info } from '@mui/icons-material';
+import {
+  Box,
+  Chip,
+  ChipProps,
+  ChipPropsColorOverrides,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+} from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+import { InfoOutlined } from '@mui/icons-material';
 
 // 컴포넌트
 import useToggle from '../../../../hooks/useToggle';
 import DialogWithIconButton from '../../../../components/DialogWithIconButton';
-import EditableItem from '../../EditableItem';
-import EditableListWrapped from '../../EditableListWrapped';
-import EditableListWrappedForCategory from '../../EditableListWrappedForCategory';
-import EditableListWrappedForTag from '../../EditableListWrappedForTag';
 import { MainCategoryDialog } from '../../tagDialogContents';
 import { BookAction, BookItemType, updateItem } from '../../bookReducer';
 import { mainCategories, largeCategories } from '../../tagListSample';
+import EditableAutocomplete from '../../EditableAutocomplete';
+import EditableAutocompleteTag from '../../EditableAutocompleteTag';
 
 type ItemType = {
   clubId: string;
@@ -19,6 +27,16 @@ type ItemType = {
   itemIndex: number;
   dispatch: React.Dispatch<BookAction>;
 };
+
+const mainTypes: { name: string; color: string }[] = [
+  { name: '자산', color: 'orange' },
+  { name: '지출', color: 'red' },
+  { name: '수입', color: 'blue' },
+  { name: '예산', color: 'green' },
+];
+
+// 정규표현식을 활용해 숫자만 추출
+const toNumberOnly = (price: string) => Number(price.replace(/[^0-9]/g, ''));
 
 export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
   // 토글 값과, 토글 버튼 생성
@@ -28,7 +46,7 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
     setMainCategory,
   );
 
-  const [tempTagId, setTempTagId] = useState(0);
+  const [inputValue, setInputValue] = useState('');
 
   // 토글 값 바꾸는 함수
   function setMainCategory(value: string) {
@@ -49,95 +67,190 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
   };
 
   // 소분류 바꾸는 함수
-  const setSmallCategory = (name: string, id: number) => {
-    dispatch(updateItem(itemIndex, 'smallCategory', name));
-    dispatch(updateItem(itemIndex, 'categoryId', id));
+  const setSmallCategory = (value: string | number) => {
+    dispatch(updateItem(itemIndex, 'smallCategory', value));
+    // dispatch(updateItem(itemIndex, 'categoryId', id));
   };
 
-  const setLargeTag = (name: string, tagId: number) => {
-    dispatch(updateItem(itemIndex, 'largeTag', name));
+  const setLargeTag = (value: string | number) => {
+    dispatch(updateItem(itemIndex, 'largeTag', value));
     dispatch(updateItem(itemIndex, 'smallTag', ''));
-    dispatch(updateItem(itemIndex, 'tagId', tagId));
-    if (tagId) {
-      setTempTagId(tagId);
-    }
+    // dispatch(updateItem(itemIndex, 'tagId', tagId));
+    // if (tagId) {
+    //   setTempTagId(tagId);
+    // }
   };
 
-  const setSmallTag = (name: string, tagId: number) => {
-    dispatch(updateItem(itemIndex, 'smallTag', name));
-    // 태그2 선택을 취소할 경우, 기존 태그 id로 복구
-    dispatch(updateItem(itemIndex, 'tagId', tagId === 0 ? tempTagId : tagId));
-  };
+  // const setSmallTag = (name: string, tagId: number) => {
+  //   dispatch(updateItem(itemIndex, 'smallTag', name));
+  //   // 태그2 선택을 취소할 경우, 기존 태그 id로 복구
+  //   dispatch(updateItem(itemIndex, 'tagId', tagId === 0 ? tempTagId : tagId));
+  // };
 
-  useEffect(() => {
-    console.log(item);
-  }, [item]);
+  // useEffect(() => {
+  //   console.log(item);
+  // }, [item]);
 
   return (
     <>
-      <List disablePadding>
+      <Box>
         {/* 거래내역 세부항목 이름 */}
-        <EditableItem
-          originalValue={item.name}
-          onEdit={(prevVal, newVal) => {
-            dispatch(updateItem(itemIndex, 'name', newVal));
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            marginBottom: 1,
           }}
-          prefixElement={
-            <ListItemIcon sx={{ marginLeft: '2.5rem' }}>내용</ListItemIcon>
-          }
-          rootHighlight
-        />
-        <Divider />
+        >
+          {/* <LocalOffer sx={{ color: 'action.active', mr: 1, my: 0.5 }} /> */}
+          <TextField
+            label="내용"
+            value={item.name}
+            onChange={(event) => {
+              dispatch(updateItem(itemIndex, 'name', event.target.value));
+            }}
+            variant="standard"
+            fullWidth
+            required
+          />
+        </Box>
 
-        {/* 세부항목 금액 */}
-        <EditableItem
-          originalValue={item.price}
-          onEdit={(prevVal, newVal) => {
-            dispatch(updateItem(itemIndex, 'price', newVal));
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-end',
           }}
-          prefixElement={
-            <ListItemIcon sx={{ marginLeft: '2.5rem' }}>금액</ListItemIcon>
-          }
-          isCurrency
-          rootHighlight
-        />
-        <Divider />
+        >
+          {/* <Money sx={{ color: 'action.active', mr: 1, my: 0.5 }} /> */}
+          <TextField
+            label="금액"
+            value={item.price ? item.price.toLocaleString() : undefined}
+            onChange={(event) => {
+              dispatch(
+                updateItem(
+                  itemIndex,
+                  'price',
+                  toNumberOnly(event.target.value),
+                ),
+              );
+            }}
+            InputProps={
+              item.price
+                ? {
+                    startAdornment: (
+                      <InputAdornment position="start">￦</InputAdornment>
+                    ),
+                  }
+                : undefined
+            }
+            variant="standard"
+            fullWidth
+            required
+          />
+        </Box>
 
-        {/* 세부항목 메모 */}
-        <EditableItem
-          originalValue={item.memo}
-          onEdit={(prevVal, newVal) => {
-            dispatch(updateItem(itemIndex, 'memo', newVal));
-          }}
-          prefixElement={
-            <ListItemIcon sx={{ marginLeft: '2.5rem' }}>메모</ListItemIcon>
-          }
-          rootHighlight
-        />
-        <Divider />
-      </List>
+        {/* <Box sx={{ display: 'flex', alignItems: 'flex-end', width: '50%' }}>
+              <Notes sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+              <TextField
+                label="메모"
+                value={item.memo}
+                onChange={(event) => {
+                  dispatch(updateItem(itemIndex, 'memo', event.target.value));
+                }}
+                variant="standard"
+                multiline
+              />
+            </Box> */}
+      </Box>
 
       {/* 주요 분류 (자산, 지출, 수입, 예산) */}
       <Stack
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        marginY={1}
+        marginTop={4}
       >
-        {/* 아이콘 버튼 & 다이얼로그 */}
-        <Stack direction="row" alignItems="center">
-          <DialogWithIconButton
-            icon={<Info />}
-            content={<MainCategoryDialog />}
-          />
-          <span>유형</span>
-        </Stack>
         {/* 유형 선택 토글 버튼 */}
-        <ToggleButtons />
+        <Stack direction="row" alignItems="center">
+          <span>유형</span>
+          {/* <ToggleButtons /> */}
+          <Stack
+            direction="row"
+            alignItems="center"
+            marginLeft={(theme) => (theme.breakpoints.down('sm') ? 2 : 5)}
+            spacing={1}
+          >
+            {mainTypes.map((eachType) => (
+              <Chip
+                label={eachType.name}
+                variant="outlined"
+                onClick={() => {
+                  setMainCategory(eachType.name);
+                }}
+                sx={{ color: eachType.color, borderColor: eachType.color }}
+              />
+            ))}
+          </Stack>
+        </Stack>
+
+        {/* 아이콘 버튼 & 다이얼로그 */}
+        <DialogWithIconButton
+          icon={<InfoOutlined />}
+          content={<MainCategoryDialog />}
+        />
       </Stack>
-      <Divider />
 
       {/* 대분류 */}
+      {item.type && (
+        <Autocomplete
+          /** 1. 옵션 목록 & 목록 출력 */
+          options={
+            item.type ? largeCategories[item.type] : largeCategories['자산']
+          }
+          renderOption={(props, option) => (
+            <li {...props}>
+              {option}
+              <IconButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <InfoOutlined />
+              </IconButton>
+            </li>
+          )}
+          /** 2. 입력란 & 입력 변화 */
+          inputValue={inputValue}
+          renderInput={(params) => (
+            <Stack
+              direction="row"
+              alignItems="flex-end"
+              spacing={1}
+              marginBottom={1}
+            >
+              <TextField
+                {...params}
+                required
+                label="대분류"
+                variant="standard"
+              />
+              {/* <Interests sx={{ color: 'action.active', mr: 1, my: 0.5 }} /> */}
+              <InfoOutlined />
+            </Stack>
+          )}
+          onInputChange={(event, newInputValue) => {
+            setInputValue(newInputValue);
+          }}
+          /** 3. 최종적으로 선택된 값 */
+          value={item.largeCategory ? item.largeCategory : null}
+          onChange={(event, newValue: string | null) => {
+            setLargeCategory(newValue);
+          }}
+          autoHighlight
+        />
+      )}
+
+      {/* 대분류
       <EditableListWrapped
         categoryName="대분류"
         dialogContent={<></>}
@@ -145,10 +258,24 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
         onSelect={setLargeCategory}
         selected={item.largeCategory}
         fixed
-      />
-      <Divider />
+      /> */}
 
-      <EditableListWrappedForCategory
+      {/* 소분류 */}
+      {item.largeCategory && (
+        <EditableAutocomplete
+          label="소분류"
+          clubId={clubId}
+          typeName={item.type}
+          largeCatName={item.largeCategory}
+          value={item.smallCategory}
+          setValue={setSmallCategory}
+          requestCreateValue={(value) => {
+            console.log('소분류 추가 API 요청', value);
+          }}
+        />
+      )}
+
+      {/* <EditableListWrappedForCategory
         categoryName="소분류"
         dialogContent={<p>설명</p>}
         clubId={clubId}
@@ -156,10 +283,20 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
         lcName={item.largeCategory}
         onSelect={setSmallCategory}
         selected={item.smallCategory}
-      />
-      <Divider />
+      /> */}
 
-      <EditableListWrappedForTag
+      {/* 1차 태그 */}
+      <EditableAutocompleteTag
+        label="태그"
+        clubId={clubId}
+        value={item.largeTag}
+        setValue={setLargeTag}
+        requestCreateValue={(value) => {
+          console.log('태그 추가 API 요청', value);
+        }}
+      />
+
+      {/* <EditableListWrappedForTag
         clubId={clubId}
         categoryName={!item.largeTag ? '태그' : '태그 1'}
         dialogContent={<p>설명</p>}
@@ -167,7 +304,6 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
         selected={item.largeTag}
         parentTag={null}
       />
-      <Divider />
 
       {item.largeTag && (
         <EditableListWrappedForTag
@@ -178,8 +314,7 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
           selected={item.smallTag}
           parentTag={item.largeTag}
         />
-      )}
-      <Divider />
+      )} */}
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button, Container, Stack } from '@mui/material';
+import { Button, Container, Divider, Stack } from '@mui/material';
 
 import Header from '../Create/Header';
 import PageButtons from '../Create/PageButtons';
@@ -31,8 +31,7 @@ const detailItemInfo = [
   createDictItem('유형', 'type'),
   createDictItem('대분류', 'largeCategory'),
   createDictItem('소분류', 'smallCategory'),
-  createDictItem('태그1', 'largeTag'),
-  createDictItem('태그2', 'smallTag'),
+  createDictItem('태그', 'largeTag'),
   createDictItem('메모', 'memo'),
 ];
 
@@ -90,7 +89,6 @@ export default function BookDetail() {
             count={state.items.length}
             page={page}
             setPage={setPage}
-            editable={false}
           />
 
           <OuterBox>
@@ -100,22 +98,32 @@ export default function BookDetail() {
               {state.items[page - 1] &&
                 // 페이지네이션에 따라 한 개씩만 보여줘야 함
                 detailItemInfo.map((info) => (
-                  <Stack direction="row">
-                    <TitleTypographyWithSpace>
-                      {info.key}
-                    </TitleTypographyWithSpace>
-                    <ContentTypography>
-                      {info.value === 'price'
-                        ? toCurrency(state.items[page - 1][info.value])
-                        : state.items[page - 1][info.value]}
-                    </ContentTypography>
-                  </Stack>
+                  <>
+                    <Stack direction="row">
+                      <TitleTypographyWithSpace>
+                        {info.key}
+                      </TitleTypographyWithSpace>
+                      <ContentTypography>
+                        {info.value === 'price'
+                          ? toCurrency(state.items[page - 1][info.value])
+                          : state.items[page - 1][info.value]}
+                      </ContentTypography>
+                    </Stack>
+                    <Divider
+                      sx={{ marginBottom: 1, backgroundColor: 'lightyellow' }}
+                    />
+                  </>
                 ))}
             </InnerBox>
           </OuterBox>
 
           <Stack direction="row" justifyContent="space-around" marginTop={1}>
-            <Button onClick={undefined} variant="contained">
+            <Button
+              onClick={async () => {
+                null;
+              }}
+              variant="contained"
+            >
               수정
             </Button>
             <Button

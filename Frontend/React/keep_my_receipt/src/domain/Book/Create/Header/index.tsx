@@ -58,10 +58,10 @@ function Header(props: HeaderType) {
         </Stack>
 
         {/* 거래 개수 */}
-        <Stack direction="row" justifyContent="space-between" marginBottom={1}>
+        {/* <Stack direction="row" justifyContent="space-between" marginBottom={1}>
           <TitleTypography>거래 개수</TitleTypography>
           <ContentTypography>{props.length}개</ContentTypography>
-        </Stack>
+        </Stack> */}
 
         {/* 영수증 사진 확인 */}
         {props.imageUrl ? (
