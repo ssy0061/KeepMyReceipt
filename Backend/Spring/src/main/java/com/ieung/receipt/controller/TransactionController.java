@@ -79,6 +79,7 @@ public class TransactionController {
                 .transactionId(transaction.getId())
                 .date(transaction.getPayDate())
                 .totalPrice(transaction.getPrice())
+                .requestId(transaction.getRequest() != null ? transaction.getRequest().getId() : null)
                 .receiptUrl(transaction.getRequest() != null ? requestService.getReceiptUrl(transaction.getRequest().getId()) : null)
                 .items(list)
                 .build();

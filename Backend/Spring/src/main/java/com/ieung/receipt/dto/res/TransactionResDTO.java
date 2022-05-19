@@ -22,6 +22,9 @@ public class TransactionResDTO {
     @Schema(description = "금액", example = "15000")
     private int totalPrice;
 
+    @Schema(description = "연관 영수증 청구 내역 id", example = "1")
+    private Long requestId;
+
     @Schema(description = "영수증 이미지 url")
     private String receiptUrl;
 
