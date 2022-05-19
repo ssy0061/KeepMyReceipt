@@ -55,8 +55,12 @@ export default function GroupSearch() {
   }, [keyWord]);
 
   const getClubList = async (page?: number) => {
+    const accessToken = sessionStorage.getItem('accessToken');
     await axios
       .get('https://k6d104.p.ssafy.io/api/spring/clubs', {
+        headers: {
+          Authorization: accessToken,
+        },
         params: {
           name: keyWord ? keyWord : word,
           page: page ? page : 0,

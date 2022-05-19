@@ -62,9 +62,14 @@ export default function ManageIndex() {
     image: '',
   });
   const checkCrewAuth = async () => {
+    const accessToken = sessionStorage.getItem('accessToken');
     // 모임 내 권한 조회를 통해 가입 여부& 권한 확인
     await axios
-      .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}/crew/auth`)
+      .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}/crew/auth`, {
+        headers: {
+          Authorization: accessToken,
+        },
+      })
       .then((res) => {
         if (res.data) {
           const check = res.data;
@@ -83,8 +88,13 @@ export default function ManageIndex() {
   };
 
   const getClubInfo = async () => {
+    const accessToken = sessionStorage.getItem('accessToken');
     await axios
-      .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}`)
+      .get(`https://k6d104.p.ssafy.io/api/spring/club/${id}`, {
+        headers: {
+          Authorization: accessToken,
+        },
+      })
       .then((res) => {
         // console.log(res.data.data);
         const output = res.data.output;

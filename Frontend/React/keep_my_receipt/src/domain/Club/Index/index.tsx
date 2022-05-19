@@ -33,8 +33,12 @@ export default function ClubIndex() {
   });
   const { list } = res || null;
   const getClubList = async (page?: number) => {
+    const accessToken = sessionStorage.getItem('accessToken');
     await axios
       .get('https://k6d104.p.ssafy.io/api/spring/clubs/joined', {
+        headers: {
+          Authorization: accessToken,
+        },
         params: {
           page: page ? page : 0,
           size: 5,
