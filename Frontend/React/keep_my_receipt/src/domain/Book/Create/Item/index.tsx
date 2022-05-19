@@ -166,11 +166,24 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
             {mainTypes.map((eachType) => (
               <Chip
                 label={eachType.name}
-                variant="outlined"
+                // 현재 목록에서의 유형 이름과, 아이템의 유형 이름이 같은 경우
+                // filled를 반환, 아니면 outlined를 반환
+                variant={eachType.name === item.type ? 'filled' : 'outlined'}
                 onClick={() => {
                   setMainCategory(eachType.name);
                 }}
-                sx={{ color: eachType.color, borderColor: eachType.color }}
+                sx={
+                  eachType.name === item.type
+                    ? // 선택된 경우
+                      {
+                        '&.MuiChip-filled': {
+                          color: 'white',
+                          backgroundColor: eachType.color,
+                        },
+                      }
+                    : // 선택되지 않은 경우
+                      { color: eachType.color, borderColor: eachType.color }
+                }
                 key={eachType.name}
               />
             ))}
