@@ -1,11 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button, Container, Divider, Stack } from '@mui/material';
+import {
+  Button,
+  Container,
+  Divider,
+  Card,
+  Stack,
+  Grid,
+  Typography,
+} from '@mui/material';
 
 import Header from '../Create/Header';
 import PageButtons from '../Create/PageButtons';
 import {
-  apiDeleteTransaction,
+  // apiDeleteTransaction,
   apiGetTransaction,
   ReadResponseType,
   initialReadResponse,
@@ -13,12 +21,13 @@ import {
 import { DetailParamType } from '../types';
 import toCurrency from '../../../services/toCurrency';
 import {
-  PageTitleTypography,
   TitleTypographyWithSpace,
   ContentTypography,
 } from '../../../styles/typography';
-import { GreenBox } from '../../../styles/box';
 import { OuterBox, InnerBox } from './style';
+import DetailHeader from './Header';
+import Pagination from '../../../components/Pagination';
+import { Box } from '@mui/system';
 
 const createDictItem = (key: string, value: string) => ({
   key,
@@ -35,15 +44,26 @@ const detailItemInfo = [
   createDictItem('메모', 'memo'),
 ];
 
+interface pageInfoType {
+  pageNumber: number;
+  size?: number;
+  totalPages: number;
+  numberOfElements?: number;
+  totalElements?: number;
+}
+
 export default function BookDetail() {
   const location = useLocation();
   const params = location.state as DetailParamType;
   const navigate = useNavigate();
 
-  // 임시로 추가
-
+  // 거래내역
   const [state, setState] = useState<ReadResponseType>(initialReadResponse);
   const [page, setPage] = useState(1);
+  const [pageInfo, setPageInfo] = useState<pageInfoType>({
+    pageNumber: 0,
+    totalPages: 0,
+  });
 
   const readTransaction = async (transactionId: number) => {
     await apiGetTransaction(transactionId).then((res) => {
@@ -51,6 +71,7 @@ export default function BookDetail() {
 
       // 아이템 설정
       const data: ReadResponseType = res.data.data;
+      // console.log(data.items[0]);
       setState(data);
 
       // 페이지 설정
@@ -59,87 +80,122 @@ export default function BookDetail() {
           (item) => item.transactionDetailId === params.transactionDetailId,
         );
         setPage(data.items.indexOf(targetItems[0]) + 1);
+        setPageInfo({
+          pageNumber: data.items.indexOf(targetItems[0]),
+          totalPages: data.items.length,
+        });
       }
     });
   };
-
+  const getBokkPage = (page: number) => {
+    const targetItems = state.items.filter(
+      (item) =>
+        item.transactionDetailId === state.items[page].transactionDetailId,
+    );
+    setPage(state.items.indexOf(targetItems[0]) + 1);
+    setPageInfo({
+      pageNumber: state.items.indexOf(targetItems[0]),
+      totalPages: state.items.length,
+    });
+  };
   useEffect(() => {
     const transactionId = params ? params.transactionId : 21;
     readTransaction(transactionId);
   }, []);
 
   return (
-    <Container maxWidth="md" sx={{ display: 'grid', marginBottom: 8 }}>
-      <GreenBox sx={{ marginX: -2, marginBottom: 1 }}>
-        <PageTitleTypography>거래 상세</PageTitleTypography>
-      </GreenBox>
+    <Container maxWidth="md" sx={{ paddingY: 0, paddingX: '1rem' }}>
+      <Grid
+        container
+        direction="column"
+        alignItems="center"
+        sx={{ marginBottom: 1 }}
+      >
+        {/* 상단 */}
+        <DetailHeader state={state} params={params} />
 
-      {state && (
-        <>
-          {/* 거래 정보 */}
-          <Header
-            date={state.date}
-            totalValue={state.totalPrice}
-            length={state.items.length}
-            editable={false}
-          />
+        {/* 내역 */}
 
-          {/* 페이지네이션 버튼들 */}
-          <PageButtons
-            count={state.items.length}
-            page={page}
-            setPage={setPage}
-          />
-
-          <OuterBox>
-            <InnerBox>
-              {/* 각각의 항목 정보들 */}
-              {/* 현재 참조하는 아이템이 있을 때만 조건부 렌더링 */}
-              {state.items[page - 1] &&
-                // 페이지네이션에 따라 한 개씩만 보여줘야 함
-                detailItemInfo.map((info) => (
-                  <>
-                    <Stack direction="row">
-                      <TitleTypographyWithSpace>
-                        {info.key}
-                      </TitleTypographyWithSpace>
-                      <ContentTypography>
-                        {info.value === 'price'
-                          ? toCurrency(state.items[page - 1][info.value])
-                          : state.items[page - 1][info.value]}
-                      </ContentTypography>
-                    </Stack>
-                    <Divider
-                      sx={{ marginBottom: 1, backgroundColor: 'lightyellow' }}
-                    />
-                  </>
-                ))}
-            </InnerBox>
-          </OuterBox>
-
-          <Stack direction="row" justifyContent="space-around" marginTop={1}>
-            <Button
-              onClick={async () => {
-                null;
-              }}
-              variant="contained"
-            >
-              수정
-            </Button>
-            <Button
-              onClick={async () => {
-                if (confirm('정말로 삭제하시겠습니까?')) {
-                  await apiDeleteTransaction(params.transactionId);
-                }
-              }}
-              variant="contained"
-              color="warning"
-            >
-              삭제
-            </Button>
+        {/* 페이지네이션 */}
+        <Pagination
+          pageInfo={pageInfo}
+          paginationSize={5}
+          onClickPage={(page: number) => {
+            setPage(page + 1);
+            getBokkPage(page);
+          }}
+          // showOne={true}
+        />
+        {/* 거래내역 상세 */}
+        <Card
+          variant="outlined"
+          sx={{
+            BoxShadow: 1,
+            margin: '1rem',
+            padding: '0.5rem',
+            width: '18rem',
+          }}
+        >
+          <Stack direction="column">
+            {/* 내용 */}
+            <Stack alignItems="start" marginBottom={1} paddingX={0.5}>
+              <Stack direction="row" paddingTop={0.5} marginBottom={0.5}>
+                <Typography fontSize="1.2rem">
+                  <b>{state.items[page - 1].name}</b>
+                </Typography>
+              </Stack>
+              <Stack direction="row" spacing={0.5} paddingTop={0.5}>
+                <Typography sx={{ width: '4rem', color: '#757575' }}>
+                  금액
+                </Typography>
+                <Typography>
+                  <b>{toCurrency(state.items[page - 1].price)}</b>
+                </Typography>
+              </Stack>
+              <Stack direction="row" spacing={0.5} paddingTop={0.5}>
+                <Typography sx={{ width: '4rem', color: '#757575' }}>
+                  유형
+                </Typography>
+                <Typography>
+                  <b>{state.items[page - 1].type}</b>
+                </Typography>
+              </Stack>
+              <Stack direction="row" spacing={0.5} paddingTop={0.5}>
+                <Typography sx={{ width: '4rem', color: '#757575' }}>
+                  대분류
+                </Typography>
+                <Typography>
+                  <b>{state.items[page - 1].largeCategory}</b>
+                </Typography>
+              </Stack>
+              <Stack direction="row" spacing={0.5} paddingTop={0.5}>
+                <Typography sx={{ width: '4rem', color: '#757575' }}>
+                  소분류
+                </Typography>
+                <Typography>
+                  <b>{state.items[page - 1].smallCategory}</b>
+                </Typography>
+              </Stack>
+              <Stack direction="row" spacing={0.5} paddingTop={0.5}>
+                <Typography sx={{ width: '4rem', color: '#757575' }}>
+                  태그
+                </Typography>
+                <Typography>
+                  <b>{state.items[page - 1].largeTag}</b>
+                </Typography>
+              </Stack>
+              <Stack direction="row" spacing={0.5} paddingTop={0.5}>
+                <Typography sx={{ width: '4rem', color: '#757575' }}>
+                  메모
+                </Typography>
+                <Typography>
+                  <b>{state.items[page - 1].memo}</b>
+                </Typography>
+              </Stack>
+            </Stack>
           </Stack>
-        </>
-      )}
+        </Card>
+      </Grid>
     </Container>
   );
 }

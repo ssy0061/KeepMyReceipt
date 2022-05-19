@@ -4,10 +4,10 @@ import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
 
 interface pageInfoType {
   pageNumber: number;
-  size: number;
+  size?: number;
   totalPages: number;
-  numberOfElements: number;
-  totalElements: number;
+  numberOfElements?: number;
+  totalElements?: number;
 }
 export default function Pagination({
   pageInfo,
@@ -15,12 +15,14 @@ export default function Pagination({
   onClickPage,
   bgColor,
   filter,
+  showOne,
 }: {
   pageInfo: pageInfoType;
   paginationSize: number;
   onClickPage: any;
   bgColor?: string;
   filter?: string;
+  showOne?: boolean;
 }) {
   // api로 받은 page 정보
   const { pageNumber, size, totalPages, numberOfElements, totalElements } =
@@ -136,7 +138,7 @@ export default function Pagination({
   };
   return (
     <Stack>
-      {totalPages === 1 ? null : pagiResult()}
+      {!showOne ? (totalPages === 1 ? null : pagiResult()) : pagiResult()}
       {/* {paginationInfo()} */}
     </Stack>
   );

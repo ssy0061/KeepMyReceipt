@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Stack, IconButton, Fade } from '@mui/material';
+import { Stack, IconButton, Fade, useMediaQuery } from '@mui/material';
 import { Add, Search, AccessTime } from '@mui/icons-material';
 import IndexHeaderDrawer from './Drawer';
 
 export default function IndexHeader() {
+  const matches = useMediaQuery('(min-width:500px)');
   const navigate = useNavigate();
   // Drawer
   const [state, setState] = useState(false);
@@ -37,6 +38,15 @@ export default function IndexHeader() {
         >
           <Add sx={{ fontSize: '2rem' }} />
         </IconButton>
+        {matches ? (
+          <IconButton
+            onClick={() => {
+              navigate('./search');
+            }}
+          >
+            <Search sx={{ color: '#000000', fontSize: '2rem' }} />
+          </IconButton>
+        ) : null}
       </Stack>
     </Stack>
   );
