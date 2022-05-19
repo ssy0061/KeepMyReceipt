@@ -45,7 +45,11 @@ export default function BookIndex() {
   const [checkAdd, setCheckAdd] = useState(false);
   const [historyList, setHistoryList] = useState([]);
   const getHistory = async (page?: number) => {
+    const accessToken = sessionStorage.getItem('accessToken');
     await HistoryAxios.get(`/api/spring/club/${id}/transactions`, {
+      headers: {
+        Authorization: accessToken,
+      },
       params: {
         // clubId: id,
         start: `${target.getFullYear()}-${
@@ -89,8 +93,13 @@ export default function BookIndex() {
   };
   // 현재 예산 잔액 가져오기
   const getBalance = async () => {
+    const accessToken = sessionStorage.getItem('accessToken');
     await axios
-      .get(`/api/spring/ascategory/${id}/현금 및 현금성자산`)
+      .get(`/api/spring/ascategory/${id}/현금 및 현금성자산`, {
+        headers: {
+          Authorization: accessToken,
+        },
+      })
       .then((res) => {
         // console.log(res.data.data[0].balance);
         setBalance(res.data.data[0].balance);
@@ -116,6 +125,7 @@ export default function BookIndex() {
     getHistory();
     window.scrollTo(0, 0);
   }, [month]);
+
   return (
     <Container maxWidth="md" sx={{ paddingY: 0, paddingX: '1rem' }}>
       <Grid container direction="column" sx={{ marginBottom: 1 }}>

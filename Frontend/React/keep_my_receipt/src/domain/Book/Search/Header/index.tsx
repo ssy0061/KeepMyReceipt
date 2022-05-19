@@ -64,25 +64,33 @@ export default function SearchHeader({
   const onClick = (e) => {
     const txt = e.target.textContent;
     const today = new Date();
-    const date3 = new Date(
+    const date1 = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+      0,
+    );
+    const date2 = new Date(
       today.getFullYear(),
       today.getMonth() - 3,
       today.getDate() + 1,
+      0,
     );
-    const date6 = new Date(
+    const date3 = new Date(
       today.getFullYear(),
       today.getMonth() - 6,
       today.getDate() + 1,
+      0,
     );
     if (txt === '오늘') {
-      setTargetStart(today);
-      setTargetEnd(today);
+      setTargetStart(date1);
+      setTargetEnd(date1);
     } else if (txt === '3개월') {
-      setTargetStart(date3);
-      setTargetEnd(today);
+      setTargetStart(date2);
+      setTargetEnd(date1);
     } else if (txt === '6개월') {
-      setTargetStart(date6);
-      setTargetEnd(today);
+      setTargetStart(date3);
+      setTargetEnd(date1);
     }
   };
   return (

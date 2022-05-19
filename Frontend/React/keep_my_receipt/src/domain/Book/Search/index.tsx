@@ -9,13 +9,16 @@ import {
   Typography,
 } from '@mui/material';
 import SearchBar from '../../../components/SearchBar';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import * as qs from 'qs';
 import SearchList from './List';
 import SearchHeader from './Header';
 
 export default function BookSearch() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const keyWord = searchParams.get('query');
+
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -28,7 +31,9 @@ export default function BookSearch() {
   const [targetStart, setTargetStart] = useState<Date>(
     new Date(today.getFullYear() - 1, today.getMonth(), today.getDate() + 1),
   );
-  const [targetEnd, setTargetEnd] = useState<Date>(today);
+  const [targetEnd, setTargetEnd] = useState<Date>(
+    new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+  );
 
   // history
   const [res, setRes] = useState({
@@ -62,11 +67,11 @@ export default function BookSearch() {
     paramsSerializer: (params) =>
       qs.stringify(params, { arrayFormat: 'repeat' }),
   });
-  const getHistory = async (page?: number, query?: string) => {
+  const getHistory = async (page?: number) => {
     const token = sessionStorage.getItem('accessToken');
     if (!token.length) return;
     if (targetStart > targetEnd) {
-      console.log(targetStart, targetEnd);
+      // console.log(targetStart, targetEnd);
       alert('검색 시작일이 종료일보다 큽니다');
       return;
     }
@@ -81,15 +86,11 @@ export default function BookSearch() {
         page: page ? page : 0,
         size: 10,
         sort: ['pay_date,DESC', 'id,DESC'],
-        query: query ? query : word ? word : '',
+        query: keyWord ? keyWord : word,
       },
     })
       .then((res) => {
-        // console.log(
-        //   toCustomDateString(targetStart) +
-        //     ' ~ ' +
-        //     toCustomDateString(targetEnd),
-        // );
+        // console.log(targetStart + ' ~ ' + targetEnd);
         const response = res.data.data;
         setRes(response);
         if (historyList.length === 0) {
@@ -114,8 +115,13 @@ export default function BookSearch() {
   };
 
   useEffect(() => {
-    getHistory();
-  }, []);
+    if (keyWord) {
+      setWord(keyWord);
+      getHistory();
+    } else {
+      getHistory();
+    }
+  }, [keyWord]);
   return (
     <Container maxWidth="md" sx={{ paddingY: 0, paddingX: '1rem' }}>
       <Grid container direction="column" sx={{ marginBottom: 1 }}>
