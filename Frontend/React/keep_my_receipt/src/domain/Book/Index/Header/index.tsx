@@ -1,9 +1,9 @@
 import { Box, IconButton, Stack, Typography } from '@mui/material';
-import { ArrowLeft, ArrowRight } from '@mui/icons-material';
+import { ArrowLeft, ArrowRight, Search } from '@mui/icons-material';
 import toCurrency from '../../../../services/toCurrency';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface IndexHeaderProps {
   month: number;
@@ -26,13 +26,15 @@ export default function IndexHeader({
   balance,
   setHistoryList,
 }: IndexHeaderProps) {
+  const navigate = useNavigate();
   return (
     <Stack width="100%">
       <Stack paddingLeft="1rem">
         <h2>거래 내역</h2>
         {/* <Typography>예산: {toCurrency(balance)}</Typography> */}
-
-        {/* 현재 연월 표시 */}
+      </Stack>
+      {/* 현재 연월 표시 + 검색버튼 */}
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Stack direction="row" alignItems="center" width="20rem">
           <IconButton
             onClick={() => {
@@ -55,8 +57,17 @@ export default function IndexHeader({
             />
           </IconButton>
         </Stack>
+        <IconButton
+          onClick={() => {
+            navigate('./search');
+          }}
+        >
+          <Search sx={{ color: '#000000', fontSize: '2rem' }} />
+        </IconButton>
+      </Stack>
 
-        {/* 지출 & 수입 */}
+      {/* 지출 & 수입 */}
+      <Stack paddingLeft="1rem">
         <Stack marginY={1}>
           <Stack direction="row" spacing="1rem">
             <Typography sx={{ fontSize: '1.2rem' }}>지출</Typography>

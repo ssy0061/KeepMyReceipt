@@ -25,16 +25,10 @@ export default function BookSearch() {
   // 날짜
   const today = new Date();
   // 기본 1년 전
-  const targetStart = new Date(
-    today.getFullYear() - 1,
-    today.getMonth(),
-    today.getDate(),
+  const [targetStart, setTargetStart] = useState<Date>(
+    new Date(today.getFullYear() - 1, today.getMonth(), today.getDate() + 1),
   );
-  const targetEnd = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate(),
-  );
+  const [targetEnd, setTargetEnd] = useState<Date>(today);
 
   // history
   const [res, setRes] = useState({
@@ -47,28 +41,43 @@ export default function BookSearch() {
   const { expenditure, income, result } = res;
   const [checkAdd, setCheckAdd] = useState(false);
   const [historyList, setHistoryList] = useState([]);
+  const toCustomDateString = (inputDate: Date, type?: boolean) => {
+    const check = (num: number) => {
+      if (num < 10) {
+        if (type) {
+          return ` ${num}`;
+        } else {
+          return `0${num}`;
+        }
+      } else {
+        return `${num}`;
+      }
+    };
+    const year = inputDate.getFullYear();
+    const month = check(inputDate.getMonth() + 1);
+    const date = check(inputDate.getDate());
+    return type ? `${year}.${month}.${date}` : `${year}-${month}-${date}`;
+  };
   const HistoryAxios = axios.create({
     paramsSerializer: (params) =>
       qs.stringify(params, { arrayFormat: 'repeat' }),
   });
   const getHistory = async (page?: number, query?: string) => {
+    const token = sessionStorage.getItem('accessToken');
+    if (!token.length) return;
+    if (targetStart > targetEnd) {
+      console.log(targetStart, targetEnd);
+      alert('검색 시작일이 종료일보다 큽니다');
+      return;
+    }
     await HistoryAxios.get(`/api/spring/club/${id}/transactions`, {
+      headers: {
+        Authorization: token,
+      },
       params: {
         // clubId: id,
-        start: `${targetStart.getFullYear()}-${
-          targetStart.getMonth() + 1 > 9
-            ? targetStart.getMonth() + 1
-            : '0' + (targetStart.getMonth() + 1)
-        }-01`,
-        end: `${targetEnd.getFullYear()}-${
-          targetEnd.getMonth() + 1 > 9
-            ? targetEnd.getMonth() + 1
-            : '0' + (targetEnd.getMonth() + 1)
-        }-${
-          today.getMonth() === targetEnd.getMonth()
-            ? today.getDate()
-            : targetEnd.getDate()
-        }`,
+        start: toCustomDateString(targetStart),
+        end: toCustomDateString(targetEnd),
         page: page ? page : 0,
         size: 10,
         sort: ['pay_date,DESC', 'id,DESC'],
@@ -76,12 +85,11 @@ export default function BookSearch() {
       },
     })
       .then((res) => {
-        console.log(
-          targetStart.toLocaleDateString() +
-            ' ~ ' +
-            targetEnd.toLocaleDateString(),
-        );
-        console.log(res.data.data);
+        // console.log(
+        //   toCustomDateString(targetStart) +
+        //     ' ~ ' +
+        //     toCustomDateString(targetEnd),
+        // );
         const response = res.data.data;
         setRes(response);
         if (historyList.length === 0) {
@@ -120,6 +128,8 @@ export default function BookSearch() {
           onSearch={onSearch}
           targetStart={targetStart}
           targetEnd={targetEnd}
+          setTargetStart={setTargetStart}
+          setTargetEnd={setTargetEnd}
         />
         {/* 거래내역 검색 결과 */}
         {loading ? (

@@ -1,9 +1,16 @@
-import { Box, IconButton, Stack, Typography } from '@mui/material';
-import { ArrowLeft, ArrowRight } from '@mui/icons-material';
+import {
+  Box,
+  IconButton,
+  Stack,
+  Typography,
+  TextField,
+  Button,
+} from '@mui/material';
+import { ArrowLeft, ArrowRight, ArrowBackIos } from '@mui/icons-material';
 import toCurrency from '../../../../services/toCurrency';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import SearchBar from '../../../../components/SearchBar';
 
 interface IndexHeaderProps {
@@ -14,6 +21,8 @@ interface IndexHeaderProps {
   onSearch: any;
   targetStart: Date;
   targetEnd: Date;
+  setTargetStart: any;
+  setTargetEnd: any;
 }
 
 export default function SearchHeader({
@@ -24,12 +33,78 @@ export default function SearchHeader({
   onSearch,
   targetStart,
   targetEnd,
+  setTargetStart,
+  setTargetEnd,
 }: IndexHeaderProps) {
+  const navigate = useNavigate();
+  const onChangeStart = (e) => {
+    setTargetStart(new Date(e.target.value));
+  };
+  const onChangeEnd = (e) => {
+    setTargetEnd(new Date(e.target.value));
+  };
+
+  const toCustomDateString = (inputDate: Date, type?: boolean) => {
+    const check = (num: number) => {
+      if (num < 10) {
+        if (type) {
+          return ` ${num}`;
+        } else {
+          return `0${num}`;
+        }
+      } else {
+        return `${num}`;
+      }
+    };
+    const year = inputDate.getFullYear();
+    const month = check(inputDate.getMonth() + 1);
+    const date = check(inputDate.getDate());
+    return type ? `${year}.${month}.${date}` : `${year}-${month}-${date}`;
+  };
+  const onClick = (e) => {
+    const txt = e.target.textContent;
+    const today = new Date();
+    const date3 = new Date(
+      today.getFullYear(),
+      today.getMonth() - 3,
+      today.getDate() + 1,
+    );
+    const date6 = new Date(
+      today.getFullYear(),
+      today.getMonth() - 6,
+      today.getDate() + 1,
+    );
+    if (txt === '오늘') {
+      setTargetStart(today);
+      setTargetEnd(today);
+    } else if (txt === '3개월') {
+      setTargetStart(date3);
+      setTargetEnd(today);
+    } else if (txt === '6개월') {
+      setTargetStart(date6);
+      setTargetEnd(today);
+    }
+  };
   return (
     <Stack width="100%">
       <Stack paddingLeft="1rem">
         {/* 검색 창 */}
-        <Stack direction="row" justifyContent="center">
+        <Stack
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          sx={{ position: 'relative' }}
+        >
+          <IconButton
+            onClick={() => {
+              // navigate('../');
+              navigate(-1);
+            }}
+            color="inherit"
+            sx={{ position: 'absolute', left: 0 }}
+          >
+            <ArrowBackIos sx={{ fontSize: '1.8rem' }} />
+          </IconButton>
           <SearchBar
             value={value}
             setValue={setValue}
@@ -55,15 +130,47 @@ export default function SearchHeader({
           </Stack>
         </Stack>
         {/* 기간 */}
-        <Stack direction="row" alignItems="center">
-          <Typography>
-            <b>
-              {targetStart.toLocaleDateString() +
-                ' ~ ' +
-                targetEnd.toLocaleDateString()}
-            </b>
-          </Typography>
-          <p>기간설정</p>
+        <Stack spacing={0.5} sx={{ marginBottom: '1rem' }}>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Button
+              variant="outlined"
+              onClick={onClick}
+              sx={{ padding: '0.2rem' }}
+            >
+              오늘
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={onClick}
+              sx={{ padding: '0.2rem' }}
+            >
+              3개월
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={onClick}
+              sx={{ padding: '0.2rem' }}
+            >
+              6개월
+            </Button>
+          </Stack>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <TextField
+              type="date"
+              value={toCustomDateString(targetStart)}
+              // defaultValue={targetStart}
+              onChange={onChangeStart}
+              variant="standard"
+            />
+            <p>~</p>
+            <TextField
+              type="date"
+              value={toCustomDateString(targetEnd)}
+              // defaultValue={targetEnd}
+              onChange={onChangeEnd}
+              variant="standard"
+            />
+          </Stack>
         </Stack>
       </Stack>
       {/* 경계선 */}

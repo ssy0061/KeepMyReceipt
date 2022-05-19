@@ -6,7 +6,7 @@ import {
   Stack,
   CircularProgress,
 } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBackIos } from '@mui/icons-material';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import SearchBar from '../../../components/SearchBar';
 import SearchList from './List';
@@ -93,7 +93,7 @@ export default function GroupSearch() {
             color="inherit"
             sx={{ position: 'absolute', left: 0 }}
           >
-            <ArrowBack sx={{ fontSize: '1.8rem' }} />
+            <ArrowBackIos sx={{ fontSize: '1.8rem' }} />
           </IconButton>
           {/* 검색 창 */}
           <SearchBar

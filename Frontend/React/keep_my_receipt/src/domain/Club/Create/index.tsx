@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { IconButton, Stack, Container, Grid } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBackIos } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CreateImage from './image';
@@ -94,7 +94,7 @@ export default function GroupCreate() {
             color="inherit"
             sx={{ position: 'absolute', left: 0 }}
           >
-            <ArrowBack sx={{ fontSize: '2rem' }} />
+            <ArrowBackIos sx={{ fontSize: '2rem' }} />
           </IconButton>
           <h2>모임 만들기</h2>
         </Stack>
