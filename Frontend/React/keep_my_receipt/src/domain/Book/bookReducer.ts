@@ -97,8 +97,10 @@ export const toTransactionType = (
     name: item.name,
     price: item.price,
     type: item.type,
-    categoryId: item.categoryId,
-    ...(item.tagId && { tagId: item.tagId }),
+    largeCategory: item.largeCategory,
+    smallCategory: item.smallCategory,
+    ...(item.largeTag && { largeTag: item.largeTag }),
+    ...(item.smallTag && { smallTag: item.smallTag }),
     ...(item.memo && { memo: item.memo }),
   })),
 });

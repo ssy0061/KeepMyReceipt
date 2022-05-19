@@ -188,6 +188,7 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
                   setMainCategory(eachType.name);
                 }}
                 sx={{ color: eachType.color, borderColor: eachType.color }}
+                key={eachType.name}
               />
             ))}
           </Stack>

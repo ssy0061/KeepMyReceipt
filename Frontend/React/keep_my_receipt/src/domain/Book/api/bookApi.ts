@@ -20,8 +20,10 @@ export type TransactionType = {
     name: string;
     price: number;
     type: TypeNameKeys;
-    categoryId: number;
-    tagId?: number;
+    largeCategory: string;
+    smallCategory: string;
+    largeTag?: string;
+    smallTag?: string;
     memo?: string;
   }[];
 };
@@ -32,9 +34,18 @@ export const apiCreateTransaction = async (
   data: TransactionType,
 ) => {
   // 데이터 검사
-  data.list.forEach((item) => {
-    if (item.categoryId === 0) {
-      alert('분류 항목을 선택해주세요');
+  data.list.forEach((item, index) => {
+    if (item.name === '') {
+      alert(`${index + 1} 번째 세부 항목명을 입력해주세요`);
+      return null;
+    } else if (item.price === 0) {
+      alert(`${index + 1} 번째 세부 항목의 금액을 입력해주세요`);
+      return null;
+    } else if (item.largeCategory === '') {
+      alert(`${index + 1} 번째 세부 항목의 대분류를 선택해주세요`);
+      return null;
+    } else if (item.smallCategory === '') {
+      alert(`${index + 1} 번째 세부 항목의 소분류를 선택해주세요`);
       return null;
     }
   });

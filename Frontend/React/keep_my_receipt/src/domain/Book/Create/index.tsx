@@ -3,7 +3,6 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Box, Button, Container, Divider } from '@mui/material';
 
 import Header from './Header';
-import PageButtons from './PageButtons';
 import Item from './Item';
 import bookReducer, {
   updateBook,
@@ -12,8 +11,6 @@ import bookReducer, {
 } from '../bookReducer';
 import { apiCreateTransaction } from '../api/bookApi';
 import { CreateParamType } from '../types';
-import { GreenBox } from '../../../styles/box';
-import { PageTitleTypography } from '../../../styles/typography';
 import DeleteButton from './DeleteButton';
 import AddButton from './AddButton';
 
@@ -82,17 +79,6 @@ export default function BookCreate() {
       /> */}
 
       {/* 각각의 항목 정보들 */}
-      {state.items.map((item, index) => (
-        <>
-          <Item
-            clubId={clubId}
-            item={item}
-            itemIndex={index}
-            dispatch={dispatch}
-            key={index}
-          />
-        </>
-      ))}
       {/* 현재 참조하는 아이템이 있을 때만 조건부 렌더링 */}
       {/* {clubId && state.items[page - 1] && (
         // 페이지네이션에 따라 한 개씩만 보여줘야 함
@@ -103,6 +89,18 @@ export default function BookCreate() {
           dispatch={dispatch}
         />
       )} */}
+
+      {/* 각각의 항목 정보들 */}
+      {state.items.map((item, index) => (
+        <div key={index}>
+          <Item
+            clubId={clubId}
+            item={item}
+            itemIndex={index}
+            dispatch={dispatch}
+          />
+        </div>
+      ))}
 
       <Box justifySelf="end">
         항목
