@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Chip,
-  ChipProps,
-  ChipPropsColorOverrides,
   IconButton,
   InputAdornment,
   Stack,
@@ -13,13 +11,13 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { InfoOutlined } from '@mui/icons-material';
 
 // 컴포넌트
-import useToggle from '../../../../hooks/useToggle';
 import DialogWithIconButton from '../../../../components/DialogWithIconButton';
-import { MainCategoryDialog } from '../../tagDialogContents';
-import { BookAction, BookItemType, updateItem } from '../../bookReducer';
-import { mainCategories, largeCategories } from '../../tagListSample';
 import EditableAutocomplete from '../../EditableAutocomplete';
 import EditableAutocompleteTag from '../../EditableAutocompleteTag';
+import { MainCategoryDialog } from '../../tagDialogContents';
+import { BookAction, BookItemType, updateItem } from '../../bookReducer';
+import { largeCategories } from '../../tagListSample';
+import { toNumberOnly } from '../../../../services/toCurrency';
 
 type ItemType = {
   clubId: string;
@@ -35,17 +33,7 @@ const mainTypes: { name: string; color: string }[] = [
   { name: '예산', color: 'green' },
 ];
 
-// 정규표현식을 활용해 숫자만 추출
-const toNumberOnly = (price: string) => Number(price.replace(/[^0-9]/g, ''));
-
 export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
-  // 토글 값과, 토글 버튼 생성
-  // 추가적으로 setter 함수도 추가해줌.
-  const { toggleValue, ToggleButtons } = useToggle(
-    mainCategories,
-    setMainCategory,
-  );
-
   const [inputValue, setInputValue] = useState('');
 
   // 토글 값 바꾸는 함수
@@ -59,7 +47,6 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
 
   // 대분류 바꾸는 함수
   const setLargeCategory = (value: string | number) => {
-    dispatch(updateItem(itemIndex, 'type', toggleValue));
     dispatch(updateItem(itemIndex, 'largeCategory', value));
     // 대분류가 바뀔 때, 중분류 초기화
     dispatch(updateItem(itemIndex, 'smallCategory', ''));
@@ -86,10 +73,6 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
   //   // 태그2 선택을 취소할 경우, 기존 태그 id로 복구
   //   dispatch(updateItem(itemIndex, 'tagId', tagId === 0 ? tempTagId : tagId));
   // };
-
-  // useEffect(() => {
-  //   console.log(item);
-  // }, [item]);
 
   return (
     <>
@@ -205,9 +188,7 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
       {item.type && (
         <Autocomplete
           /** 1. 옵션 목록 & 목록 출력 */
-          options={
-            item.type ? largeCategories[item.type] : largeCategories['자산']
-          }
+          options={largeCategories[item.type]}
           renderOption={(props, option) => (
             <li {...props}>
               {option}
@@ -287,15 +268,17 @@ export default function Item({ clubId, item, itemIndex, dispatch }: ItemType) {
       /> */}
 
       {/* 1차 태그 */}
-      <EditableAutocompleteTag
-        label="태그"
-        clubId={clubId}
-        value={item.largeTag}
-        setValue={setLargeTag}
-        requestCreateValue={(value) => {
-          console.log('태그 추가 API 요청', value);
-        }}
-      />
+      {(item.type === '지출' || item.type === '자산') && (
+        <EditableAutocompleteTag
+          label="태그"
+          clubId={clubId}
+          value={item.largeTag}
+          setValue={setLargeTag}
+          requestCreateValue={(value) => {
+            console.log('태그 추가 API 요청', value);
+          }}
+        />
+      )}
 
       {/* <EditableListWrappedForTag
         clubId={clubId}

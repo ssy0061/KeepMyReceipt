@@ -1,10 +1,24 @@
-import { useEffect, useState } from 'react';
-import { Stack, TextField } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Grid, IconButton, Stack, TextField, Typography } from '@mui/material';
+import {
+  Backdrop,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Fade,
+  // Slide,
+} from '@mui/material';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import { Cancel, Edit, InfoOutlined } from '@mui/icons-material';
+import { TransitionProps } from '@mui/material/transitions';
+import { DeleteOutline, EditOutlined, InfoOutlined } from '@mui/icons-material';
 
-import { apiReadAllCategory } from '../api/categoryApi';
-import { apiGetLargeTags } from '../api/tagApi';
+import {
+  apiCreateTag,
+  apiUpdateTag,
+  apiGetLargeTags,
+  apiDeleteTag,
+} from '../api/tagApi';
 import { TagType } from '../types';
 
 type OptionType = {
@@ -20,13 +34,25 @@ type EditableAutocompleteTagType = {
   requestCreateValue: (value: string | number) => void;
 };
 
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: JSX.Element;
+  },
+  ref: React.Ref<unknown>,
+) {
+  return <Fade ref={ref} {...props} />;
+  // <Slide direction="up" ref={ref} {...props} />;
+});
+
 const filter = createFilterOptions<OptionType>();
 
 const toFilterOption = (objectArray: TagType[]) =>
-  objectArray.map((obj) => ({
-    ...obj,
-    name: obj.tagName,
-  }));
+  objectArray
+    .map((obj) => ({
+      ...obj,
+      name: obj.tagName,
+    }))
+    .concat({ name: '', tagId: 0, tagName: '', parentTag: '' });
 
 export default function EditableAutocompleteTag(
   props: EditableAutocompleteTagType,
@@ -40,9 +66,68 @@ export default function EditableAutocompleteTag(
     });
   };
 
+  const createTag = async (newValue: string, parentTag?: string) => {
+    await apiCreateTag(props.clubId, newValue, parentTag).then(() => {
+      getAllTags();
+    });
+  };
+
+  const updateTag = async (tagId: number, newValue: string) => {
+    await apiUpdateTag(props.clubId, tagId, newValue, null)
+      .then(() => {
+        getAllTags();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const deleteTag = async (tagId: number) => {
+    await apiDeleteTag(tagId).then(() => {
+      getAllTags();
+    });
+  };
+
+  const [nameOnEdit, setNameOnEdit] = React.useState('');
+  const [idOnEdit, setIdOnEdit] = useState(0);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNameOnEdit(event.target.value);
+  };
+
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = (
+    e: React.MouseEvent<HTMLDivElement | HTMLButtonElement, MouseEvent>,
+    tagName: string,
+    tagId: number,
+  ) => {
+    // 아이콘 클릭 시 겹치는 메뉴 열리는 이벤트 차단
+    e.stopPropagation();
+    setOpen(true);
+    setNameOnEdit(tagName);
+    setIdOnEdit(tagId);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setIdOnEdit(0);
+    setNameOnEdit('');
+  };
+
+  const handleUpdate = () => {
+    if (!nameOnEdit) {
+      alert('빈 값은 입력할 수 없습니다');
+      return;
+    }
+    updateTag(idOnEdit, nameOnEdit);
+    handleClose();
+  };
+
   useEffect(() => {
     getAllTags();
-  }, [props.value]);
+    console.log(options);
+  }, []);
 
   return (
     <>
@@ -51,9 +136,35 @@ export default function EditableAutocompleteTag(
         options={options}
         renderOption={(props, option) => (
           <li {...props}>
-            {option.name}
-            <Edit />
-            <Cancel />
+            {option.tagName ? (
+              <Grid container justifyContent="space-between">
+                <Grid item>
+                  <Typography>{option.name}</Typography>
+                </Grid>
+                <Grid item>
+                  <Stack direction="row" spacing={1}>
+                    <IconButton
+                      onClick={(e) => {
+                        handleOpen(e, option.tagName, option.tagId);
+                      }}
+                    >
+                      <EditOutlined />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => {
+                        deleteTag(option.tagId);
+                      }}
+                    >
+                      <DeleteOutline />
+                    </IconButton>
+                  </Stack>
+                </Grid>
+              </Grid>
+            ) : option.inputValue ? (
+              <Typography>{option.inputValue} 추가</Typography>
+            ) : (
+              <Typography>추가하려면 새로 입력!</Typography>
+            )}
           </li>
         )}
         /** 2. 옵션 검색 결과 */
@@ -99,14 +210,15 @@ export default function EditableAutocompleteTag(
           return option.name;
         }}
         /** 4. 값 바뀌면서 트리거 발동 */
-        value={props.value ? { name: props.value } : null}
+        value={{ name: props.value }}
+        isOptionEqualToValue={(option, value) => option.name === value.name}
         onChange={(event, newValue) => {
           if (typeof newValue === 'string') {
             props.setValue(newValue);
           } else if (newValue && newValue.inputValue) {
             // Create a new value from the user input
+            createTag(newValue.inputValue);
             props.setValue(newValue.inputValue);
-            props.requestCreateValue(newValue.inputValue);
           } else if (newValue && newValue.name) {
             props.setValue(newValue.name);
           } else {
@@ -114,11 +226,39 @@ export default function EditableAutocompleteTag(
           }
         }}
         // autoHighlight
+        // disableCloseOnSelect
         selectOnFocus
         clearOnEscape
         clearOnBlur
         handleHomeEndKeys
       />
+
+      {/* 수정 다이얼로그 */}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        keepMounted
+        TransitionComponent={Transition}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        // BackdropProps={{ timeout: 500 }}
+        // fullWidth
+        // maxWidth="xs"
+      >
+        <DialogContent dividers>
+          <TextField
+            label="태그 이름 변경"
+            value={nameOnEdit}
+            onChange={handleChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleUpdate}>확인</Button>
+          <Button onClick={handleClose} color="secondary">
+            취소
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

@@ -105,7 +105,7 @@ export default function BookCreate() {
       <Box justifySelf="end">
         항목
         <AddButton page={page} setPage={setPage} dispatch={dispatch} />
-        {/* <DeleteButton page={page} setPage={setPage} dispatch={dispatch} /> */}
+        <DeleteButton page={page} setPage={setPage} dispatch={dispatch} />
       </Box>
 
       <Button
