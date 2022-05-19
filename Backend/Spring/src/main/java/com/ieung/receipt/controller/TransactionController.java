@@ -6,6 +6,7 @@ import com.ieung.receipt.dto.res.*;
 import com.ieung.receipt.entity.*;
 import com.ieung.receipt.service.CrewTokenService;
 import com.ieung.receipt.service.NotificationService;
+import com.ieung.receipt.service.RequestService;
 import com.ieung.receipt.service.TransactionService;
 import com.ieung.receipt.service.common.CommonResult;
 import com.ieung.receipt.service.common.ResponseService;
@@ -43,6 +44,7 @@ public class TransactionController {
     private final ResponseService responseService;
     private final CrewTokenService crewTokenService;
     private final NotificationService notificationService;
+    private final RequestService requestService;
 
     // 거래내역 등록
     @Operation(summary = "거래내역 등록", description = "거래내역 등록")
@@ -77,6 +79,7 @@ public class TransactionController {
                 .transactionId(transaction.getId())
                 .date(transaction.getPayDate())
                 .totalPrice(transaction.getPrice())
+                .receiptUrl(transaction.getRequest() != null ? requestService.getReceiptUrl(transaction.getRequest().getId()) : null)
                 .items(list)
                 .build();
 

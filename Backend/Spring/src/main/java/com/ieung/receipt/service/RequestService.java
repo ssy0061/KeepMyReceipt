@@ -173,4 +173,15 @@ public class RequestService {
             throw new AccessDeniedException("");
         }
     }
+
+    /**
+     * 영수증 사진 조회
+     * @param requestId
+     */
+    public String getReceiptUrl(Long requestId) {
+        String receiptUrl = requestRepository.findReceiptUrlById(requestId)
+                .orElse(null);
+
+        return receiptUrl;
+    }
 }

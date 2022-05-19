@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RequestRepoCommonImpl implements RequestRepoCommon {
     private final JPAQueryFactory queryFactory;
@@ -112,6 +113,16 @@ public class RequestRepoCommonImpl implements RequestRepoCommon {
                 .fetch().size();
 
         return new PageImpl<>(result, pageable, total);
+    }
+
+    @Override
+    public Optional<String> findReceiptUrlById(Long requestId) {
+        Optional<String> result = Optional.ofNullable(queryFactory
+                .select(QRequest.request.receiptUrl)
+                .from(QRequest.request)
+                .where(QRequest.request.id.eq(requestId))
+                .fetchOne());
+        return result;
     }
 
     // Pageable 객체의 sort를 list로 변환
