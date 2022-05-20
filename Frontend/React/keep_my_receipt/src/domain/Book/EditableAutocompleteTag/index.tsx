@@ -20,6 +20,8 @@ import {
   apiDeleteTag,
 } from '../api/tagApi';
 import { TagType } from '../types';
+import DialogWithIconButton from '../../../components/DialogWithIconButton';
+import { TagGuide } from '../Create/ItemGuide/classification';
 
 type OptionType = {
   inputValue?: string;
@@ -194,7 +196,10 @@ export default function EditableAutocompleteTag(
             marginBottom={1}
           >
             <TextField {...params} label={props.label} variant="standard" />
-            <InfoOutlined />
+            <DialogWithIconButton
+              icon={<InfoOutlined />}
+              content={<TagGuide />}
+            />
           </Stack>
         )}
         getOptionLabel={(option) => {

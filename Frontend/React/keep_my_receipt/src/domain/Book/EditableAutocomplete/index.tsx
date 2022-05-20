@@ -20,6 +20,8 @@ import {
 } from '../api/categoryApi';
 import { TypeNameKeys } from '../bookReducer';
 import { ASType, BSType } from '../types';
+import DialogWithIconButton from '../../../components/DialogWithIconButton';
+import { SmallCategoryGuide } from '../Create/ItemGuide/classification';
 
 type OptionType = BSType &
   ASType & {
@@ -210,7 +212,10 @@ export default function EditableAutocomplete(props: EditableAutocompleteType) {
             marginBottom={1}
           >
             <TextField {...params} label={props.label} variant="standard" />
-            <InfoOutlined />
+            <DialogWithIconButton
+              icon={<InfoOutlined />}
+              content={<SmallCategoryGuide />}
+            />
           </Stack>
         )}
         getOptionLabel={(option: OptionType) => {
