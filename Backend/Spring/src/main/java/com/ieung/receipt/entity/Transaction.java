@@ -48,6 +48,7 @@ public class Transaction extends BaseEntity {
 
     // 연관된 청구 내역
     @OneToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "request_id")
     private Request request;
 
