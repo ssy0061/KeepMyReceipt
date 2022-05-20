@@ -171,7 +171,7 @@ export default function Item({
           <Stack
             direction="row"
             alignItems="center"
-            marginLeft={(theme) => (theme.breakpoints.down('sm') ? 2 : 5)}
+            marginLeft={(theme) => (theme.breakpoints.down('sm') ? 1 : 5)}
             spacing={1}
           >
             {mainTypes.map((eachType) => (

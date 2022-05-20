@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Box, Button, Container } from '@mui/material';
+import { Box, Button, Container, Card, Stack } from '@mui/material';
 
 import Header from './Header';
 import Item from './Item';
@@ -127,17 +127,27 @@ export default function BookCreate() {
       )} */}
 
       {/* 각각의 항목 정보들 */}
-      {state.items.map((item, index) => (
-        <div key={index}>
-          <Item
-            clubId={clubId}
-            item={item}
-            itemIndex={index}
-            dispatch={dispatch}
-            currencyEditable={isEditable()}
-          />
-        </div>
-      ))}
+      <Stack spacing={2}>
+        {state.items.map((item, index) => (
+          <Card
+            key={index}
+            variant="outlined"
+            sx={{
+              BoxShadow: 2,
+              paddingY: '1rem',
+              paddingX: '0.7rem',
+            }}
+          >
+            <Item
+              clubId={clubId}
+              item={item}
+              itemIndex={index}
+              dispatch={dispatch}
+              currencyEditable={isEditable()}
+            />
+          </Card>
+        ))}
+      </Stack>
 
       <Box justifySelf="end">
         항목

@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Button, Stack, TextField } from '@mui/material';
+import { Button, Stack, TextField, Box } from '@mui/material';
 // import { Schedule, PointOfSale } from '@mui/icons-material';
 
 import DialogWithIconButton from '../../../../components/DialogWithIconButton';
@@ -83,6 +83,15 @@ function Header(props: HeaderType) {
             영수증 없음
           </Button>
         )}
+        <Box
+          width="100%"
+          height="0.5rem"
+          sx={{
+            backgroundColor: '#eeeeee',
+            marginBottom: '1rem',
+            marginTop: '0.5rem',
+          }}
+        />
       </Stack>
     </>
   );
