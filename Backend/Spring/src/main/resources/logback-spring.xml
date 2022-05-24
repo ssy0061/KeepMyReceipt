@@ -29,10 +29,10 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="com.ieung.receipt" level="DEBUG">
-        <appender-ref ref="SAMPLE" />
+    <logger name="com.ieung.receipt" level="INFO">
+        <appender-ref ref="DAILY_ROLLING_FILE_APPENDER" />
     </logger>
     <root level="INFO">
-        <appender-ref ref="DAILY_ROLLING_FILE_APPENDER" />
+        <appender-ref ref="SAMPLE" />
     </root>
 </configuration>

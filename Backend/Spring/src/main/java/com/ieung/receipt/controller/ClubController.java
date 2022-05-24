@@ -50,6 +50,9 @@ public class ClubController {
      * 모임 리스트 조회 : get /clubs?page=0&size=10&sort=id,ASC
      * 모임 삭제 : delete /clubs/{clubId}
      * 모임 정보 수정 : put /club/{clubId}
+     * 대분류 활성화 여부 확인 : get /club/{clubId}/isActiveCategory
+     * 대분류 활성화 : put /club/{clubId}/isActiveCategory/active
+     * 대분류 비활성화 : put /club/{clubId}/isActiveCategory/inactive
      */
 
     // 모임 생성

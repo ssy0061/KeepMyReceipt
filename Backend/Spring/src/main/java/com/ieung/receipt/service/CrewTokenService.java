@@ -84,6 +84,7 @@ public class CrewTokenService {
         CrewToken crewToken = crewTokenRepository.findByCrewIdAndFcmToken(crewId, fcmToken);
 
         if (crewToken != null) {
+            // refresh token null 처리
             crewToken.updateRefreshToken(null);
             crewTokenRepository.save(crewToken);
         }
@@ -124,10 +125,16 @@ public class CrewTokenService {
         return crewTokenRepository.findLeaderOrManagerByClubId(clubId);
     }
 
+    /**
+     * 일반 회원 토큰 조회
+     */
     public List<CrewToken> getNormalCrewToken(long crewId) {
         return crewTokenRepository.findByCrewId(crewId);
     }
 
+    /**
+     * 리더 토큰 조회
+     */
     public List<CrewToken> getLeaderCrewToken(long clubId) {
         return crewTokenRepository.findLeaderByClubId(clubId);
     }

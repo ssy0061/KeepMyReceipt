@@ -5,7 +5,6 @@ import com.ieung.receipt.service.common.ResponseService;
 import com.ieung.receipt.exception.ApiMessageException;
 import com.ieung.receipt.exception.CAuthenticationEntryPointException;
 import com.ieung.receipt.exception.CUserNotFoundException;
-import com.ieung.receipt.exception.FailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -13,7 +12,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -99,13 +97,6 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.OK)
     protected CommonResult communicationException(HttpServletRequest request, ApiMessageException e) {
         return responseService.getFailResult(0, e.getMessage());
-    }
-
-    @ExceptionHandler(FailedException.class)
-    @ResponseStatus(HttpStatus.OK)
-    protected CommonResult communicationException(HttpServletRequest request, FailedException e) {
-        log.info(StringUtils.isEmpty(e.getMessage()) ? getMessage("failedException.msg") : e.getMessage());
-        return responseService.getFailResult(Integer.valueOf(getMessage("failedException.code")), StringUtils.isEmpty(e.getMessage()) ? getMessage("failedException.msg") : e.getMessage());
     }
 
     // code정보에 해당하는 메시지를 조회합니다.

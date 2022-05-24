@@ -177,6 +177,94 @@
 
 
 
+<details> <summary>Git 컨벤션</summary> <div markdown="1">
+
+  **branch 생성 규칙**
+
+- 모든 기능은 develop 브랜치에서 새 브랜치를 생성하여 작업
+
+- feature/[지라 키]-[지라 이슈 번호] 로 브랜치 생성
+
+    
+
+**commit 생성 규칙**
+
+
+- **feat** : 새로운 기능 추가
+- **fix** : 버그를 고친 경우
+- design : CSS 등 사용자 UI 디자인 변경
+- hotfix : 신속하게 치명적인 버그를 고쳐야 할 경우
+- style : 코드 포맷변경, 세미 콜론 누락, 코드 수정 X 경우
+- refactor : 프로덕션 코드 리팩토링
+- comment : 필요한 주석 추가 및 변경
+- **docs** : 문서를 수정한 경우
+- rename : 파일, 폴더명 수정이나 이동
+- remove : 파일 삭제
+- **study** : 학습
+
+</div> </details>
+
+
+
+<details> <summary>Jira 컨벤션</summary> <div markdown="1">   
+
+- 스프린트
+  - 스프린트는 1주일 단위로 진행한다.
+  - 스프린트마다 개인당 40 스토리 포인트를 가진다. (1sp ==1시간)
+- 에픽
+  - 매주 월요일 오전 스크럼 미팅 때 어떤 에픽을 생성할지 논의한다.
+  - 태그[]는 기획, 개발 등 완전히 다른 업무를 기준으로 나눈다
+  - 해당 태그 내에서 기능별, 업무별 또는 페이지별로 다시 한번 나눈다.
+  - ex) [기획] 프로젝트 계획서, [개발] 유저관리, [사전학습] 코틀린
+- 스토리
+  - 개발 에픽의 경우 MO, BE 등 도메인별 태그와 상세 구현 내용 기입
+  - [개발] 유저관리 에픽의 하위 스토리의 경우 ex) [BE] 회원가입 기능
+  - [사전학습] 코틀린 에픽의 하위 스토리의 경우 ex) 1~10강 학습
+
+</div> </details>
+
+
+
+<details> <summary>개발 환경</summary> <div markdown="1">
+
+## **Development Environment**
+
+- 작성 날짜: 2022-05-20
+- CPU: Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz RAM: 16.0 GB
+- Ubuntu: 20.04 LTS (GNU/Linux 5.4.0-1018-aws x68_64)
+  - Docker: 20.10.12
+  - Docker Compose: 2.1.0
+  - Nginx: 1.18.0
+- Backend
+  - Java JDK: v17.0.2
+  - Spring: 2.6.7
+  - Mysql: 8.0.27
+  - Intellij: 2021.3.1
+- Backend (AI)
+  - Python
+  - FastAPI
+  - Pycharm
+- Frontend (Web)
+  - React: 18.1.0
+  - Typescript: 4.6.3
+  - Visual Studio Code: 1.67.0
+- Frontend (Android)
+  - Kotlin: 1.6.10
+  - Android Studio: 2021.1.1
+  - Android Gradle: 7.0.4
+
+# **Port**
+
+- Nginx: 80
+- Spring Boot: 8185
+- FastAPI: 5555
+- React: 3000
+- jenkins: 8000
+
+</div> </details>
+
+
+
 
 
 ## 📎 서비스 이용

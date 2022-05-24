@@ -51,26 +51,6 @@ public class LogConfig {
             log.info("parameters" + params(pjp));
             log.info("response: " + result, true);
         }
-
-//        String params = getRequestParams(); // request 값 가져오기
-//
-//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-//        String bodys = getBody(request);
-//
-//        long startAt = System.currentTimeMillis();
-//
-//
-//        String className = pjp.getSignature().getDeclaringTypeName();
-//        log.info("+++ REQUEST Param +++ {}({}) => {} {}", className.substring(className.lastIndexOf(".") + 1), pjp.getSignature().getName(), params, bodys);
-//
-//        Object result = pjp.proceed(); // 4
-//
-//        long endAt = System.currentTimeMillis();
-//
-//        log.info("+++ RESPONSE Param +++ {}({}) = {} ({}ms)", pjp.getSignature().getDeclaringTypeName(),
-//                                                             pjp.getSignature().getName(), result, endAt - startAt);
-//
-//        return result;
     }
 
     private String getRequestUrl(JoinPoint joinPoint, Class clazz) {
@@ -112,52 +92,4 @@ public class LogConfig {
         }
         return params;
     }
-
-//  private String getBody(@RequestBody HttpServletRequest request) throws IOException {
-//      String body = null;
-//      StringBuilder stringBuilder = new StringBuilder();
-//      BufferedReader bufferedReader = null;
-//
-//      InputStream inputStream = request.getInputStream();
-//      if (inputStream != null) {
-//          bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-//          char[] charBuffer = new char[128];
-//          int bytesRead = -1;
-//          while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-//              stringBuilder.append(charBuffer, 0, bytesRead);
-//          }
-//      } else {
-//          stringBuilder.append("");
-//      }
-//
-//      body = stringBuilder.toString();
-//      return body;
-//  }
-//
-//  // Get request values
-//  private String getRequestParams() throws IOException {
-//
-//    String params = "";
-//    StringJoiner sj = new StringJoiner(",");
-//
-//    RequestAttributes requestAttributes = RequestContextHolder
-//        .getRequestAttributes(); // 3
-//
-//    if (requestAttributes != null) {
-//      HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
-//          .getRequestAttributes()).getRequest();
-//
-//      Map<String, String[]> paramMap = request.getParameterMap();
-//      if (!paramMap.isEmpty()) {
-//          for (Entry<String, String[]> entry : paramMap.entrySet()) {
-//                String name = entry.getKey();
-//                String[] values = entry.getValue();
-//                sj.add(name + "=" + Arrays.toString(values));
-//          }
-//        params = sj.toString();
-//      }
-//    }
-//
-//    return params;
-//  }
 }

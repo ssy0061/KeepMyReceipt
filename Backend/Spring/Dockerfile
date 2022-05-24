@@ -7,7 +7,6 @@ COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
 COPY src src
-RUN chmod +x ./gradlew
 
 COPY ./build/libs/receipt-0.0.1-SNAPSHOT.jar spring.jar 
 

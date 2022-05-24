@@ -60,7 +60,7 @@ public class ClubService {
         if (resClubCrew == null) {
             throw new ApiMessageException("모임 생성에 실패했습니다. 다시 시도해 주세요.");
         }
-        System.out.println("it's my problem");
+
         // 기본 소분류 등록
         Long clubId = resGroup.getId();
         categoryService.createBudgetSCategory(BudgetSCategoryReqDTO.builder().clubId(clubId).lcName("전기예산").bscName("전기예산").build());

@@ -32,6 +32,10 @@ public class NotificationService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PushService pushService;
 
+    /**
+     * 알림 하나 생성
+     * @param notiCode, requestId, title, body, club, crewTokens
+     */
     @Transactional(readOnly = false)
     public void createOneNotification(NotiCode notiCode, Long requestId, String title, String body, Club club, List<CrewToken> crewTokens) {
         if (crewTokens == null || crewTokens.size() == 0) {
@@ -50,6 +54,7 @@ public class NotificationService {
 
         notificationRepository.save(notification);
 
+        // FCM 전송
         for (CrewToken crewToken : crewTokens) {
             if (crewToken.getFcmToken() != null && crewToken.getIsAllowedPush() == YNCode.Y
                     && jwtTokenProvider.validateToken(crewToken.getRefreshToken())) {
@@ -64,6 +69,10 @@ public class NotificationService {
         }
     }
 
+    /**
+     * 알림 여러 개 생성
+     * @param notiCode, requestId, title, body, club, crewTokens
+     */
     @Transactional(readOnly = false)
     public void createManyNotifications(NotiCode notiCode, Long requestId, String title, String body, Club club, List<CrewToken> crewTokens) {
         if (crewTokens == null || crewTokens.size() == 0) {
@@ -92,6 +101,7 @@ public class NotificationService {
 
         notificationRepository.saveAll(notifications);
 
+        // FCM 전송
         for (CrewToken crewToken : crewTokens) {
             if (crewToken.getFcmToken() != null && crewToken.getIsAllowedPush() == YNCode.Y
                     && jwtTokenProvider.validateToken(crewToken.getRefreshToken())) {
@@ -106,10 +116,19 @@ public class NotificationService {
         }
     }
 
+    /**
+     * 알림 조회
+     * @param crewId, pageable
+     * @return Page<Notification>
+     */
     public Page<Notification> getNotifications(Long crewId, Pageable pageable) {
         return notificationRepository.findByCrewId(crewId, pageable);
     }
 
+    /**
+     * 알림 읽음 처리
+     * @param crewId, pageable
+     */
     @Transactional(readOnly = false)
     public void readNotification(Long crewId, long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
@@ -123,6 +142,10 @@ public class NotificationService {
         }
     }
 
+    /**
+     * 알림 삭제
+     * @param crewId, notificationId
+     */
     @Transactional(readOnly = false)
     public void deleteNotification(Long crewId, long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)

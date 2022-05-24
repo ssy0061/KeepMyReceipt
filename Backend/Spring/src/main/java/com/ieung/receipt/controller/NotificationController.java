@@ -35,6 +35,12 @@ public class NotificationController {
     private final NotificationService notificationService;
     private final ResponseService responseService;
 
+    /**
+     * 알림 목록 조회 : get /notifications?page=0&size=10&sort=id,ASC
+     * 알림 읽음 처리 : put /notification/{notificationId}
+     * 알림 삭제 : delete /notification/{notificationId}
+     */
+
     // 알림 목록 조회
     @Operation(summary = "알림 목록 조회", description = "알림 목록 조회")
     @GetMapping(value = "/notifications", produces = MediaType.APPLICATION_JSON_VALUE)

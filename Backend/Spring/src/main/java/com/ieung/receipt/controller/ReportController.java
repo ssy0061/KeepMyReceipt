@@ -37,6 +37,13 @@ public class ReportController {
     private final ExcelService excelService;
     private final ResponseService responseService;
 
+    /**
+     * 자산현황표 조회 : get /{clubId}/report/asset/date={date}
+     * 자산현황표 다운로드 : get /{clubId}/report/asset/excel/date={date}
+     * 예산운영표 조회 : get /{clubId}/report/budget/excel/date={date}
+     * 예산운영표 다운로드 : get /{clubId}/report/budget/excel/date={date}
+     */
+
     // 자산현황표 조회
     @Operation(summary = "자산현황표 조회", description = "자산현황표 조회")
     @GetMapping(value = "/{clubId}/report/asset", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,6 +54,7 @@ public class ReportController {
         if (list == null || list.size() == 0) {
             return responseService.getListResult(null);
         } else {
+            // 자산별로 분류해서 result dto에 담기
             Map<String, Map<String, List<SmallCategoryResDTO>>> map = new HashMap<>();
             List<ReportResDTO> result = new ArrayList<>();
 
@@ -96,6 +104,7 @@ public class ReportController {
         if (list == null || list.size() == 0) {
             throw new ApiMessageException("해당하는 자료가 없습니다.");
         } else {
+            // 자산별로 분류해서 result dto에 담기
             Map<String, Map<String, List<SmallCategoryResDTO>>> map = new HashMap<>();
 
             for (Asset asset : list) {
@@ -143,6 +152,7 @@ public class ReportController {
         if (list == null || list.size() == 0) {
             return responseService.getListResult(null);
         } else {
+            // 분류별로 result dto에 담기
             Map<String, Map<String, List<SmallCategoryResDTO>>> map = new HashMap<>();
             List<ReportResDTO> result = new ArrayList<>();
 
@@ -192,6 +202,7 @@ public class ReportController {
         if (list == null || list.size() == 0) {
             throw new ApiMessageException("해당하는 자료가 없습니다.");
         } else {
+            // 분류별로 result dto에 담기
             Map<String, Map<String, List<SmallCategoryResDTO>>> map = new HashMap<>();
 
             for (Budget budget : list) {

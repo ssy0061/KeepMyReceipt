@@ -47,6 +47,15 @@ public class RequestController {
     private final CrewTokenService crewTokenService;
     private final NotificationService notificationService;
 
+    /**
+     * 청구 요청 등록 : post /club/{clubId}/request
+     * 청구 목록 조회 :  get /club/{clubId}/requests?state={state}&page=0&size=10&sort=id,ASC
+     * 특정 청구 내역 조회 : get /club/request/{requestId}
+     * 특정 청구 내역 수정 : put /club/request/{requestId}
+     * 특정 청구 내역 삭제 : delete /club/request/{requestId}
+     * 특정 청구 내역 거절 : put /club/request/{requestId}/refusal
+     */
+
     // 청구 요청 등록
     @Operation(summary = "청구 요청 등록", description = "청구 요청 등록")
     @PostMapping(value = "/club/{clubId}/request", produces = MediaType.APPLICATION_JSON_VALUE)

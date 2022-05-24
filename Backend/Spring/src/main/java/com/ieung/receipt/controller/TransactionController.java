@@ -46,6 +46,14 @@ public class TransactionController {
     private final NotificationService notificationService;
     private final RequestService requestService;
 
+    /**
+     * 거래내역 등록 : post /{clubId}/transaction
+     * 거래내역 조회 : get /transaction/{transactionId}
+     * 거래내역 검색 : get /{clubId}/transactions?query={query}&start={start}&end={end}&page=0&size=10&sort=id,ASC
+     * 거래내역 삭제 : delete /transaction/{transactionId}
+     * 거래내역 수정 : put /transaction/{transactionId}
+     */
+
     // 거래내역 등록
     @Operation(summary = "거래내역 등록", description = "거래내역 등록")
     @PostMapping(value = "/{clubId}/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -66,7 +74,7 @@ public class TransactionController {
 
     // 거래내역 조회
     @Operation(summary = "거래내역 조회", description = "거래내역 조회")
-    @GetMapping(value = "transaction/{transactionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/transaction/{transactionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody SingleResult<TransactionResDTO> getTransaction(@PathVariable @NotNull Long transactionId) throws Exception {
         Transaction transaction = transactionService.getTransaction(getCurrentCrewId(), transactionId);
 
@@ -115,7 +123,7 @@ public class TransactionController {
 
     // 거래내역 삭제
     @Operation(summary = "거래내역 삭제", description = "거래내역 삭제")
-    @DeleteMapping(value = "transaction/{transactionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/transaction/{transactionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody CommonResult deleteTransaction(@PathVariable @NotNull Long transactionId) throws Exception {
         Transaction transaction = transactionService.deleteTransaction(getCurrentCrewId(), transactionId);
 
@@ -133,7 +141,7 @@ public class TransactionController {
 
     // 거래내역 수정
     @Operation(summary = "거래내역 수정", description = "거래내역 수정")
-    @PutMapping(value = "transaction/{transactionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/transaction/{transactionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody CommonResult updateTransaction(@PathVariable @NotNull Long transactionId, @Valid @RequestBody TransactionReqDTO transactionReqDTO) throws Exception {
         transactionService.updateTransaction(getCurrentCrewId(), transactionId, transactionReqDTO);
 

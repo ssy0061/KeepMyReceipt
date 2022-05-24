@@ -29,6 +29,15 @@ public class CrewTokenController {
     private final CrewTokenService crewTokenService;
     private final ResponseService responseService;
 
+    /**
+     * 로그인 : post /login
+     * 로그아웃 : post /logout
+     * 토큰 재발급 : put /token/reissue
+     * 푸시 알림 허용 : put /token/push/allow
+     * 푸시 알림 비허용 : put /token/push/disallow
+     * 푸시 알림 상태 확인 : get /token/push/allow
+     */
+
     // 로그인
     @Operation(summary = "로그인", description = "로그인")
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)

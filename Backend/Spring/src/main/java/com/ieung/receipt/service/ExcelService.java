@@ -16,6 +16,11 @@ import java.util.Map;
 
 @Service
 public class ExcelService {
+    /**
+     * 엑셀 파일 생성
+     * @param date, map, title
+     * @return SXSSFWorkbook
+     */
     public SXSSFWorkbook toExcel(YearMonth date, Map<String, Map<String, List<SmallCategoryResDTO>>> map, String title) {
         List<String>  typeList =  new ArrayList<>(Arrays.asList("자산", "예산", "수입", "지출"));
 
@@ -65,6 +70,7 @@ public class ExcelService {
 
             int typeTotal = 0;
 
+            // 대분류별 기입
             for (String lcName : map.get(type).keySet()) {
                 int lcTotal = 0;
 
@@ -72,7 +78,8 @@ public class ExcelService {
                 createCell(row, null, lcName, 1);
                 sheet.addMergedRegion(new CellRangeAddress(rowNum - 1, rowNum - 1, 1, 2));
 
-                for (SmallCategoryResDTO smallCategoryResDTO : map.get(type).get(lcName)) {
+                // 소분류별 기입
+               for (SmallCategoryResDTO smallCategoryResDTO : map.get(type).get(lcName)) {
                     row = sheet.createRow(rowNum++);
                     createCell(row, null, smallCategoryResDTO.getScName(), 2);
                     createCell(row, null, smallCategoryResDTO.getBalance(), 3);
@@ -93,6 +100,10 @@ public class ExcelService {
         return wb;
     }
 
+    /**
+     * cell 생성 (문자열)
+     * @param row, style, value, columnNum
+     */
     public void createCell(Row row, XSSFCellStyle style, String value, int columnNum) {
         Cell cell = row.createCell(columnNum);
         cell.setCellValue(value);
@@ -102,6 +113,10 @@ public class ExcelService {
         }
     }
 
+    /**
+     * cell 생성 (숫자)
+     * @param row, style, value, columnNum
+     */
     public void createCell(Row row, XSSFCellStyle style, int value, int columnNum) {
         Cell cell = row.createCell(columnNum);
         cell.setCellValue(value);
@@ -111,7 +126,9 @@ public class ExcelService {
         }
     }
 
-    // cell style 생성
+    /**
+     * cell style 생성
+     */
     public XSSFCellStyle createCellStyle(SXSSFWorkbook wb, String align, XSSFColor color, boolean isBold, int height) {
         XSSFCellStyle style = (XSSFCellStyle) wb.createCellStyle();
 
