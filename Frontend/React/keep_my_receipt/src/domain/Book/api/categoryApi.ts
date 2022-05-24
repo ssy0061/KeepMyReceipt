@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { WarningToast } from '../../../services/customSweetAlert';
-import { TypeNameKeys } from '../bookReducer';
+import { TypeNameKeys } from '../Create/bookReducer';
 
 const BASE_URL = 'https://k6d104.p.ssafy.io/api/spring';
 
@@ -12,9 +12,11 @@ const setToken = () => {
   return config;
 };
 
+/** 거래 유형에 따라 자산(as) 소분류 접두어, 혹은 예산(bs) 소분류 접두어를 반환 */
 const matching = (typeName: TypeNameKeys) =>
   typeName === '자산' ? 'as' : 'bs';
 
+/** 소분류 추가 API */
 export const apiCreateCategory = async (
   clubId: number,
   typeName: TypeNameKeys,
@@ -27,6 +29,8 @@ export const apiCreateCategory = async (
     data: {
       clubId,
       lcName: largeCategoryName,
+      // 인자로 받은 유형 이름 (typeName)에 따라
+      // 대응하는 소분류 key 생성
       [`${matching(typeName)}cName`]: smallCategoryName,
     },
     headers: setToken(),
@@ -45,6 +49,7 @@ export const apiCreateCategory = async (
     });
 };
 
+/** 소분류 수정 API */
 export const apiUpdateCategory = async (
   clubId: number,
   typeName: TypeNameKeys,
@@ -54,6 +59,7 @@ export const apiUpdateCategory = async (
 ) => {
   return await axios({
     method: 'put',
+    // 유형에 따라 대응되는 URL로 보냄
     url: `${BASE_URL}/${matching(typeName)}category/${categoryId}`,
     data: {
       clubId,
@@ -76,6 +82,7 @@ export const apiUpdateCategory = async (
     });
 };
 
+/** 소분류 목록 읽어오는 API */
 export const apiReadAllCategory = async (
   clubId: string,
   typeName: TypeNameKeys,
@@ -102,6 +109,7 @@ export const apiReadAllCategory = async (
     });
 };
 
+/** 소분류 삭제 API */
 export const apiDeleteCategory = async (
   typeName: TypeNameKeys,
   categoryId: number,

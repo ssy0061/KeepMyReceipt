@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { WarningToast } from '../../../services/customSweetAlert';
-import { BookState, TypeNameKeys } from '../bookReducer';
+import { BookState, TypeNameKeys } from '../Create/bookReducer';
 
 export const BASE_URL = 'https://k6d104.p.ssafy.io/api/spring';
 
@@ -12,6 +12,7 @@ export const setToken = () => {
   return config;
 };
 
+/** 거래 내역 등록 API의 Request Body 형식 */
 export type CreateTransactionReqType = {
   date: string;
   totalPrice: number;
@@ -28,6 +29,7 @@ export type CreateTransactionReqType = {
   }[];
 };
 
+/** 프론트의 상태를 API 요청 형식에 맞춰 바꿔주는 함수 */
 export const toTransactionType = (
   bookState: BookState,
   requestId?: number,
@@ -47,10 +49,11 @@ export const toTransactionType = (
   })),
 });
 
-/** 요청 전 데이터 검사 */
+/** 요청 전 데이터 검증 */
 export const apiValidateCreateTransaction = (
   data: CreateTransactionReqType,
 ): boolean => {
+  // 데이터가 한 개인 경우
   if (data.list.length === 1) {
     if (data.list[0].name === '') {
       WarningToast.fire({
@@ -71,7 +74,7 @@ export const apiValidateCreateTransaction = (
     return true;
   }
 
-  // 몇 번째 아이템인지 나타냄
+  // 데이터가 여러 개인 경우, 몇 번째 아이템인지 추가로 표시
   let index = 1;
   for (const item of data.list) {
     if (item.name === '') {
@@ -95,7 +98,7 @@ export const apiValidateCreateTransaction = (
   return true;
 };
 
-// 거래내역
+/** 거래 내역 추가 API */
 export const apiCreateTransaction = async (
   clubId: number,
   data: CreateTransactionReqType,
@@ -118,6 +121,7 @@ export const apiCreateTransaction = async (
     });
 };
 
+/** 거래 내역 수정 API */
 export const apiUpdateTransaction = async (
   transactionId: number,
   data: CreateTransactionReqType,

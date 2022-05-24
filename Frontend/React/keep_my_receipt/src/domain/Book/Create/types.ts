@@ -1,4 +1,4 @@
-// 영수증 승인에서 거래 등록에 넘기는 데이터 타입
+/** 영수증 승인에서부터 거래 등록으로 넘어오는 param 타입 */
 export type ReceiptStateType = {
   requestId: number;
   imgUrl: string;
@@ -9,11 +9,6 @@ export type ReceiptStateType = {
     content: string;
     money: string;
   }[];
-};
-
-export type DetailParamType = {
-  transactionId: number;
-  transactionDetailId: number;
 };
 
 export type BSType = {

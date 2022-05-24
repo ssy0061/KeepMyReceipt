@@ -1,25 +1,28 @@
 import React, { memo } from 'react';
 import { Button, Stack, TextField, Box } from '@mui/material';
-// import { Schedule, PointOfSale } from '@mui/icons-material';
 
 import DialogWithIconButton from '../../../../components/DialogWithIconButton';
-import { BookAction, updateBook } from '../../bookReducer';
-import toCurrency from '../../../../services/toCurrency';
 import {
   ContentTypography,
   TitleTypography,
 } from '../../../../styles/typography';
+import { BookAction, updateBook } from '../bookReducer';
+import toCurrency from '../../../../services/toCurrency';
 
+/** 헤더 타입
+ * - 필수: 날짜, 총 금액, 수정 가능 여부
+ * - 옵션: 이미지 주소, 상태 변경 함수
+ */
 interface HeaderType {
   date: string;
   totalValue: number;
-  length: number;
   imageUrl?: string;
   dispatch?: React.Dispatch<BookAction>;
   editable: boolean;
 }
 
 function Header(props: HeaderType) {
+  /** 거래 내역의 날짜를 갱신하는 함수 */
   const changeDate = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
@@ -38,7 +41,7 @@ function Header(props: HeaderType) {
         >
           <TitleTypography>날짜</TitleTypography>
           {props.editable ? (
-            // 날짜 수정 가능
+            // 날짜 입력란
             <TextField
               type="date"
               defaultValue={props.date}
@@ -57,13 +60,7 @@ function Header(props: HeaderType) {
           <ContentTypography>{toCurrency(props.totalValue)}</ContentTypography>
         </Stack>
 
-        {/* 거래 개수 */}
-        {/* <Stack direction="row" justifyContent="space-between" marginBottom={1}>
-          <TitleTypography>거래 개수</TitleTypography>
-          <ContentTypography>{props.length}개</ContentTypography>
-        </Stack> */}
-
-        {/* 영수증 사진 확인 */}
+        {/* 영수증 사진 */}
         {props.imageUrl ? (
           <DialogWithIconButton
             icon={

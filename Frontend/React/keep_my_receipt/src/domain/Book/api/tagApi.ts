@@ -10,7 +10,7 @@ const setToken = () => {
   return config;
 };
 
-// 태그
+/** 태그 생성 API **/
 export const apiCreateTag = async (
   clubId: string,
   tagName: string,
@@ -30,6 +30,7 @@ export const apiCreateTag = async (
   });
 };
 
+/** 태그 수정 API */
 export const apiUpdateTag = async (
   clubId: string,
   tagId: number,
@@ -50,6 +51,7 @@ export const apiUpdateTag = async (
   });
 };
 
+/** 1차 태그 읽어오는 API */
 export const apiGetLargeTags = async (clubId: string) => {
   return await axios({
     method: 'get',
@@ -60,6 +62,7 @@ export const apiGetLargeTags = async (clubId: string) => {
   });
 };
 
+/** 2차 태그 읽어오는 API */
 export const apiGetSmallTags = async (clubId: string, largeTagName: string) => {
   return await axios({
     method: 'get',
@@ -70,6 +73,7 @@ export const apiGetSmallTags = async (clubId: string, largeTagName: string) => {
   });
 };
 
+/** 태그 삭제하는 API */
 export const apiDeleteTag = async (tagId: number) => {
   return await axios({
     method: 'delete',

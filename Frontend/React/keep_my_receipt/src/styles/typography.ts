@@ -1,3 +1,5 @@
+/** MUI의 Typography의 스타일을 바꿉니다. */
+
 import { Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { grey } from '../styles/Colors';

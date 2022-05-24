@@ -1,106 +1,70 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, IconButton, Typography, Stack, TextField } from '@mui/material';
+import {
+  Autocomplete,
+  Grid,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import {
   Backdrop,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
-  Fade,
 } from '@mui/material';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import { TransitionProps } from '@mui/material/transitions';
 import { DeleteOutline, EditOutlined, InfoOutlined } from '@mui/icons-material';
 
+import DialogWithIconButton from '../../../../components/DialogWithIconButton';
+import { TagGuide } from '../ItemGuide/classification';
+import { Transition } from '../../../../components/DialogWithIconButton/service';
+import { filter, toFilterOption } from './service';
 import {
-  apiCreateCategory,
-  apiUpdateCategory,
-  apiReadAllCategory,
-  apiDeleteCategory,
-} from '../api/categoryApi';
-import { TypeNameKeys } from '../bookReducer';
-import { ASType, BSType } from '../types';
-import DialogWithIconButton from '../../../components/DialogWithIconButton';
-import { SmallCategoryGuide } from '../Create/ItemGuide/classification';
+  apiCreateTag,
+  apiUpdateTag,
+  apiGetLargeTags,
+  apiDeleteTag,
+} from '../../api/tagApi';
 
-type OptionType = BSType &
-  ASType & {
-    inputValue?: string;
-    name: string;
-  };
-
-type EditableAutocompleteType = {
+type ItemTagFirstType = {
   label: string;
   clubId: string;
-  typeName: TypeNameKeys;
-  largeCatName: string;
   value: string;
   setValue: (value: string | number) => void;
   requestCreateValue: (value: string | number) => void;
 };
 
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: JSX.Element;
-  },
-  ref: React.Ref<unknown>,
-) {
-  return <Fade ref={ref} {...props} />;
-  // <Slide direction="up" ref={ref} {...props} />;
-});
-
-const filter = createFilterOptions<OptionType>();
-
-const toFilterOption = (objectArray: OptionType[]) =>
-  objectArray
-    .map((obj) => ({
-      ...obj,
-      name: obj.ascName ? obj.ascName : obj.bscName,
-    }))
-    .concat({ name: '', ascId: 0, ascName: '', bscId: 0, bscName: '' });
-
-const getCategoryId = (option: OptionType) =>
-  option.ascId ? option.ascId : option.bscId;
-
-export default function EditableAutocomplete(props: EditableAutocompleteType) {
+export default function ItemTagFirst(props: ItemTagFirstType) {
   const [options, setOptions] = useState([]);
 
-  const getAllCategory = async () => {
-    if (props.largeCatName) {
-      await apiReadAllCategory(
-        props.clubId,
-        props.typeName,
-        props.largeCatName,
-      ).then((res) => {
-        console.log('getAllCategory', res);
-        setOptions(toFilterOption(res.data.data));
+  const getAllTags = async () => {
+    await apiGetLargeTags(props.clubId).then((res) => {
+      console.log('getAllTags', res.data);
+      setOptions(toFilterOption(res.data.data));
+    });
+  };
+
+  const createTag = async (newValue: string, parentTag?: string) => {
+    await apiCreateTag(props.clubId, newValue, parentTag).then(() => {
+      getAllTags();
+    });
+  };
+
+  const updateTag = async (tagId: number, newValue: string) => {
+    await apiUpdateTag(props.clubId, tagId, newValue, null)
+      .then(() => {
+        getAllTags();
+      })
+      .catch((e) => {
+        console.log(e);
       });
-    }
   };
 
-  const createCategory = async (smallCategory: string) => {
-    await apiCreateCategory(
-      Number(props.clubId),
-      props.typeName,
-      props.largeCatName,
-      smallCategory,
-    ).then(() => getAllCategory());
-  };
-
-  const updateCategory = async (smallCatName: string, smallCatId: number) => {
-    await apiUpdateCategory(
-      Number(props.clubId),
-      props.typeName,
-      props.largeCatName,
-      smallCatName,
-      smallCatId,
-    ).then(() => getAllCategory());
-  };
-
-  const deleteCategory = async (smallCatId: number) => {
-    await apiDeleteCategory(props.typeName, smallCatId).then(() =>
-      getAllCategory(),
-    );
+  const deleteTag = async (tagId: number) => {
+    await apiDeleteTag(tagId).then(() => {
+      getAllTags();
+    });
   };
 
   const [nameOnEdit, setNameOnEdit] = React.useState('');
@@ -126,8 +90,8 @@ export default function EditableAutocomplete(props: EditableAutocompleteType) {
 
   const handleClose = () => {
     setOpen(false);
-    setNameOnEdit('');
     setIdOnEdit(0);
+    setNameOnEdit('');
   };
 
   const handleUpdate = () => {
@@ -135,22 +99,23 @@ export default function EditableAutocomplete(props: EditableAutocompleteType) {
       alert('빈 값은 입력할 수 없습니다');
       return;
     }
-    updateCategory(nameOnEdit, idOnEdit);
+    updateTag(idOnEdit, nameOnEdit);
     handleClose();
   };
 
   useEffect(() => {
-    getAllCategory();
-  }, [props.largeCatName]);
+    getAllTags();
+    console.log(options);
+  }, []);
 
   return (
     <>
       <Autocomplete
         /** 1. 옵션 리스트 렌더링 */
         options={options}
-        renderOption={(props, option: OptionType) => (
+        renderOption={(props, option) => (
           <li {...props}>
-            {option.name ? (
+            {option.tagName ? (
               <Grid container justifyContent="space-between">
                 <Grid item>
                   <Typography>{option.name}</Typography>
@@ -159,14 +124,14 @@ export default function EditableAutocomplete(props: EditableAutocompleteType) {
                   <Stack direction="row" spacing={1}>
                     <IconButton
                       onClick={(e) => {
-                        handleOpen(e, option.name, getCategoryId(option));
+                        handleOpen(e, option.tagName, option.tagId);
                       }}
                     >
                       <EditOutlined />
                     </IconButton>
                     <IconButton
                       onClick={() => {
-                        deleteCategory(getCategoryId(option));
+                        deleteTag(option.tagId);
                       }}
                     >
                       <DeleteOutline />
@@ -194,10 +159,6 @@ export default function EditableAutocomplete(props: EditableAutocompleteType) {
             filtered.push({
               inputValue,
               name: `Add "${inputValue}"`,
-              bscName: '',
-              bscId: 0,
-              ascName: '',
-              ascId: 0,
             });
           }
 
@@ -214,11 +175,11 @@ export default function EditableAutocomplete(props: EditableAutocompleteType) {
             <TextField {...params} label={props.label} variant="standard" />
             <DialogWithIconButton
               icon={<InfoOutlined />}
-              content={<SmallCategoryGuide />}
+              content={<TagGuide />}
             />
           </Stack>
         )}
-        getOptionLabel={(option: OptionType) => {
+        getOptionLabel={(option) => {
           // Value selected with enter, right from the input
           if (typeof option === 'string') {
             return option;
@@ -231,16 +192,14 @@ export default function EditableAutocomplete(props: EditableAutocompleteType) {
           return option.name;
         }}
         /** 4. 값 바뀌면서 트리거 발동 */
-        value={{ name: props.value }}
-        isOptionEqualToValue={(option: OptionType, value) =>
-          option.name === value.name
-        }
+        value={{ name: props.value ? props.value : '' }}
+        isOptionEqualToValue={(option, value) => option.name === value.name}
         onChange={(event, newValue) => {
           if (typeof newValue === 'string') {
             props.setValue(newValue);
           } else if (newValue && newValue.inputValue) {
             // Create a new value from the user input
-            createCategory(newValue.inputValue);
+            createTag(newValue.inputValue);
             props.setValue(newValue.inputValue);
           } else if (newValue && newValue.name) {
             props.setValue(newValue.name);
@@ -270,7 +229,7 @@ export default function EditableAutocomplete(props: EditableAutocompleteType) {
       >
         <DialogContent dividers>
           <TextField
-            label="소분류 이름 변경"
+            label="태그 이름 변경"
             value={nameOnEdit}
             onChange={handleChange}
           />

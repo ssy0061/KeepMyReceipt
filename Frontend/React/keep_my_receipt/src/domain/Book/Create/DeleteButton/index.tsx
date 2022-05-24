@@ -1,7 +1,7 @@
 import { IconButton } from '@mui/material';
 import { RemoveCircle } from '@mui/icons-material/';
 
-import { BookAction, deleteItem } from '../../bookReducer';
+import { BookAction, deleteItem } from '../bookReducer';
 
 interface AddDeleteButtonType {
   page: number;

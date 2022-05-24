@@ -11,7 +11,7 @@ import {
 import { Cancel, CheckCircle, Delete, Edit } from '@mui/icons-material';
 
 import useEditableItem from './hook';
-import toCurrency from '../../../services/toCurrency';
+import toCurrency from '../../services/toCurrency';
 import { EditableItemControllerType } from './hook';
 type EditableItemViewType = Parameters<typeof EditableItemContainer>[0];
 

@@ -1,14 +1,14 @@
-// string 배열로 구성된 객체 타입 일반화
-// 자세한 건 TypeScript의 인덱스 시그니처 참고
+/** string 배열로 구성된 객체 타입 일반화.  
+ 자세한 건 TypeScript의 인덱스 시그니처 참고 */
 interface StringArrayObjectType {
   [key: string]: string[];
 }
 
+/** 유형 목록 */
 export const mainCategories = ['자산', '지출', '수입', '예산'];
 
-// as type을 씀으로써
-// 리터럴 타입만 쓰게 하는 걸 방지
-// 자세한 건 TypeScript의 리터럴 타입과 타입 단언 참고
+/**타입 단언 (as ...)을 씀으로써 리터럴 타입만 쓰게 하는 걸 방지.  
+ 자세한 건 TypeScript의 리터럴 타입과 타입 단언 참고 */
 export const largeCategories = {
   자산: ['현금 및 현금성자산', '유형자산', '선급금', '기타자산'],
   예산: ['전기예산', '활동지원금', '회비', '후원비'],

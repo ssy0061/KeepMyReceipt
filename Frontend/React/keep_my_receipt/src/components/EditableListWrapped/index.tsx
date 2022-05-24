@@ -2,7 +2,7 @@ import { memo, useState } from 'react';
 import { Collapse, List, ListItemButton } from '@mui/material';
 import { ExpandLess, ExpandMore, Info } from '@mui/icons-material';
 
-import DialogWithIconButton from '../../../components/DialogWithIconButton';
+import DialogWithIconButton from '../DialogWithIconButton';
 import EditableItem from '../EditableItem';
 import EditableList from '../EditableList';
 import EditableListFixed from '../EditableListFixed';

@@ -20,7 +20,6 @@ import ClubCreate from './domain/Club/Create';
 import ClubSearch from './domain/Club/Search';
 import BookIndex from './domain/Book/Index';
 import BookCreate from './domain/Book/Create';
-import BookUpdate from './domain/Book/Update';
 import BookDetail from './domain/Book/Detail';
 
 import SettingIndex from './domain/Setting/Index';
@@ -63,7 +62,6 @@ function App() {
                 <Route index element={<BookIndex />} />
                 <Route path="search" element={<BookSearch />} />
                 <Route path="create" element={<BookCreate />} />
-                <Route path="update" element={<BookUpdate />} />
                 <Route path="detail" element={<BookDetail />} />
               </Route>
               <Route path="receipt" element={<Outlet />}>

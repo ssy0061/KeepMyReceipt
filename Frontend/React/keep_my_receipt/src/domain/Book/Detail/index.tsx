@@ -18,7 +18,7 @@ import {
   ReadTransactionResType,
   initialReadResponse,
 } from '../api/bookReadApi';
-import { DetailParamType } from '../types';
+import { DetailParamType } from './types';
 import toCurrency from '../../../services/toCurrency';
 import {
   TitleTypographyWithSpace,
