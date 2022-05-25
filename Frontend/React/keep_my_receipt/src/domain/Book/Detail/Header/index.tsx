@@ -6,6 +6,7 @@ import { ArrowBackIos } from '@mui/icons-material';
 import toCurrency from '../../../../services/toCurrency';
 import { apiDeleteTransaction } from '../../api/bookReadApi';
 import { ConfirmSwal } from '../../../../services/customSweetAlert';
+import DialogWithIconButton from '../../../../components/DialogWithIconButton';
 
 interface DetailHeaderProps {
   state: any;
@@ -49,14 +50,21 @@ export default function DetailHeader({ state, params }: DetailHeaderProps) {
           </Stack>
         </Stack>
         {/* 영수증 확인 */}
-        <Button
-          fullWidth
-          variant="contained"
-          onClick={onClickButton}
-          disabled={!receiptUrl ? true : false}
-        >
-          {receiptUrl ? '영수증 확인' : '영수증 없음'}
-        </Button>
+        {receiptUrl ? (
+          <DialogWithIconButton
+            icon={
+              <Button fullWidth variant="outlined" color="secondary">
+                영수증 확인
+              </Button>
+            }
+            content={<img src={receiptUrl} />}
+          />
+        ) : (
+          <Button disabled variant="outlined">
+            영수증 없음
+          </Button>
+        )}
+
         {/* 수정, 삭제 버튼 */}
         <Stack direction="row" justifyContent="end" marginTop={1}>
           <Button

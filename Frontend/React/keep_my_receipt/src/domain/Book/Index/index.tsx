@@ -103,8 +103,10 @@ export default function BookIndex() {
         },
       })
       .then((res) => {
-        // console.log(res.data.data[0].balance);
-        setBalance(res.data.data[0].balance);
+        // console.log(res.data.data);
+        if (res.data.data.length) {
+          setBalance(res.data.data[0].balance);
+        }
       })
       .catch((e) => {
         console.log(e);
